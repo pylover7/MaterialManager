@@ -100,6 +100,9 @@ devDependencies:
   '@iconify-icons/ep':
     specifier: ^1.2.12
     version: 1.2.12
+  '@iconify-icons/fluent':
+    specifier: ^1.2.38
+    version: 1.2.38
   '@iconify-icons/ri':
     specifier: ^1.2.10
     version: 1.2.10
@@ -1263,6 +1266,12 @@ packages:
 
   /@iconify-icons/ep@1.2.12:
     resolution: {integrity: sha512-8EJULn048sQq3fvytpQ5j40omnVOdBKpo+sXdYM35NRrqCe1BihxBesMcCOLWaocqkWia6uTQ3cnRHff4ZA11w==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-icons/fluent@1.2.38:
+    resolution: {integrity: sha512-5GaGNLxFZfzc82+vyH+SYdDgNJgni99qUFsvc0B7TLxrpXO4jlqhiGDBFQRVm4V2zNvyEsXdpjTa9qNSda2iKQ==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: true

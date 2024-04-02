@@ -1,0 +1,22 @@
+lockfileVersion: '6.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+devDependencies:
+  '@iconify-icons/fluent':
+    specifier: ^1.2.38
+    version: 1.2.38
+
+packages:
+
+  /@iconify-icons/fluent@1.2.38:
+    resolution: {integrity: sha512-5GaGNLxFZfzc82+vyH+SYdDgNJgni99qUFsvc0B7TLxrpXO4jlqhiGDBFQRVm4V2zNvyEsXdpjTa9qNSda2iKQ==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify/types@2.0.0:
+    resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
+    dev: true
