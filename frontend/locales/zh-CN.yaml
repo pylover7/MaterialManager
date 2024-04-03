@@ -29,4 +29,7 @@ login:
   pureUsernameReg: 请输入账号
   purePassWordReg: 请输入密码
   purePassWordRuleReg: 密码格式应为8-18位数字、字母、符号的任意两种组合
-
+glb:
+  title: 隔离办
+  glbMaterialTitle: 隔离办物资管理
+  glbKeyTitle: 隔离办钥匙管理

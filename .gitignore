@@ -1,3 +1,10 @@
+# backend
+.env.*
+.env
+*.pyc
+*.sqlite*
+
+# frontend
 node_modules
 .DS_Store
 dist

@@ -5,10 +5,10 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    VERSION: str = "0.1.0"
-    APP_TITLE: str = "Vue FastAPI Admin"
-    PROJECT_NAME: str = "Vue FastAPI Admin"
-    APP_DESCRIPTION: str = "Description"
+    VERSION: str = "0.0.1"
+    APP_TITLE: str = "MaterialManager"
+    PROJECT_NAME: str = "MaterialManager"
+    APP_DESCRIPTION: str = "A manager for material"
 
     CORS_ORIGINS: typing.List = ["*"]
     CORS_ALLOW_CREDENTIALS: bool = True
