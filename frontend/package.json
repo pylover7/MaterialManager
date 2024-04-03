@@ -1,6 +1,6 @@
 {
-  "name": "pure-admin-thin",
-  "version": "5.3.0",
+  "name": "material-manager",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -23,6 +23,7 @@
     "preinstall": "npx only-allow pnpm"
   },
   "keywords": [
+    "MaterialManager",
     "vue-pure-admin",
     "element-plus",
     "tailwindcss",
@@ -33,19 +34,19 @@
     "vite",
     "esm"
   ],
-  "homepage": "https://github.com/pure-admin/pure-admin-thin/tree/i18n",
+  "homepage": "https://github.com/pylover7/MaterialManager",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pure-admin/pure-admin-thin.git"
+    "url": "git+https://github.com/pylover7/MaterialManager.git"
   },
   "bugs": {
-    "url": "https://github.com/pure-admin/vue-pure-admin/issues"
+    "url": "https://github.com/pylover7/MaterialManager/issues"
   },
   "license": "MIT",
   "author": {
-    "name": "xiaoxian521",
-    "email": "pureadmin@163.com",
-    "url": "https://github.com/xiaoxian521"
+    "name": "pylover7",
+    "email": "1372755472@qq.com",
+    "url": "https://github.com/pylover7"
   },
   "dependencies": {
     "@pureadmin/descriptions": "^1.2.1",
