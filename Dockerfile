@@ -14,10 +14,13 @@ COPY /backend .
 COPY entrypoint.sh .
 
 RUN sed -i s@/deb.debian.org/@/mirrors.aliyun.com/@g /etc/apt/sources.list.d/debian.sources \
-    && sed -i s@/security.debian.org/@/mirrors.aliyun.com/@g /etc/apt/sources.list.d/debian.sources
+    && sed -i s@/security.debian.org/@/mirrors.aliyun.com/@g /etc/apt/sources.list.d/debian.sources \
+    && sed -i 's/\r$//' ./entrypoint.sh
+
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends gcc python3-dev bash nginx vim curl procps net-tools\
+    # && apt-get install -y --no-install-recommends gcc python3-dev bash nginx vim curl procps net-tools\
+    && apt-get install -y --no-install-recommends python3-dev bash nginx\
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 RUN pip install poetry -i https://pypi.tuna.tsinghua.edu.cn/simple\
