@@ -1,43 +1,249 @@
-<script setup lang="ts">
-import { $t } from "@/plugins/i18n";
+<script setup lang="tsx">
+import { ref, reactive, computed, markRaw } from "vue";
+import FluentWarning48Filled from "@iconify-icons/fluent/warning-48-filled";
+import FluentCheckmark12Filled from "@iconify-icons/fluent/checkmark-12-filled";
+import FluentCheckmark24Filled from "@iconify-icons/fluent/checkmark-24-filled";
+import EpSelect from "@iconify-icons/ep/select";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import FluentNumberCircle116Regular from "@iconify-icons/fluent/number-circle-1-16-regular";
 
 defineOptions({
   name: "GlbMaterial"
 });
+
+enum StepStatus {
+  Wait = "wait",
+  Process = "process",
+  Finish = "finish",
+  Success = "success",
+  Warning = "warning",
+  Error = "error"
+}
+
+const columns: TableColumnList = [
+  { label: "序号", prop: "id", width: "60" },
+  { label: "位置", prop: "position" },
+  { label: "名称", prop: "name" },
+  { label: "型号", prop: "model", width: "200" },
+  { label: "数量", prop: "number", width: "100" },
+  {
+    label: "当前数量",
+    width: "150",
+    prop: "nowNumber",
+    cellRenderer: ({ row }) => (
+      <>
+        <el-input-number
+          v-model={row.nowNumber}
+          controls={false}
+          size="small"
+        />
+      </>
+    )
+  },
+  {
+    label: "确认",
+    prop: "confirm",
+    width: "100",
+    cellRenderer: ({ row }) => (
+      <>
+        <el-button
+          size="small"
+          type={row.nowNumber === Number(row.number) ? "success" : "warning"}
+          onClick={() => handleConfirm(row)}
+          plain
+        >
+          确认
+        </el-button>
+      </>
+    )
+  }
+];
+
+const tableData = [
+  {
+    id: "2",
+    position: "左上角",
+    name: "扳手",
+    model: "把",
+    number: "3",
+    nowNumber: 0
+  },
+  {
+    id: "3",
+    position: "左上角",
+    name: "扳手",
+    model: "把",
+    number: "13",
+    nowNumber: 0
+  }
+];
+
+const confirmedData = reactive(tableData);
+const step1Init = ref(true);
+
+const step1Status = computed(() => {
+  return confirmedData.every(item => item.nowNumber === Number(item.number))
+    ? StepStatus.Success
+    : StepStatus.Error;
+});
+
+const handleConfirm = row => {
+  row.nowNumber = Number(row.number);
+  step1Init.value = false;
+};
+const handleConfirmAll = () => {
+  // 确认所有
+  confirmedData.forEach(row => {
+    row.nowNumber = Number(row.number);
+    step1Init.value = false;
+  });
+};
+
+const remark = ref("");
+const lastRemark = "";
+const step2Init = ref(true);
+
+const step2Status = computed(() => {
+  return remark.value.length > 0 ? StepStatus.Success : StepStatus.Error;
+});
+
+const copyLastRemark = () => {
+  remark.value = lastRemark;
+  step2Init.value = false;
+};
+
+const bulrHandle = () => {
+  step2Init.value = false;
+};
+
+const attation = [
+  "岗位值班室内工具不允许长期借出；",
+  "岗位值班室内工具不允许长期借出2；"
+];
+
+const step3Init = ref(true);
+const attationStatus = computed(() => {
+  return step3Init.value ? StepStatus.Process : StepStatus.Success;
+});
+const attationBtn = computed(() => {
+  return step3Init.value ? StepStatus.Warning : StepStatus.Success;
+});
+const readAttation = () => {
+  step3Init.value = false;
+};
 </script>
 
 <template>
   <div>
-    <el-card shadow="never">
-      <p>test</p>
-    </el-card>
+    <el-affix :offset="100">
+      <el-card class="oprationCar" shadow="never" body-style="padding: 0px;">
+        <el-row :gutter="20">
+          <el-col :span="6">
+            <el-button type="success" plain size="large">交班</el-button>
+          </el-col>
+          <el-col :span="5" :offset="1"></el-col>
+          <el-col :span="5" :offset="1"></el-col>
+          <el-col :span="5" :offset="1"> </el-col>
+        </el-row>
+      </el-card>
+    </el-affix>
+
     <el-card shadow="never">
       <div class="flex">
-        <el-timeline>
-          <el-timeline-item
-            size="large"
-            :icon="
-              useRenderIcon(FluentNumberCircle116Regular, { color: '#0bbd87' })
-            "
-            key="1"
+        <el-steps direction="vertical">
+          <el-step
+            title="核对物资数量"
+            :status="step1Init ? 'process' : step1Status"
           >
-            {{ $t("glb.title") }}
-          </el-timeline-item>
-          <el-timeline-item
-            size="large"
-            :icon="
-              useRenderIcon(FluentNumberCircle116Regular, { color: '#0bbd87' })
-            "
-            key="2"
+            <template #description>
+              <el-space direction="vertical" alignment="flex-start">
+                <pure-table
+                  :columns="columns"
+                  :data="confirmedData"
+                  :border="true"
+                  stripe
+                  highlight-current-row
+                  :header-cell-style="{ textAlign: 'center' }"
+                  :cell-style="{ textAlign: 'center' }"
+                  style="width: 70vw"
+                />
+                <el-button
+                  type="success"
+                  plain
+                  size="large"
+                  @click="handleConfirmAll"
+                  >确认所有</el-button
+                >
+              </el-space>
+            </template>
+          </el-step>
+          <el-step
+            title="备注异常信息"
+            :status="step2Init ? 'process' : step2Status"
           >
-            <p>你好</p>
-          </el-timeline-item>
-        </el-timeline>
+            <template #description>
+              <el-space alignment="flex-start">
+                <el-space direction="vertical" alignment="flex-start">
+                  <p>当前备注</p>
+                  <el-input
+                    v-model="remark"
+                    type="textarea"
+                    placeholder="填写本班备注"
+                    :autosize="{ minRows: 2 }"
+                    :show-word-limit="true"
+                    style="width: 35vw"
+                    @blur="bulrHandle"
+                  />
+                  <el-button type="warning" plain @click="copyLastRemark"
+                    >复制上个班</el-button
+                  >
+                </el-space>
+                <el-space direction="vertical" alignment="flex-start">
+                  <p>上个班备注</p>
+                  <el-input
+                    v-model="lastRemark"
+                    type="textarea"
+                    placeholder="上个班没有备注"
+                    :autosize="{ minRows: 2 }"
+                    :show-word-limit="true"
+                    style="width: 35vw"
+                    readonly
+                  />
+                </el-space>
+              </el-space>
+            </template>
+          </el-step>
+          <el-step title="查看注意事项" :status="attationStatus">
+            <template #description>
+              <el-space direction="vertical" alignment="flex-start">
+                <el-alert
+                  title="注意事项"
+                  :type="attationBtn"
+                  show-icon
+                  :closable="false"
+                >
+                  <template #default>
+                    <ol>
+                      <li v-for="(item, index) in attation" :key="index">
+                        {{ item }}
+                      </li>
+                    </ol>
+                  </template>
+                </el-alert>
+                <el-button :type="attationBtn" @click="readAttation" plain
+                  >确认阅读
+                </el-button>
+              </el-space>
+            </template>
+          </el-step>
+        </el-steps>
       </div>
     </el-card>
   </div>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.oprationCar {
+  margin-bottom: 20px;
+  padding: 0px;
+}
+</style>

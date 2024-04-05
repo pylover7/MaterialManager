@@ -13,6 +13,7 @@ import { themePreprocessorPlugin } from "@pureadmin/theme";
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import { genScssMultipleScopeVars } from "../src/layout/theme";
 import { vitePluginFakeServer } from "vite-plugin-fake-server";
+import VueDevTools from 'vite-plugin-vue-devtools'
 
 export function getPluginsList(
   VITE_CDN: boolean,
@@ -58,6 +59,8 @@ export function getPluginsList(
     // 打包分析
     lifecycle === "report"
       ? visualizer({ open: true, brotliSize: true, filename: "report.html" })
-      : (null as any)
+      : (null as any),
+    // vue-devtools
+    VueDevTools()
   ];
 }

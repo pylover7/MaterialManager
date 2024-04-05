@@ -3,6 +3,7 @@
 .env
 *.pyc
 *.sqlite*
+.venv/
 
 # frontend
 node_modules
