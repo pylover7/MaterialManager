@@ -4,8 +4,7 @@ version = "0.1.0"
 description = "A manager for materials"
 authors = ["xiaoyezi <1372755472@foxmail.com>"]
 license = "MIT"
-readme = "README.md"
-package-mode = false
+readme = "../README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -30,6 +29,11 @@ target-version = ["py310", "py311"]
 [[tool.poetry.source]]
 name = "tsinghua"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+priority = "primary"
+
+
+[[tool.poetry.source]]
+name = "PyPI"
 priority = "primary"
 
 [tool.ruff]

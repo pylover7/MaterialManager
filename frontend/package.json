@@ -1,6 +1,6 @@
 {
-  "name": "pure-admin-thin",
-  "version": "5.3.0",
+  "name": "material-manager",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -23,6 +23,7 @@
     "preinstall": "npx only-allow pnpm"
   },
   "keywords": [
+    "MaterialManager",
     "vue-pure-admin",
     "element-plus",
     "tailwindcss",
@@ -33,19 +34,19 @@
     "vite",
     "esm"
   ],
-  "homepage": "https://github.com/pure-admin/pure-admin-thin/tree/i18n",
+  "homepage": "https://github.com/pylover7/MaterialManager",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pure-admin/pure-admin-thin.git"
+    "url": "git+https://github.com/pylover7/MaterialManager.git"
   },
   "bugs": {
-    "url": "https://github.com/pure-admin/vue-pure-admin/issues"
+    "url": "https://github.com/pylover7/MaterialManager/issues"
   },
   "license": "MIT",
   "author": {
-    "name": "xiaoxian521",
-    "email": "pureadmin@163.com",
-    "url": "https://github.com/xiaoxian521"
+    "name": "pylover7",
+    "email": "1372755472@qq.com",
+    "url": "https://github.com/pylover7"
   },
   "dependencies": {
     "@pureadmin/descriptions": "^1.2.1",
@@ -81,6 +82,7 @@
     "@eslint/js": "^8.57.0",
     "@faker-js/faker": "^8.4.1",
     "@iconify-icons/ep": "^1.2.12",
+    "@iconify-icons/fluent": "^1.2.38",
     "@iconify-icons/ri": "^1.2.10",
     "@iconify/vue": "^4.1.1",
     "@intlify/unplugin-vue-i18n": "^2.0.0",
@@ -129,6 +131,7 @@
     "vite-plugin-fake-server": "^2.1.1",
     "vite-plugin-remove-console": "^2.2.0",
     "vite-plugin-router-warn": "^1.0.0",
+    "vite-plugin-vue-devtools": "^7.0.25",
     "vite-svg-loader": "^5.1.0",
     "vue-eslint-parser": "^9.4.2",
     "vue-tsc": "^1.8.27"
