@@ -4,5 +4,5 @@ export default {
   meta: {
     title: "测试页"
   },
-  component: () => import("@/views/testView/index.vue"),
+  component: () => import("@/views/testView/index.vue")
 };

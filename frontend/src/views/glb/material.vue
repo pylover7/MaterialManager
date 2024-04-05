@@ -140,9 +140,9 @@ const readAttation = () => {
           <el-col :span="6">
             <el-button type="success" plain size="large">交班</el-button>
           </el-col>
-          <el-col :span="5" :offset="1"></el-col>
-          <el-col :span="5" :offset="1"></el-col>
-          <el-col :span="5" :offset="1"> </el-col>
+          <el-col :span="5" :offset="1" />
+          <el-col :span="5" :offset="1" />
+          <el-col :span="5" :offset="1" />
         </el-row>
       </el-card>
     </el-affix>
@@ -229,7 +229,7 @@ const readAttation = () => {
                     </ol>
                   </template>
                 </el-alert>
-                <el-button :type="attationBtn" @click="readAttation" plain
+                <el-button :type="attationBtn" plain @click="readAttation"
                   >确认阅读
                 </el-button>
               </el-space>
@@ -243,7 +243,7 @@ const readAttation = () => {
 
 <style lang="scss" scoped>
 .oprationCar {
+  padding: 0;
   margin-bottom: 20px;
-  padding: 0px;
 }
 </style>
