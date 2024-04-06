@@ -13,6 +13,7 @@ import { stringify } from "qs";
 import NProgress from "../progress";
 import { getToken, formatToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
+import { baseUrlApi } from "@/api/utils";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
@@ -73,7 +74,10 @@ class PureHttp {
           return config;
         }
         /** 请求白名单，放置一些不需要token的接口（通过设置请求白名单，防止token过期后再请求造成的死循环问题） */
-        const whiteList = ["/refresh-token", "/login"];
+        const whiteList = [
+          baseUrlApi("base/refreshToken"),
+          baseUrlApi("base/accessToken")
+        ];
         return whiteList.find(url => url === config.url)
           ? config
           : new Promise(resolve => {
