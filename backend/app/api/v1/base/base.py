@@ -10,7 +10,7 @@ from app.schemas.base import Fail, Success
 from app.schemas.login import *
 from app.schemas.users import UpdatePassword
 from app.settings import settings
-from app.utils.jwt import create_access_token
+from app.utils.jwt import create_access_token, decode_access_token
 from app.utils.password import get_password_hash, verify_password
 
 router = APIRouter()
@@ -21,7 +21,9 @@ async def login_access_token(credentials: CredentialsSchema):
     user: User = await user_controller.authenticate(credentials)
     await user_controller.update_last_login(user.id)
     access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
-    expire = datetime.utcnow() + access_token_expires
+    refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now() + access_token_expires
+    expire_refresh = datetime.now() + refresh_token_expires
 
     data = JWTOut(
         username=user.username,
@@ -34,9 +36,46 @@ async def login_access_token(credentials: CredentialsSchema):
                 exp=expire,
             )
         ),
-        refreshToken="eyJhbGciOiJIUzUxMiJ9.adminRefresh",
-        expires=expire.strftime("%Y-%m-%d %H:%M:%S")
+        refreshToken=create_access_token(
+            data=JWTPayload(
+                user_id=user.id,
+                username=user.username,
+                is_superuser=user.is_superuser,
+                exp=expire_refresh,
+            )
+        ),
+        expires=expire.strftime("%Y-%m-%d %H:%M:%S")  # expire.timestamp()
     )
+    return Success(data=data.model_dump())
+
+@router.post("/refreshToken", summary="刷新token")
+async def refresh_token(refreshToken: refreshTokenSchema):
+    payload = decode_access_token(refreshToken.refreshToken)
+    access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
+    refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now() + access_token_expires
+    expire_refresh = datetime.now() + refresh_token_expires
+    
+    data = JWTReOut(
+        accessToken=create_access_token(
+            data=JWTPayload(
+                user_id=payload.user_id,
+                username=payload.username,
+                is_superuser=payload.is_superuser,
+                exp=expire,
+            )
+        ),
+        refreshToken=create_access_token(
+            data=JWTPayload(
+                user_id=payload.user_id,
+                username=payload.username,
+                is_superuser=payload.is_superuser,
+                exp=expire_refresh,
+            )
+        ),
+        expires=expire.strftime("%Y-%m-%d %H:%M:%S")  # expire.timestamp()
+    )
+        
     return Success(data=data.model_dump())
 
 
