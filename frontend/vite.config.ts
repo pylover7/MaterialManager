@@ -10,7 +10,7 @@ import {
 } from "./build/utils";
 
 export default ({ mode }: ConfigEnv): UserConfigExport => {
-  const { VITE_CDN, VITE_PORT, VITE_COMPRESSION, VITE_PUBLIC_PATH } =
+  const { VITE_CDN, VITE_PORT, VITE_COMPRESSION, VITE_PUBLIC_PATH, VITE_PROXY_URL } =
     warpperEnv(loadEnv(mode, root));
   return {
     base: VITE_PUBLIC_PATH,
@@ -24,7 +24,13 @@ export default ({ mode }: ConfigEnv): UserConfigExport => {
       port: VITE_PORT,
       host: "127.0.0.1",
       // 本地跨域代理 https://cn.vitejs.dev/config/server-options.html#server-proxy
-      proxy: {},
+      proxy: {
+        '^/proxy/.*': {
+          target: VITE_PROXY_URL,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/proxy/, ''),
+        },
+      },
       // 预热文件以提前转换和缓存结果，降低启动期间的初始页面加载时长并防止转换瀑布
       warmup: {
         clientFiles: ["./index.html", "./src/{views,components}/*"]

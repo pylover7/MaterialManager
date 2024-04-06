@@ -16,7 +16,7 @@ from app.utils.password import get_password_hash, verify_password
 router = APIRouter()
 
 
-@router.post("/access_token", summary="获取token")
+@router.post("/accessToken", summary="获取token")
 async def login_access_token(credentials: CredentialsSchema):
     user: User = await user_controller.authenticate(credentials)
     await user_controller.update_last_login(user.id)
@@ -24,7 +24,9 @@ async def login_access_token(credentials: CredentialsSchema):
     expire = datetime.utcnow() + access_token_expires
 
     data = JWTOut(
-        access_token=create_access_token(
+        username=user.username,
+        roles=["admin"],
+        accessToken=create_access_token(
             data=JWTPayload(
                 user_id=user.id,
                 username=user.username,
@@ -32,7 +34,8 @@ async def login_access_token(credentials: CredentialsSchema):
                 exp=expire,
             )
         ),
-        username=user.username,
+        refreshToken="eyJhbGciOiJIUzUxMiJ9.adminRefresh",
+        expires=expire.strftime("%Y-%m-%d %H:%M:%S")
     )
     return Success(data=data.model_dump())
 
