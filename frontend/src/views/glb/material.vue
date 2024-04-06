@@ -1,10 +1,6 @@
 <script setup lang="tsx">
-import { ref, reactive, computed, markRaw } from "vue";
-import FluentWarning48Filled from "@iconify-icons/fluent/warning-48-filled";
-import FluentCheckmark12Filled from "@iconify-icons/fluent/checkmark-12-filled";
-import FluentCheckmark24Filled from "@iconify-icons/fluent/checkmark-24-filled";
-import EpSelect from "@iconify-icons/ep/select";
-import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import { ref, reactive, computed } from "vue";
+import { test, getLogin } from "@/api/user";
 
 defineOptions({
   name: "GlbMaterial"
@@ -130,6 +126,17 @@ const attationBtn = computed(() => {
 const readAttation = () => {
   step3Init.value = false;
 };
+
+const handover = () => {
+  // 交班
+  let data = {
+    username: "admin",
+    password: "123456"
+  };
+  getLogin(data).then(res => {
+    console.log(res);
+  });
+};
 </script>
 
 <template>
@@ -138,7 +145,9 @@ const readAttation = () => {
       <el-card class="oprationCar" shadow="never" body-style="padding: 0px;">
         <el-row :gutter="20">
           <el-col :span="6">
-            <el-button type="success" plain size="large">交班</el-button>
+            <el-button type="success" plain size="large" @click="handover"
+              >交班</el-button
+            >
           </el-col>
           <el-col :span="5" :offset="1" />
           <el-col :span="5" :offset="1" />
