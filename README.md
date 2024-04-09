@@ -1,7 +1,5 @@
 <h1 align="center"> MaterialManager </h1>
 
----
-
 ## 介绍
 
 一款自用的物资管理系统

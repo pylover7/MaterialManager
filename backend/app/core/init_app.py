@@ -67,7 +67,7 @@ async def init_superuser():
             UserCreate(
                 username="admin",
                 email="admin@admin.com",
-                password="123456",
+                password="admin123456",
                 is_active=True,
                 is_superuser=True,
             )
