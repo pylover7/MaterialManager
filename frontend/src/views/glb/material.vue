@@ -1,6 +1,6 @@
 <script setup lang="tsx">
-import { ref, reactive, computed } from "vue";
-import { test, getLogin } from "@/api/user";
+import { ref, reactive, computed, onMounted } from "vue";
+import { getGlbList } from "@/api/material";
 
 defineOptions({
   name: "GlbMaterial"
@@ -14,6 +14,18 @@ enum StepStatus {
   Warning = "warning",
   Error = "error"
 }
+interface tableDataRow {
+  id: number;
+  uuid: string;
+  name: string;
+  model: string;
+  position: string;
+  number: string;
+  nowNumber?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+interface tableData extends Array<tableDataRow> {}
 
 const columns: TableColumnList = [
   { label: "序号", prop: "id", width: "60" },
@@ -54,26 +66,13 @@ const columns: TableColumnList = [
   }
 ];
 
-const tableData = [
-  {
-    id: "2",
-    position: "左上角",
-    name: "扳手",
-    model: "把",
-    number: "3",
-    nowNumber: 0
-  },
-  {
-    id: "3",
-    position: "左上角",
-    name: "扳手",
-    model: "把",
-    number: "13",
-    nowNumber: 0
-  }
-];
+onMounted(() => {
+  getGlbList().then(res => {
+    confirmedData.push(...res.data);
+  });
+});
 
-const confirmedData = reactive(tableData);
+const confirmedData: tableData = reactive([]);
 const step1Init = ref(true);
 
 const step1Status = computed(() => {
@@ -133,9 +132,6 @@ const handover = () => {
     username: "admin",
     password: "123456"
   };
-  getLogin(data).then(res => {
-    console.log(res);
-  });
 };
 </script>
 

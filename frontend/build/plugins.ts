@@ -61,6 +61,6 @@ export function getPluginsList(
       ? visualizer({ open: true, brotliSize: true, filename: "report.html" })
       : (null as any),
     // vue-devtools
-    VueDevTools()
+    // VueDevTools()
   ];
 }
