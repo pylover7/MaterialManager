@@ -18,6 +18,22 @@ export type MaterialResult = {
   ];
 };
 
+export type NoteResult = {
+  code: number;
+  msg: string;
+  data: [
+    {
+      id: number;
+      uuid: string;
+      note: string;
+    }
+  ];
+};
+
 export const getGlbList = () => {
   return http.request<MaterialResult>("get", baseUrlApi("material/glb_list"));
+};
+
+export const getGlbNoteList = () => {
+  return http.request<NoteResult>("get", baseUrlApi("material/glb_note"));
 };

@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { ref, reactive, computed, onMounted } from "vue";
-import { getGlbList } from "@/api/material";
+import { getGlbList, getGlbNoteList } from "@/api/material";
 
 defineOptions({
   name: "GlbMaterial"
@@ -70,6 +70,10 @@ onMounted(() => {
   getGlbList().then(res => {
     confirmedData.push(...res.data);
   });
+  getGlbNoteList().then(res => {
+    const result = res.data.map(item => item.note);
+    attention.push(...result);
+  });
 });
 
 const confirmedData: tableData = reactive([]);
@@ -106,23 +110,20 @@ const copyLastRemark = () => {
   step2Init.value = false;
 };
 
-const bulrHandle = () => {
+const burlHandle = () => {
   step2Init.value = false;
 };
 
-const attation = [
-  "岗位值班室内工具不允许长期借出；",
-  "岗位值班室内工具不允许长期借出2；"
-];
+const attention = reactive([]);
 
 const step3Init = ref(true);
-const attationStatus = computed(() => {
+const attentionStatus = computed(() => {
   return step3Init.value ? StepStatus.Process : StepStatus.Success;
 });
-const attationBtn = computed(() => {
+const attentionBtn = computed(() => {
   return step3Init.value ? StepStatus.Warning : StepStatus.Success;
 });
-const readAttation = () => {
+const readAttention = () => {
   step3Init.value = false;
 };
 
@@ -138,7 +139,7 @@ const handover = () => {
 <template>
   <div>
     <el-affix :offset="100">
-      <el-card class="oprationCar" shadow="never" body-style="padding: 0px;">
+      <el-card class="operationCar" shadow="never" body-style="padding: 0px;">
         <el-row :gutter="20">
           <el-col :span="6">
             <el-button type="success" plain size="large" @click="handover"
@@ -196,7 +197,7 @@ const handover = () => {
                     :autosize="{ minRows: 2 }"
                     :show-word-limit="true"
                     style="width: 35vw"
-                    @blur="bulrHandle"
+                    @blur="burlHandle"
                   />
                   <el-button type="warning" plain @click="copyLastRemark"
                     >复制上个班</el-button
@@ -217,24 +218,24 @@ const handover = () => {
               </el-space>
             </template>
           </el-step>
-          <el-step title="查看注意事项" :status="attationStatus">
+          <el-step title="查看注意事项" :status="attentionStatus">
             <template #description>
               <el-space direction="vertical" alignment="flex-start">
                 <el-alert
                   title="注意事项"
-                  :type="attationBtn"
+                  :type="attentionBtn"
                   show-icon
                   :closable="false"
                 >
                   <template #default>
                     <ol>
-                      <li v-for="(item, index) in attation" :key="index">
+                      <li v-for="(item, index) in attention" :key="index">
                         {{ item }}
                       </li>
                     </ol>
                   </template>
                 </el-alert>
-                <el-button :type="attationBtn" plain @click="readAttation"
+                <el-button :type="attentionBtn" plain @click="readAttention"
                   >确认阅读
                 </el-button>
               </el-space>
@@ -247,7 +248,7 @@ const handover = () => {
 </template>
 
 <style lang="scss" scoped>
-.oprationCar {
+.operationCar {
   padding: 0;
   margin-bottom: 20px;
 }

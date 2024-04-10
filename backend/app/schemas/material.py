@@ -34,3 +34,25 @@ class MaterialUpdate(BaseModel):
     def update_dict(self):
         # 更新字典
         return self.model_dump(exclude_unset=True, exclude={"id"})
+
+
+class AttentionNote(BaseModel):
+    id: int
+    note: Optional[str] = None
+    depart: Optional[str] = None
+
+
+class AttentionNoteCreate(BaseModel):
+    note: str = Field(description="注意事项")
+    depart: str = Field(description="所属部门")
+
+    def create_dict(self):
+        return self.model_dump(exclude_unset=True)
+
+
+class AttentionNoteUpdate(BaseModel):
+    note: str = Field(description="注意事项")
+    depart: str = Field(description="所属部门")
+
+    def update_dict(self):
+        return self.model_dump(exclude_unset=True)

@@ -12,3 +12,11 @@ class Material(BaseModel, TimestampMixin, UUIDModel):
 
     class Meta:
         table = "material"
+
+
+class AttentionNote(BaseModel, TimestampMixin, UUIDModel):
+    note = fields.CharField(max_length=100, description="事项")
+    depart = fields.CharField(max_length=100, description="所属部门")
+
+    class Meta:
+        table = "attention_note"

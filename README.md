@@ -1,5 +1,6 @@
 <h1 align="center"> MaterialManager </h1>
 
+[![wakatime](https://wakatime.com/badge/user/1d39df6a-cef0-41f7-a903-ef4b9dd13fb0/project/018c41f2-4f38-4875-b72b-1a79d2352c7d.svg)](https://wakatime.com/badge/user/1d39df6a-cef0-41f7-a903-ef4b9dd13fb0/project/018c41f2-4f38-4875-b72b-1a79d2352c7d)
 ## 介绍
 
 一款自用的物资管理系统
