@@ -11,7 +11,7 @@ export type MaterialResult = {
       name: string;
       model: string;
       position: string;
-      number: string
+      number: string;
       created_at: string;
       updated_at: string;
     }
@@ -19,5 +19,5 @@ export type MaterialResult = {
 };
 
 export const getGlbList = () => {
-  return http.request<MaterialResult>("get",baseUrlApi("material/glb_list"));
-}
+  return http.request<MaterialResult>("get", baseUrlApi("material/glb_list"));
+};

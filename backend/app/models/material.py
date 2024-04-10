@@ -1,20 +1,14 @@
 from tortoise import fields
 
-from .base import Material
+from .base import BaseModel, TimestampMixin, UUIDModel
 
 
-class GlbMaterial(Material):
-  
-  class Meta:
-    table = "glb_material"
-    
-class FkMaterial(Material):
-  
-  class Meta:
-    table = "fk_material"
+class Material(BaseModel, TimestampMixin, UUIDModel):
+    name = fields.CharField(max_length=100, unique=True, description="物资名字")
+    model = fields.CharField(max_length=100, null=True, description="物资型号")
+    position = fields.CharField(max_length=100, description="物资位置")
+    number = fields.CharField(max_length=100, description="物资数量")
+    depart = fields.CharField(max_length=100, description="物资所属部门")
 
-class WkMaterial(Material):
-  
-  class Meta:
-    table = "wk_material"
-  
+    class Meta:
+        table = "material"

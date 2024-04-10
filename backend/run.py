@@ -1,4 +1,3 @@
-import os
 import uvicorn
 
 from app.settings import settings
