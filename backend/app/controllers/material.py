@@ -14,3 +14,7 @@ class MaterialController(CRUDBase[Material, MaterialCreate, MaterialUpdate]):
 class MaterialNoteController(CRUDBase[AttentionNote, AttentionNoteCreate, AttentionNoteUpdate]):
     def __init__(self):
         super().__init__(AttentionNote)
+
+
+material_controller = MaterialController()
+material_note_controller = MaterialNoteController()
