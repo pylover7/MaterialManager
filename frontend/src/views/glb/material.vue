@@ -127,12 +127,10 @@ const readAttention = () => {
   step3Init.value = false;
 };
 
+const dialogVisible = ref(false);
 const handover = () => {
   // 交班
-  let data = {
-    username: "admin",
-    password: "123456"
-  };
+  dialogVisible.value = true;
 };
 </script>
 
@@ -244,6 +242,17 @@ const handover = () => {
         </el-steps>
       </div>
     </el-card>
+    <el-dialog v-model="dialogVisible" title="确认" width="500">
+      <span>确认从 {{}} 接班</span>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="dialogVisible = false">
+            确定
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
