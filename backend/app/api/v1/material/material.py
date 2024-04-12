@@ -7,6 +7,7 @@ from app.controllers.material import material_controller, material_note_controll
 from app.controllers.dutyLog import dutyLogController
 from app.schemas.base import Success, SuccessExtra
 from app.schemas.dutyLog import DutyLogCreate
+from app.utils.onDutyInfo import OnDutyInfo
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,13 @@ async def get_glb_list(
     total, material_objs = await material_controller.list(page=page, page_size=page_size, search=q)
     data = [await obj.to_dict() for obj in material_objs]
     return SuccessExtra(msg="隔离办数据获取成功", data=data, total=total, page=page, page_size=page_size)
+
+
+@router.get("/glb_duty_info", summary="获取隔离办值班信息")
+async def get_glb_duty_info():
+    info = OnDutyInfo()
+    data = info.get_glb_duty_info()
+    return Success(data=data)
 
 
 @router.get("/glb_note", summary="获取隔离办物资注意事项")

@@ -30,10 +30,26 @@ export type NoteResult = {
   ];
 };
 
+export type DutyInfoResult = {
+  code: number;
+  msg: string;
+  data: {
+    dutyPerson: string;
+    dutyPersonDepart: string;
+  };
+};
+
 export const getGlbList = () => {
   return http.request<MaterialResult>("get", baseUrlApi("material/glb_list"));
 };
 
 export const getGlbNoteList = () => {
   return http.request<NoteResult>("get", baseUrlApi("material/glb_note"));
+};
+
+export const getGlbDutyInfo = () => {
+  return http.request<DutyInfoResult>(
+    "get",
+    baseUrlApi("material/glb_duty_info")
+  );
 };

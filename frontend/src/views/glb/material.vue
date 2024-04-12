@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { ref, reactive, computed, onMounted } from "vue";
-import { getGlbList, getGlbNoteList } from "@/api/material";
+import { getGlbList, getGlbNoteList, getGlbDutyInfo } from "@/api/material";
 
 defineOptions({
   name: "GlbMaterial"
@@ -74,6 +74,10 @@ onMounted(() => {
     const result = res.data.map(item => item.note);
     attention.push(...result);
   });
+  getGlbDutyInfo().then(res => {
+    dutyPerson.value = res.data.dutyPerson;
+    dutyPersonDepart.value = res.data.dutyPersonDepart;
+  });
 });
 
 const confirmedData: tableData = reactive([]);
@@ -127,6 +131,8 @@ const readAttention = () => {
   step3Init.value = false;
 };
 
+const dutyPerson = ref("");
+const dutyPersonDepart = ref("");
 const dialogVisible = ref(false);
 const handover = () => {
   // 交班
@@ -138,15 +144,23 @@ const handover = () => {
   <div>
     <el-affix :offset="100">
       <el-card class="operationCar" shadow="never" body-style="padding: 0px;">
-        <el-row :gutter="20">
-          <el-col :span="6">
+        <el-row :gutter="20" justify="space-between">
+          <el-col class="rowFlex" :span="5">
             <el-button type="success" plain size="large" @click="handover"
               >交班</el-button
             >
           </el-col>
-          <el-col :span="5" :offset="1" />
-          <el-col :span="5" :offset="1" />
-          <el-col :span="5" :offset="1" />
+          <el-col class="rowFlex" :span="5">
+            <el-text size="large" type="danger" tag="b"
+              >值班员：{{ dutyPerson }}</el-text
+            >
+          </el-col>
+          <el-col class="rowFlex" :span="5"
+            ><el-text size="large" tag="b"
+              >值班科值：{{ dutyPersonDepart }}</el-text
+            >
+          </el-col>
+          <el-col :span="5" />
         </el-row>
       </el-card>
     </el-affix>
@@ -260,5 +274,8 @@ const handover = () => {
 .operationCar {
   padding: 0;
   margin-bottom: 20px;
+}
+.rowFlex {
+  display: flex;
 }
 </style>
