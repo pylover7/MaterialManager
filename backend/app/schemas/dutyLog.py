@@ -2,7 +2,7 @@
 # @FileName  :dutyLog.py
 # @Time      :2024/4/10 下午8:31
 # @Author    :dayezi
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, Field
 
@@ -29,3 +29,10 @@ class DutyLogUpdate(DutyLog):
 
     def update_dict(self):
         return self.model_dump(exclude_unset=True, exclude={"id"})
+
+
+class DutyOverInfo(BaseModel):
+    materialData: List[DutyLog]
+    materialNote: str
+    dutyPerson: str
+    dutyPersonDepart: str

@@ -53,3 +53,9 @@ export const getGlbDutyInfo = () => {
     baseUrlApi("material/glb_duty_info")
   );
 };
+
+export const dutyOver = (data?: object) => {
+  return http.request<DutyInfoResult>("post", baseUrlApi("material/dutyOver"), {
+    data
+  });
+};

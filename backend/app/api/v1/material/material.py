@@ -6,7 +6,7 @@ from tortoise.expressions import Q
 from app.controllers.material import material_controller, material_note_controller
 from app.controllers.dutyLog import dutyLogController
 from app.schemas.base import Success, SuccessExtra
-from app.schemas.dutyLog import DutyLogCreate
+from app.schemas.dutyLog import DutyOverInfo
 from app.utils.onDutyInfo import OnDutyInfo
 
 logger = logging.getLogger(__name__)
@@ -15,9 +15,13 @@ router = APIRouter()
 
 
 @router.post("/dutyOver", summary="接班")
-async def duty_over(data: DutyLogCreate):
-    await dutyLogController.create_all(data)
-    return Success(msg="接班完成")
+async def duty_over(data: DutyOverInfo):
+    # await dutyLogController.create_all(data)
+    result = {
+        "dutyPerson": data.dutyPerson,
+        "dutyPersonDepart": data.dutyPersonDepart
+    }
+    return Success(data=result)
 
 
 @router.get("/glb_list", summary="获取隔离办物资列表")

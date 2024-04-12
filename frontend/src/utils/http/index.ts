@@ -11,9 +11,11 @@ import type {
 } from "./types.d";
 import { stringify } from "qs";
 import NProgress from "../progress";
-import { getToken, formatToken } from "@/utils/auth";
+import { getToken, formatToken, removeToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
 import { baseUrlApi } from "@/api/utils";
+import { router, resetRouter } from "@/router";
+import { message } from "@/utils/message";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
@@ -139,11 +141,19 @@ class PureHttp {
         return response.data;
       },
       (error: PureHttpError) => {
+        console.log(error);
         const $error = error;
         $error.isCancelRequest = Axios.isCancel($error);
         // 关闭进度条动画
         NProgress.done();
         // 所有的响应异常 区分来源为取消请求/非取消请求
+        if (error.response.status == 401) {
+          removeToken();
+          resetRouter();
+          router.push("/login").then(() => {
+            message("请重新登录！", { type: "error" });
+          });
+        }
         return Promise.reject($error);
       }
     );

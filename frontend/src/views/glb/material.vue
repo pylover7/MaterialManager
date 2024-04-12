@@ -1,6 +1,12 @@
 <script setup lang="tsx">
 import { ref, reactive, computed, onMounted } from "vue";
-import { getGlbList, getGlbNoteList, getGlbDutyInfo } from "@/api/material";
+import {
+  getGlbList,
+  getGlbNoteList,
+  getGlbDutyInfo,
+  dutyOver
+} from "@/api/material";
+import { useUserStoreHook } from "@/store/modules/user";
 
 defineOptions({
   name: "GlbMaterial"
@@ -24,6 +30,10 @@ interface tableDataRow {
   nowNumber?: number;
   created_at?: string;
   updated_at?: string;
+  dutyPerson?: string;
+  dutyPersonDepart?: string;
+  depart?: string;
+  dutyDate?: string;
 }
 interface tableData extends Array<tableDataRow> {}
 
@@ -134,9 +144,41 @@ const readAttention = () => {
 const dutyPerson = ref("");
 const dutyPersonDepart = ref("");
 const dialogVisible = ref(false);
-const handover = () => {
+const popDisabled = ref(false);
+const handoverConfirm = () => {
   // 交班
-  dialogVisible.value = true;
+  if (!(step2Init.value && step2Status.value && step3Init.value)) {
+    popDisabled.value = true;
+    dialogVisible.value = true;
+  }
+};
+
+const now = new Date();
+const date = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+const updateData = (data: tableDataRow): object => {
+  return {
+    name: data.name,
+    model: data.model,
+    position: data.position,
+    number: data.number,
+    nowNumber: data.nowNumber,
+    dutyPerson: useUserStoreHook()?.username,
+    dutyPersonDepart: useUserStoreHook()?.depart,
+    depart: "glb",
+    dutyDate: date
+  };
+};
+const handover = () => {
+  let data = {
+    materialData: confirmedData.map(updateData),
+    materialNote: remark.value,
+    dutyPerson: useUserStoreHook()?.username,
+    dutyPersonDepart: useUserStoreHook()?.depart
+  };
+  dutyOver(data).then(res => {
+    console.log(res);
+  });
+  dialogVisible.value = false;
 };
 </script>
 
@@ -146,9 +188,22 @@ const handover = () => {
       <el-card class="operationCar" shadow="never" body-style="padding: 0px;">
         <el-row :gutter="20" justify="space-between">
           <el-col class="rowFlex" :span="5">
-            <el-button type="success" plain size="large" @click="handover"
-              >交班</el-button
+            <el-popconfirm
+              :disabled="popDisabled"
+              title="请确认所有数据已核对！"
+              confirm-button-text="好的"
+              cancel-button-text="再看看"
             >
+              <template #reference>
+                <el-button
+                  type="success"
+                  plain
+                  size="large"
+                  @click="handoverConfirm"
+                  >交班</el-button
+                >
+              </template>
+            </el-popconfirm>
           </el-col>
           <el-col class="rowFlex" :span="5">
             <el-text size="large" type="danger" tag="b"
@@ -256,14 +311,12 @@ const handover = () => {
         </el-steps>
       </div>
     </el-card>
-    <el-dialog v-model="dialogVisible" title="确认" width="500">
-      <span>确认从 {{}} 接班</span>
+    <el-dialog v-model="dialogVisible" title="交班确认" width="500">
+      <span>确认从 {{ dutyPerson }} 接班</span>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">
-            确定
-          </el-button>
+          <el-button type="primary" @click="handover"> 确定 </el-button>
         </div>
       </template>
     </el-dialog>
@@ -275,6 +328,7 @@ const handover = () => {
   padding: 0;
   margin-bottom: 20px;
 }
+
 .rowFlex {
   display: flex;
 }

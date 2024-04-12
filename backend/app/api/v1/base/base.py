@@ -1,16 +1,17 @@
 from datetime import datetime, timedelta
 
 from fastapi import APIRouter
+from jwt.exceptions import ExpiredSignatureError
 
 from app.controllers.user import UserController, user_controller
 from app.core.ctx import CTX_USER_ID
 from app.core.dependency import DependAuth
 from app.models.admin import Api, Menu, Role, User
-from app.schemas.base import Fail, Success
+from app.schemas.base import Fail, Success, FailAuth
 from app.schemas.login import *
 from app.schemas.users import UpdatePassword
 from app.settings import settings
-from app.utils.jwt import create_access_token, decode_access_token
+from app.utils.jwtt import create_access_token, decode_access_token
 from app.utils.password import get_password_hash, verify_password
 
 router = APIRouter()
@@ -48,14 +49,18 @@ async def login_access_token(credentials: CredentialsSchema):
     )
     return Success(data=data.model_dump())
 
+
 @router.post("/refreshToken", summary="刷新token")
 async def refresh_token(refreshToken: refreshTokenSchema):
-    payload = decode_access_token(refreshToken.refreshToken)
+    try:
+        payload = decode_access_token(refreshToken.refreshToken)
+    except ExpiredSignatureError:
+        return FailAuth(msg="refreshToken已过期")
     access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
     expire = datetime.now() + access_token_expires
     expire_refresh = datetime.now() + refresh_token_expires
-    
+
     data = JWTReOut(
         accessToken=create_access_token(
             data=JWTPayload(
@@ -75,7 +80,7 @@ async def refresh_token(refreshToken: refreshTokenSchema):
         ),
         expires=expire.strftime("%Y-%m-%d %H:%M:%S")  # expire.timestamp()
     )
-        
+
     return Success(data=data.model_dump())
 
 
