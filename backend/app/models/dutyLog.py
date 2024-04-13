@@ -27,6 +27,6 @@ class DutyLog(BaseModel):
 
 
 class DutyNotes(BaseModel):
-    note = fields.CharField(max_length=255, null=False, description="备注")
+    note = fields.CharField(max_length=510, null=False, description="备注")
     depart = fields.CharField(max_length=255, null=False, description="部门")
     dutyDate = fields.DatetimeField(auto_now_add=True, description="交班时间")

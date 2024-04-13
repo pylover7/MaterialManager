@@ -9,6 +9,7 @@ import {
 } from "@/api/material";
 import { useUserStoreHook } from "@/store/modules/user";
 import { successNotification, errorNotification } from "@/utils/notification";
+import formatCurrentTime from "@/utils/formatDatetime";
 
 defineOptions({
   name: "GlbMaterial"
@@ -103,6 +104,8 @@ const initGlb = () => {
   step1Init.value = true;
   step2Init.value = true;
   step3Init.value = true;
+
+  handleOverBtnLoading.value = false;
 };
 
 const confirmedData: tableData = reactive([]);
@@ -160,16 +163,18 @@ const dutyPerson = ref("");
 const dutyPersonDepart = ref("");
 const dialogVisible = ref(false);
 const handleOverBtnLoading = ref(false);
+const popDisabled = computed(() => {
+  return !(step2Init.value || step2Init.value || step3Init.value);
+});
 const handoverConfirm = () => {
   // 交班
-  if (!(step2Init.value || step2Init.value || step3Init.value)) {
+  if (popDisabled.value) {
     dialogVisible.value = true;
   }
 };
 
 const handover = () => {
-  const now = new Date();
-  const date = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+  const date = formatCurrentTime();
   let data = {
     materialData: confirmedData.map((data: tableDataRow) => {
       return {
@@ -202,6 +207,7 @@ const handover = () => {
     })
     .catch(err => {
       errorNotification(err.message);
+      handleOverBtnLoading.value = false;
     });
   dialogVisible.value = false;
 };
@@ -287,6 +293,7 @@ const handover = () => {
                     type="textarea"
                     placeholder="填写本班备注"
                     :autosize="{ minRows: 2 }"
+                    maxlength="510"
                     :show-word-limit="true"
                     style="width: 35vw"
                     @blur="burlHandle"

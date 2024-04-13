@@ -7,16 +7,20 @@ class CredentialsSchema(BaseModel):
     username: str = Field(..., description="用户名称", example="admin")
     password: str = Field(..., description="密码", example="admin123456")
 
+
 class refreshTokenSchema(BaseModel):
     refreshToken: str = Field(..., description="刷新令牌", example="eyJhbGciOiJIUzUxMiJ9.newAdminRefresh")
+
 
 class JWTReOut(BaseModel):
     accessToken: str
     refreshToken: str
     expires: str
 
+
 class JWTOut(BaseModel):
     username: str
+    depart: str
     roles: list[str]
     accessToken: str
     refreshToken: str

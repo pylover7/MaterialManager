@@ -66,6 +66,7 @@ async def init_superuser():
         await user_controller.create(
             UserCreate(
                 username="admin",
+                depart="管理部",
                 email="admin@admin.com",
                 password="admin123456",
                 is_active=True,

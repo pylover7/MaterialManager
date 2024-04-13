@@ -12,6 +12,7 @@ class User(BaseModel, TimestampMixin):
     email = fields.CharField(max_length=255, unique=True, description="邮箱")
     phone = fields.CharField(max_length=20, null=True, description="电话")
     password = fields.CharField(max_length=128, null=True, description="密码")
+    depart = fields.CharField(max_length=20, null=True, description="部门")
     is_active = fields.BooleanField(default=True, description="是否激活")
     is_superuser = fields.BooleanField(default=False, description="是否为超级管理员")
     last_login = fields.DatetimeField(null=True, description="最后登录时间")

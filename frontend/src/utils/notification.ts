@@ -61,7 +61,7 @@ const notification = (
       onClose,
       offset = 100,
       appendTo = document.body,
-      zIndex = 0
+      zIndex = 1000
     } = params;
     return ElNotification({
       title,

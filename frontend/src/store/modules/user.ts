@@ -28,6 +28,10 @@ export const useUserStore = defineStore({
     SET_USERNAME(username: string) {
       this.username = username;
     },
+    /** 储存用户部门 */
+    SET_DEPART(depart: string) {
+      this.depart = depart;
+    },
     /** 存储角色 */
     SET_ROLES(roles: Array<string>) {
       this.roles = roles;
