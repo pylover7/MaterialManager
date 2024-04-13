@@ -2,9 +2,10 @@
 import { ref, reactive, computed, onMounted } from "vue";
 import {
   getGlbList,
-  getGlbNoteList,
+  getGlbAttentionList,
   getGlbDutyInfo,
-  dutyOver
+  dutyOver,
+  getLatestNote
 } from "@/api/material";
 import { useUserStoreHook } from "@/store/modules/user";
 import { successNotification, errorNotification } from "@/utils/notification";
@@ -78,18 +79,31 @@ const columns: TableColumnList = [
 ];
 
 onMounted(() => {
+  initGlb();
+});
+
+const initGlb = () => {
   getGlbList().then(res => {
+    confirmedData.length = 0;
     confirmedData.push(...res.data);
   });
-  getGlbNoteList().then(res => {
+  getGlbAttentionList().then(res => {
     const result = res.data.map(item => item.note);
+    attention.length = 0;
     attention.push(...result);
+  });
+  getLatestNote().then(res => {
+    lastRemark.value = res.data.note;
   });
   getGlbDutyInfo().then(res => {
     dutyPerson.value = res.data.dutyPerson;
     dutyPersonDepart.value = res.data.dutyPersonDepart;
   });
-});
+  remark.value = "";
+  step1Init.value = true;
+  step2Init.value = true;
+  step3Init.value = true;
+};
 
 const confirmedData: tableData = reactive([]);
 const step1Init = ref(true);
@@ -113,7 +127,7 @@ const handleConfirmAll = () => {
 };
 
 const remark = ref("");
-const lastRemark = "";
+const lastRemark = ref("");
 const step2Init = ref(true);
 
 const step2Status = computed(() => {
@@ -121,7 +135,7 @@ const step2Status = computed(() => {
 });
 
 const copyLastRemark = () => {
-  remark.value = lastRemark;
+  remark.value = lastRemark.value;
   step2Init.value = false;
 };
 
@@ -129,7 +143,7 @@ const burlHandle = () => {
   step2Init.value = false;
 };
 
-const attention = reactive([]);
+const attention: string[] = reactive([]);
 
 const step3Init = ref(true);
 const attentionStatus = computed(() => {
@@ -182,6 +196,7 @@ const handover = () => {
   handleOverBtnLoading.value = true;
   dutyOver(data)
     .then(res => {
+      initGlb();
       handleOverBtnLoading.value = false;
       successNotification("交班成功");
     })
@@ -194,7 +209,7 @@ const handover = () => {
 
 <template>
   <div>
-    <el-affix :offset="100">
+    <el-affix :offset="105">
       <el-card class="operationCar" shadow="never" body-style="padding: 0px;">
         <el-row :gutter="20" justify="space-between">
           <el-col class="rowFlex" :span="5">

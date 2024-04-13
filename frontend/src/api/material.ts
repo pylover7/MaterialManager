@@ -18,7 +18,7 @@ export type MaterialResult = {
   ];
 };
 
-export type NoteResult = {
+export type AttentionResult = {
   code: number;
   msg: string;
   data: [
@@ -28,6 +28,16 @@ export type NoteResult = {
       note: string;
     }
   ];
+};
+
+type LatestNote = {
+  code: number;
+  msg: string;
+  data: {
+    note: string;
+    depart: string;
+    dutyDate: string;
+  };
 };
 
 export type DutyInfoResult = {
@@ -43,14 +53,24 @@ export const getGlbList = () => {
   return http.request<MaterialResult>("get", baseUrlApi("material/glb_list"));
 };
 
-export const getGlbNoteList = () => {
-  return http.request<NoteResult>("get", baseUrlApi("material/glb_note"));
+export const getGlbAttentionList = () => {
+  return http.request<AttentionResult>(
+    "get",
+    baseUrlApi("material/glb_attention")
+  );
 };
 
 export const getGlbDutyInfo = () => {
   return http.request<DutyInfoResult>(
     "get",
     baseUrlApi("material/glb_duty_info")
+  );
+};
+
+export const getLatestNote = () => {
+  return http.request<LatestNote>(
+    "get",
+    baseUrlApi("material/glb_latest_note")
   );
 };
 

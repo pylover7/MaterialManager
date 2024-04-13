@@ -50,12 +50,19 @@ async def get_glb_duty_info():
     return Success(data=data)
 
 
-@router.get("/glb_note", summary="获取隔离办物资注意事项")
-async def get_glb_note():
+@router.get("/glb_attention", summary="获取隔离办物资注意事项")
+async def get_glb_attention():
     q = Q(depart__contains="glb")
     total, note_objs = await materialAttentionController.list(page=1, page_size=100, search=q)
     data = [await obj.to_dict() for obj in note_objs]
     return Success(msg="隔离办注意事项", data=data)
+
+
+@router.get("/glb_latest_note", summary="获取隔离办最近一条备注")
+async def get_glb_latest_note():
+    q = Q(depart__contains="glb")
+    data = await dutyNotesController.latest(search=q)
+    return Success(data=await data.to_dict())
 
 
 @router.get("/fk_material", summary="查看辅控物资列表")
