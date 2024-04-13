@@ -7,6 +7,7 @@ import {
   dutyOver
 } from "@/api/material";
 import { useUserStoreHook } from "@/store/modules/user";
+import { successNotification, errorNotification } from "@/utils/notification";
 
 defineOptions({
   name: "GlbMaterial"
@@ -144,40 +145,49 @@ const readAttention = () => {
 const dutyPerson = ref("");
 const dutyPersonDepart = ref("");
 const dialogVisible = ref(false);
-const popDisabled = ref(false);
+const handleOverBtnLoading = ref(false);
 const handoverConfirm = () => {
   // 交班
-  if (!(step2Init.value && step2Status.value && step3Init.value)) {
-    popDisabled.value = true;
+  if (!(step2Init.value || step2Init.value || step3Init.value)) {
     dialogVisible.value = true;
   }
 };
 
-const now = new Date();
-const date = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-const updateData = (data: tableDataRow): object => {
-  return {
-    name: data.name,
-    model: data.model,
-    position: data.position,
-    number: data.number,
-    nowNumber: data.nowNumber,
-    dutyPerson: useUserStoreHook()?.username,
-    dutyPersonDepart: useUserStoreHook()?.depart,
-    depart: "glb",
-    dutyDate: date
-  };
-};
 const handover = () => {
+  const now = new Date();
+  const date = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
   let data = {
-    materialData: confirmedData.map(updateData),
-    materialNote: remark.value,
+    materialData: confirmedData.map((data: tableDataRow) => {
+      return {
+        name: data.name,
+        model: data.model,
+        position: data.position,
+        number: data.number,
+        nowNumber: data.nowNumber,
+        dutyPerson: useUserStoreHook()?.username,
+        dutyPersonDepart: useUserStoreHook()?.depart,
+        depart: "glb",
+        dutyDate: date
+      };
+    }),
+    materialNote: {
+      note: remark.value,
+      depart: "glb",
+      dutyDate: date
+    },
+    dutyDate: date,
     dutyPerson: useUserStoreHook()?.username,
     dutyPersonDepart: useUserStoreHook()?.depart
   };
-  dutyOver(data).then(res => {
-    console.log(res);
-  });
+  handleOverBtnLoading.value = true;
+  dutyOver(data)
+    .then(res => {
+      handleOverBtnLoading.value = false;
+      successNotification("交班成功");
+    })
+    .catch(err => {
+      errorNotification(err.message);
+    });
   dialogVisible.value = false;
 };
 </script>
@@ -189,7 +199,7 @@ const handover = () => {
         <el-row :gutter="20" justify="space-between">
           <el-col class="rowFlex" :span="5">
             <el-popconfirm
-              :disabled="popDisabled"
+              :disabled="dialogVisible"
               title="请确认所有数据已核对！"
               confirm-button-text="好的"
               cancel-button-text="再看看"
@@ -316,7 +326,13 @@ const handover = () => {
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="handover"> 确定 </el-button>
+          <el-button
+            type="primary"
+            :loading="handleOverBtnLoading"
+            @click="handover"
+          >
+            确定
+          </el-button>
         </div>
       </template>
     </el-dialog>

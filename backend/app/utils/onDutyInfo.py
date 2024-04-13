@@ -13,8 +13,17 @@ class OnDutyInfo:
         self.conf = ConfigParser()
         self.conf.read(filenames=path, encoding='utf-8')
 
-    def get_glb_duty_info(self) -> dict[str, str]:
+    async def getGlbDutyInfo(self) -> dict[str, str]:
         return {
-            "dutyPerson": self.conf.get("glb", "dutyPerson"),
-            "dutyPersonDepart": self.conf.get("glb", "dutyPersonDepart")
+            "dutyPerson": self.conf["glb"]["dutyPerson"],
+            "dutyPersonDepart": self.conf["glb"]["dutyPersonDepart"],
         }
+
+    async def setGlbDutyInfo(self, dutyPerson: str, dutyPersonDepart: str, takeoverTime: str) -> None:
+        self.conf["glb"]["dutyPerson"] = dutyPerson
+        self.conf["glb"]["dutyPersonDepart"] = dutyPersonDepart
+        self.conf["glb"]["takeoverTime"] = takeoverTime
+        with open(path, "w", encoding="utf-8") as f:
+            self.conf.write(f)
+
+

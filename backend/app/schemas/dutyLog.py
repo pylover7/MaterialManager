@@ -31,8 +31,25 @@ class DutyLogUpdate(DutyLog):
         return self.model_dump(exclude_unset=True, exclude={"id"})
 
 
+class DutyNote(BaseModel):
+    note: str = Field(description="当班备注")
+    depart: str = Field(description="部门")
+    dutyDate: str = Field(description="交班时间")
+
+
+class DutyNoteCreate(DutyNote):
+    def create_dict(self):
+        return self.model_dump(exclude_unset=True)
+
+
+class DutyNoteUpdate(DutyNote):
+    def update_dict(self):
+        return self.model_dump(exclude_unset=True, exclude={"id"})
+
+
 class DutyOverInfo(BaseModel):
-    materialData: List[DutyLog]
-    materialNote: str
+    materialData: List[DutyLogCreate]
+    materialNote: DutyNoteCreate
+    dutyDate: str
     dutyPerson: str
     dutyPersonDepart: str

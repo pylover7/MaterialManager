@@ -5,8 +5,8 @@
 from typing import List
 
 from app.core.crud import CRUDBase
-from app.models.dutyLog import DutyLog
-from app.schemas.dutyLog import DutyLogCreate, DutyLogUpdate
+from app.models.dutyLog import DutyLog, DutyNotes
+from app.schemas.dutyLog import DutyLogCreate, DutyLogUpdate, DutyNoteCreate, DutyNoteUpdate
 
 
 class DutyLogController(CRUDBase[DutyLog, DutyLogCreate, DutyLogUpdate]):
@@ -18,4 +18,10 @@ class DutyLogController(CRUDBase[DutyLog, DutyLogCreate, DutyLogUpdate]):
             await self.create(log)
 
 
+class DutyNotesController(CRUDBase[DutyNotes, DutyNoteCreate, DutyNoteUpdate]):
+    def __init__(self):
+        super().__init__(DutyNotes)
+
+
 dutyLogController = DutyLogController()
+dutyNotesController = DutyNotesController()

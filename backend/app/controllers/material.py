@@ -11,10 +11,10 @@ class MaterialController(CRUDBase[Material, MaterialCreate, MaterialUpdate]):
         return await self.model.filter(name=name).first()
 
 
-class MaterialNoteController(CRUDBase[AttentionNote, AttentionNoteCreate, AttentionNoteUpdate]):
+class MaterialAttentionController(CRUDBase[AttentionNote, AttentionNoteCreate, AttentionNoteUpdate]):
     def __init__(self):
         super().__init__(AttentionNote)
 
 
-material_controller = MaterialController()
-material_note_controller = MaterialNoteController()
+materialController = MaterialController()
+materialAttentionController = MaterialAttentionController()

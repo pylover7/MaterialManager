@@ -3,8 +3,8 @@ import logging
 from fastapi import APIRouter, Query
 from tortoise.expressions import Q
 
-from app.controllers.material import material_controller, material_note_controller
-from app.controllers.dutyLog import dutyLogController
+from app.controllers.material import materialController, materialAttentionController
+from app.controllers.dutyLog import dutyLogController, dutyNotesController
 from app.schemas.base import Success, SuccessExtra
 from app.schemas.dutyLog import DutyOverInfo
 from app.utils.onDutyInfo import OnDutyInfo
@@ -16,7 +16,11 @@ router = APIRouter()
 
 @router.post("/dutyOver", summary="接班")
 async def duty_over(data: DutyOverInfo):
-    # await dutyLogController.create_all(data)
+    await dutyLogController.create_all(data.materialData)
+    await dutyNotesController.create(data.materialNote)
+    onDutyInfo = OnDutyInfo()
+    await onDutyInfo.setGlbDutyInfo(data.dutyPerson, data.dutyPersonDepart, data.dutyDate)
+
     result = {
         "dutyPerson": data.dutyPerson,
         "dutyPersonDepart": data.dutyPersonDepart
@@ -34,7 +38,7 @@ async def get_glb_list(
     if name:
         q &= Q(name__contains=name)
 
-    total, material_objs = await material_controller.list(page=page, page_size=page_size, search=q)
+    total, material_objs = await materialController.list(page=page, page_size=page_size, search=q)
     data = [await obj.to_dict() for obj in material_objs]
     return SuccessExtra(msg="隔离办数据获取成功", data=data, total=total, page=page, page_size=page_size)
 
@@ -42,14 +46,14 @@ async def get_glb_list(
 @router.get("/glb_duty_info", summary="获取隔离办值班信息")
 async def get_glb_duty_info():
     info = OnDutyInfo()
-    data = info.get_glb_duty_info()
+    data = await info.getGlbDutyInfo()
     return Success(data=data)
 
 
 @router.get("/glb_note", summary="获取隔离办物资注意事项")
 async def get_glb_note():
     q = Q(depart__contains="glb")
-    total, note_objs = await material_note_controller.list(page=1, page_size=100, search=q)
+    total, note_objs = await materialAttentionController.list(page=1, page_size=100, search=q)
     data = [await obj.to_dict() for obj in note_objs]
     return Success(msg="隔离办注意事项", data=data)
 
@@ -64,7 +68,7 @@ async def get_fk_list(
     if name:
         q &= Q(name__contains=name)
 
-    total, material_objs = await material_controller.list(page=page, page_size=page_size, search=q)
+    total, material_objs = await materialController.list(page=page, page_size=page_size, search=q)
     data = [await obj.to_dict() for obj in material_objs]
     return SuccessExtra(msg="辅控数据获取成功", data=data, total=total, page=page, page_size=page_size)
 
@@ -79,6 +83,6 @@ async def get_fk_list(
     if name:
         q &= Q(name__contains=name)
 
-    total, material_objs = await material_controller.list(page=page, page_size=page_size, search=q)
+    total, material_objs = await materialController.list(page=page, page_size=page_size, search=q)
     data = [await obj.to_dict() for obj in material_objs]
     return SuccessExtra(msg="网控数据获取成功", data=data, total=total, page=page, page_size=page_size)
