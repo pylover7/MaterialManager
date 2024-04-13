@@ -1,38 +1,31 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
+name: 🐞 Bug
+about: 反馈 MaterialManager 的 bug
+labels: bug
+title: "[🐞BUG] <title>"
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+<!--请注意：不规范的问题会被部署的 issue bot 自动关闭。-->
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## 对 `Bug` 的描述
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+- 当前行为：
+- 正确的行为：
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+## 环境
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+- 平台：
+- `MaterialManager` 版本号：
+- `Python` 版本：
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+## 复现步骤
 
-**Additional context**
-Add any other context about the problem here.
+1.
+2.
+3. ...
+
+## 其他信息
+
+（截图什么的）
+
+<!-- 如对 bug 修复的建议、相关 issue 或 PR 的引用等信息 -->

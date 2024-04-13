@@ -1,20 +1,20 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
-
+about: 为 MaterialManager 的功能提出建议
+labels: enhancement
+title: "[Feature] <title>"
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+<!--请注意：请注意：不规范的问题会被部署的 issue bot 自动关闭。-->
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+## 你的想法
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+<!-- 提出你认为好的功能或者建议， 当然，加上你想法的背景（理由、原因）也是很不错的哟-->
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+## 预期方案
+
+<!-- 描述为了实现这个目标需要 MaterialManager 添加的 feature -->
+
+## 其他内容
+
+<!-- 如相关 issue 或 PR 的引用等信息 -->
