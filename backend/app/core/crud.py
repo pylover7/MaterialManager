@@ -14,8 +14,11 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: Type[ModelType]):
         self.model = model
 
-    async def get(self, id: int) -> ModelType:
-        return await self.model.get(id=id)
+    async def get(self, id: int) -> ModelType | None:
+        return await self.model.get_or_none(id=id)
+
+    async def latest(self, search: Q = Q()) -> ModelType:
+        return await self.model.filter(search).all().order_by("-id").first()
 
     async def list(self, page: int, page_size: int, search: Q = Q(), order: list = []) -> Tuple[Total, List[ModelType]]:
         query = self.model.filter(search)

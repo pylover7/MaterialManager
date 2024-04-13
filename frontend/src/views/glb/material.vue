@@ -1,6 +1,14 @@
 <script setup lang="tsx">
-import { ref, reactive, computed } from "vue";
-import { test, getLogin } from "@/api/user";
+import { ref, reactive, computed, onMounted } from "vue";
+import {
+  getGlbList,
+  getGlbAttentionList,
+  getGlbDutyInfo,
+  dutyOver,
+  getLatestNote
+} from "@/api/material";
+import { useUserStoreHook } from "@/store/modules/user";
+import { successNotification, errorNotification } from "@/utils/notification";
 
 defineOptions({
   name: "GlbMaterial"
@@ -14,6 +22,22 @@ enum StepStatus {
   Warning = "warning",
   Error = "error"
 }
+interface tableDataRow {
+  id: number;
+  uuid: string;
+  name: string;
+  model: string;
+  position: string;
+  number: string;
+  nowNumber?: number;
+  created_at?: string;
+  updated_at?: string;
+  dutyPerson?: string;
+  dutyPersonDepart?: string;
+  depart?: string;
+  dutyDate?: string;
+}
+interface tableData extends Array<tableDataRow> {}
 
 const columns: TableColumnList = [
   { label: "序号", prop: "id", width: "60" },
@@ -54,26 +78,34 @@ const columns: TableColumnList = [
   }
 ];
 
-const tableData = [
-  {
-    id: "2",
-    position: "左上角",
-    name: "扳手",
-    model: "把",
-    number: "3",
-    nowNumber: 0
-  },
-  {
-    id: "3",
-    position: "左上角",
-    name: "扳手",
-    model: "把",
-    number: "13",
-    nowNumber: 0
-  }
-];
+onMounted(() => {
+  initGlb();
+});
 
-const confirmedData = reactive(tableData);
+const initGlb = () => {
+  getGlbList().then(res => {
+    confirmedData.length = 0;
+    confirmedData.push(...res.data);
+  });
+  getGlbAttentionList().then(res => {
+    const result = res.data.map(item => item.note);
+    attention.length = 0;
+    attention.push(...result);
+  });
+  getLatestNote().then(res => {
+    lastRemark.value = res.data.note;
+  });
+  getGlbDutyInfo().then(res => {
+    dutyPerson.value = res.data.dutyPerson;
+    dutyPersonDepart.value = res.data.dutyPersonDepart;
+  });
+  remark.value = "";
+  step1Init.value = true;
+  step2Init.value = true;
+  step3Init.value = true;
+};
+
+const confirmedData: tableData = reactive([]);
 const step1Init = ref(true);
 
 const step1Status = computed(() => {
@@ -95,7 +127,7 @@ const handleConfirmAll = () => {
 };
 
 const remark = ref("");
-const lastRemark = "";
+const lastRemark = ref("");
 const step2Init = ref(true);
 
 const step2Status = computed(() => {
@@ -103,55 +135,112 @@ const step2Status = computed(() => {
 });
 
 const copyLastRemark = () => {
-  remark.value = lastRemark;
+  remark.value = lastRemark.value;
   step2Init.value = false;
 };
 
-const bulrHandle = () => {
+const burlHandle = () => {
   step2Init.value = false;
 };
 
-const attation = [
-  "岗位值班室内工具不允许长期借出；",
-  "岗位值班室内工具不允许长期借出2；"
-];
+const attention: string[] = reactive([]);
 
 const step3Init = ref(true);
-const attationStatus = computed(() => {
+const attentionStatus = computed(() => {
   return step3Init.value ? StepStatus.Process : StepStatus.Success;
 });
-const attationBtn = computed(() => {
+const attentionBtn = computed(() => {
   return step3Init.value ? StepStatus.Warning : StepStatus.Success;
 });
-const readAttation = () => {
+const readAttention = () => {
   step3Init.value = false;
 };
 
-const handover = () => {
+const dutyPerson = ref("");
+const dutyPersonDepart = ref("");
+const dialogVisible = ref(false);
+const handleOverBtnLoading = ref(false);
+const handoverConfirm = () => {
   // 交班
+  if (!(step2Init.value || step2Init.value || step3Init.value)) {
+    dialogVisible.value = true;
+  }
+};
+
+const handover = () => {
+  const now = new Date();
+  const date = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
   let data = {
-    username: "admin",
-    password: "123456"
+    materialData: confirmedData.map((data: tableDataRow) => {
+      return {
+        name: data.name,
+        model: data.model,
+        position: data.position,
+        number: data.number,
+        nowNumber: data.nowNumber,
+        dutyPerson: useUserStoreHook()?.username,
+        dutyPersonDepart: useUserStoreHook()?.depart,
+        depart: "glb",
+        dutyDate: date
+      };
+    }),
+    materialNote: {
+      note: remark.value,
+      depart: "glb",
+      dutyDate: date
+    },
+    dutyDate: date,
+    dutyPerson: useUserStoreHook()?.username,
+    dutyPersonDepart: useUserStoreHook()?.depart
   };
-  getLogin(data).then(res => {
-    console.log(res);
-  });
+  handleOverBtnLoading.value = true;
+  dutyOver(data)
+    .then(res => {
+      initGlb();
+      handleOverBtnLoading.value = false;
+      successNotification("交班成功");
+    })
+    .catch(err => {
+      errorNotification(err.message);
+    });
+  dialogVisible.value = false;
 };
 </script>
 
 <template>
   <div>
-    <el-affix :offset="100">
-      <el-card class="oprationCar" shadow="never" body-style="padding: 0px;">
-        <el-row :gutter="20">
-          <el-col :span="6">
-            <el-button type="success" plain size="large" @click="handover"
-              >交班</el-button
+    <el-affix :offset="105">
+      <el-card class="operationCar" shadow="never" body-style="padding: 0px;">
+        <el-row :gutter="20" justify="space-between">
+          <el-col class="rowFlex" :span="5">
+            <el-popconfirm
+              :disabled="dialogVisible"
+              title="请确认所有数据已核对！"
+              confirm-button-text="好的"
+              cancel-button-text="再看看"
+            >
+              <template #reference>
+                <el-button
+                  type="success"
+                  plain
+                  size="large"
+                  @click="handoverConfirm"
+                  >交班</el-button
+                >
+              </template>
+            </el-popconfirm>
+          </el-col>
+          <el-col class="rowFlex" :span="5">
+            <el-text size="large" type="danger" tag="b"
+              >值班员：{{ dutyPerson }}</el-text
             >
           </el-col>
-          <el-col :span="5" :offset="1" />
-          <el-col :span="5" :offset="1" />
-          <el-col :span="5" :offset="1" />
+          <el-col class="rowFlex" :span="5"
+            ><el-text size="large" tag="b"
+              >值班科值：{{ dutyPersonDepart }}</el-text
+            >
+          </el-col>
+          <el-col :span="5" />
         </el-row>
       </el-card>
     </el-affix>
@@ -200,7 +289,7 @@ const handover = () => {
                     :autosize="{ minRows: 2 }"
                     :show-word-limit="true"
                     style="width: 35vw"
-                    @blur="bulrHandle"
+                    @blur="burlHandle"
                   />
                   <el-button type="warning" plain @click="copyLastRemark"
                     >复制上个班</el-button
@@ -221,24 +310,24 @@ const handover = () => {
               </el-space>
             </template>
           </el-step>
-          <el-step title="查看注意事项" :status="attationStatus">
+          <el-step title="查看注意事项" :status="attentionStatus">
             <template #description>
               <el-space direction="vertical" alignment="flex-start">
                 <el-alert
                   title="注意事项"
-                  :type="attationBtn"
+                  :type="attentionBtn"
                   show-icon
                   :closable="false"
                 >
                   <template #default>
                     <ol>
-                      <li v-for="(item, index) in attation" :key="index">
+                      <li v-for="(item, index) in attention" :key="index">
                         {{ item }}
                       </li>
                     </ol>
                   </template>
                 </el-alert>
-                <el-button :type="attationBtn" plain @click="readAttation"
+                <el-button :type="attentionBtn" plain @click="readAttention"
                   >确认阅读
                 </el-button>
               </el-space>
@@ -247,12 +336,31 @@ const handover = () => {
         </el-steps>
       </div>
     </el-card>
+    <el-dialog v-model="dialogVisible" title="交班确认" width="500">
+      <span>确认从 {{ dutyPerson }} 接班</span>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button
+            type="primary"
+            :loading="handleOverBtnLoading"
+            @click="handover"
+          >
+            确定
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.oprationCar {
+.operationCar {
   padding: 0;
   margin-bottom: 20px;
+}
+
+.rowFlex {
+  display: flex;
 }
 </style>

@@ -10,8 +10,9 @@ from app.settings import settings
 
 class AuthControl:
     @classmethod
-    async def is_authed(cls, token: str = Header(..., description="token验证")) -> Optional["User"]:
+    async def is_authed(cls, authorization: str = Header(..., description="token验证")) -> Optional["User"]:
         try:
+            token = authorization.split(" ")[1]
             if token == "dev":
                 user = await User.filter().first()
                 user_id = user.id

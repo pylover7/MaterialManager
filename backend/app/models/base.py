@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 from tortoise import fields, models
 
@@ -18,6 +19,8 @@ class BaseModel(models.Model):
                 value = getattr(self, field)
                 if isinstance(value, datetime):
                     value = value.strftime(settings.DATETIME_FORMAT)
+                if isinstance(value, UUID):
+                    value = str(value)
                 d[field] = value
         if m2m:
             for field in self._meta.m2m_fields:
@@ -41,5 +44,5 @@ class UUIDModel:
 
 
 class TimestampMixin:
-    created_at = fields.DatetimeField(auto_now_add=True)
-    updated_at = fields.DatetimeField(auto_now=True)
+    created_at = fields.DatetimeField(auto_now_add=True, description="创建时间")
+    updated_at = fields.DatetimeField(auto_now=True, description="更新时间")
