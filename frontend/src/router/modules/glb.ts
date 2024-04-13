@@ -13,7 +13,8 @@ export default {
       component: () => import("@/views/glb/material.vue"),
       meta: {
         title: $t("glb.glbMaterialTitle"),
-        icon: "fluent:box-search-16-regular"
+        icon: "fluent:box-search-16-regular",
+        keepAlive: true
       }
     },
     {
@@ -22,7 +23,8 @@ export default {
       component: () => import("@/views/glb/key.vue"),
       meta: {
         title: $t("glb.glbKeyTitle"),
-        icon: "fluent:key-reset-24-regular"
+        icon: "fluent:key-reset-24-regular",
+        keepAlive: true
       }
     }
   ]

@@ -14,6 +14,8 @@ export const useUserStore = defineStore({
   state: (): userType => ({
     // 用户名
     username: storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "",
+    // 用户部门
+    depart: storageLocal().getItem<DataInfo<number>>(userKey)?.depart ?? "",
     // 页面级别权限
     roles: storageLocal().getItem<DataInfo<number>>(userKey)?.roles ?? [],
     // 是否勾选了登录页的免登录

@@ -50,3 +50,16 @@ class SuccessExtra(JSONResponse):
         }
         content.update(kwargs)
         super().__init__(content=content, status_code=code)
+
+
+class FailAuth(JSONResponse):
+    def __init__(
+            self,
+            code: int = 401,
+            msg: Optional[str] = "Unauthorized",
+            **kwargs,
+    ):
+        content = {"code": code, "msg": msg}
+        content.update(kwargs)
+        super().__init__(content=content, status_code=code)
+
