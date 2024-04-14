@@ -4,12 +4,16 @@ import { baseUrlApi } from "./utils";
 export type MaterialResult = {
   code: number;
   msg: string;
+  page: number;
+  pageSize: number;
+  total: number;
   data: [
     {
       id: number;
       uuid: string;
       name: string;
       model: string;
+      depart: string;
       position: string;
       number: string;
       created_at: string;
@@ -49,8 +53,12 @@ export type DutyInfoResult = {
   };
 };
 
-export const getGlbList = () => {
-  return http.request<MaterialResult>("get", baseUrlApi("material/glb_list"));
+export const getMaterialMeta = async (depart: string) => {
+  return http.request<MaterialResult>("get", baseUrlApi("material/meta"), {
+    params: {
+      depart
+    }
+  });
 };
 
 export const getGlbAttentionList = () => {

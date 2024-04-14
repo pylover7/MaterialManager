@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { ref, reactive, computed, onMounted } from "vue";
 import {
-  getGlbList,
+  getMaterialMeta,
   getGlbAttentionList,
   getGlbDutyInfo,
   dutyOver,
@@ -78,16 +78,21 @@ const columns: TableColumnList = [
     )
   }
 ];
-
+const loading = ref(false);
 onMounted(() => {
   initGlb();
 });
 
 const initGlb = () => {
-  getGlbList().then(res => {
-    confirmedData.length = 0;
-    confirmedData.push(...res.data);
-  });
+  loading.value = true;
+  getMaterialMeta("glb")
+    .then(res => {
+      confirmedData.length = 0;
+      confirmedData.push(...res.data);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
   getGlbAttentionList().then(res => {
     const result = res.data.map(item => item.note);
     attention.length = 0;
@@ -265,6 +270,7 @@ const handover = () => {
                   :data="confirmedData"
                   :border="true"
                   stripe
+                  :loading="loading"
                   highlight-current-row
                   :header-cell-style="{ textAlign: 'center' }"
                   :cell-style="{ textAlign: 'center' }"

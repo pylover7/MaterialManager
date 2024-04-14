@@ -28,19 +28,20 @@ async def duty_over(data: DutyOverInfo):
     return Success(data=result)
 
 
-@router.get("/glb_list", summary="获取隔离办物资列表")
-async def get_glb_list(
+@router.get("/meta", summary="获取物资源数据")
+async def get_meta(
+        depart: str = Query("glb", description="物资部门"),
         page: int = Query(1, description="页码"),
         page_size: int = Query(1000, description="每页数量"),
         name: str = Query("", description="物资名称"),
 ):
-    q = Q(depart__contains="glb")
+    q = Q(depart__contains=depart)
     if name:
         q &= Q(name__contains=name)
 
     total, material_objs = await materialController.list(page=page, page_size=page_size, search=q)
     data = [await obj.to_dict() for obj in material_objs]
-    return SuccessExtra(msg="隔离办数据获取成功", data=data, total=total, page=page, page_size=page_size)
+    return SuccessExtra(msg="物资数据获取成功", data=data, total=total, page=page, page_size=page_size)
 
 
 @router.get("/glb_duty_info", summary="获取隔离办值班信息")
@@ -62,7 +63,11 @@ async def get_glb_attention():
 async def get_glb_latest_note():
     q = Q(depart__contains="glb")
     data = await dutyNotesController.latest(search=q)
-    return Success(data=await data.to_dict())
+    if data:
+        data = await data.to_dict()
+    else:
+        data = ""
+    return Success(data=data)
 
 
 @router.get("/fk_material", summary="查看辅控物资列表")
