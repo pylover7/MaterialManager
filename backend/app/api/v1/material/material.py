@@ -5,9 +5,12 @@ from tortoise.expressions import Q
 
 from app.controllers.material import materialController, materialAttentionController
 from app.controllers.dutyLog import dutyLogController, dutyNotesController
-from app.schemas.base import Success, SuccessExtra
+from app.models import Material
+from app.schemas.base import Success, SuccessExtra, Fail
 from app.schemas.dutyLog import DutyOverInfo
 from app.utils.onDutyInfo import OnDutyInfo
+from app.schemas.material import MaterialCreate
+from app.utils.password import generate_uuid
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +45,19 @@ async def get_meta(
     total, material_objs = await materialController.list(page=page, page_size=page_size, search=q)
     data = [await obj.to_dict() for obj in material_objs]
     return SuccessExtra(msg="物资数据获取成功", data=data, total=total, page=page, page_size=page_size)
+
+
+@router.post("/add_meta", summary="添加物资源数据")
+async def add_meta(data: MaterialCreate):
+    data = data.create_dict()
+    data["uuid"] = generate_uuid(data["name"])
+    result: Material = await materialController.create(data)
+    result = await result.to_dict()
+    print(result)
+    if result:
+        return Success(data=result)
+    else:
+        return Fail(msg="数据写入失败！")
 
 
 @router.get("/glb_duty_info", summary="获取隔离办值班信息")

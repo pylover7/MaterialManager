@@ -1,63 +1,24 @@
 import { http } from "@/utils/http";
 import { baseUrlApi } from "./utils";
-
-export type MaterialResult = {
-  code: number;
-  msg: string;
-  page: number;
-  pageSize: number;
-  total: number;
-  data: [
-    {
-      id: number;
-      uuid: string;
-      name: string;
-      model: string;
-      depart: string;
-      position: string;
-      number: string;
-      created_at: string;
-      updated_at: string;
-    }
-  ];
-};
-
-export type AttentionResult = {
-  code: number;
-  msg: string;
-  data: [
-    {
-      id: number;
-      uuid: string;
-      note: string;
-    }
-  ];
-};
-
-type LatestNote = {
-  code: number;
-  msg: string;
-  data: {
-    note: string;
-    depart: string;
-    dutyDate: string;
-  };
-};
-
-export type DutyInfoResult = {
-  code: number;
-  msg: string;
-  data: {
-    dutyPerson: string;
-    dutyPersonDepart: string;
-  };
-};
+import type {
+  AttentionResult,
+  DutyInfoResult,
+  LatestNote,
+  MaterialResult,
+  addResult
+} from "@/api/type";
 
 export const getMaterialMeta = async (depart: string) => {
   return http.request<MaterialResult>("get", baseUrlApi("material/meta"), {
     params: {
       depart
     }
+  });
+};
+
+export const addMaterialMeta = async (data: object) => {
+  return http.request<addResult>("post", baseUrlApi("material/add_meta"), {
+    data
   });
 };
 

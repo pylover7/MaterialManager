@@ -1,6 +1,7 @@
 from typing import Optional
 
 from pydantic import BaseModel, Field
+from uuid import UUID
 
 
 class Material(BaseModel):
@@ -18,6 +19,7 @@ class MaterialCreate(BaseModel):
     position: str = Field(description="物资位置")
     number: str = Field(description="物资数量")
     depart: str = Field(description="物资所属部门")
+    uuid: UUID = None
 
     def create_dict(self):
         # 创建字典

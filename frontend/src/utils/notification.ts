@@ -100,20 +100,24 @@ const successNotification = (message: string | VNode): NotificationHandle => {
 };
 
 /**
- * 警告通知
+ * 警告通知， 默认显示时间为5s
  */
 const warningNotification = (message: string | VNode): NotificationHandle => {
   return notification("警告通知", message, {
-    type: "warning"
+    type: "warning",
+    duration: 5000,
+    showClose: true
   });
 };
 
 /**
- * 错误通知
+ * 错误通知，默认显示时间为10s
  */
 const errorNotification = (message: string | VNode): NotificationHandle => {
   return notification("错误通知", message, {
-    type: "error"
+    type: "error",
+    duration: 10000,
+    showClose: true
   });
 };
 

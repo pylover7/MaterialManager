@@ -22,7 +22,8 @@ export default {
       component: () => import("@/views/admin/MaterialMeta.vue"),
       meta: {
         title: "物资源数据",
-        icon: "fluent:home-garage-24-regular"
+        icon: "fluent:home-garage-24-regular",
+        keepAlive: true
       }
     },
     {

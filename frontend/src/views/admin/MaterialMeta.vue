@@ -6,8 +6,10 @@ import Delete from "@iconify-icons/ep/delete";
 import Add from "@iconify-icons/ep/circle-plus";
 import type { PaginationProps } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
-import { getMaterialMeta } from "@/api/material";
-import { warningNotification, errorNotification } from "@/utils/notification";
+import { getMaterialMeta, addMaterialMeta } from "@/api/material";
+import { successNotification, warningNotification } from "@/utils/notification";
+import { message } from "@/utils/message";
+import type { FormInstance, FormRules } from "element-plus";
 
 defineOptions({
   name: "MaterialMeta"
@@ -19,6 +21,9 @@ const area = ref("");
 const areaChange = (value: string) => {
   area.value = value;
   onSearch();
+};
+const areaClear = () => {
+  dataList.length = 0;
 };
 
 // 表格选择的数量
@@ -94,6 +99,9 @@ async function onSearch() {
         pagination.pageSize = res.pageSize;
         pagination.currentPage = res.page;
       })
+      .catch(e => {
+        area.value = "";
+      })
       .finally(() => {
         loading.value = false;
       });
@@ -101,6 +109,74 @@ async function onSearch() {
     warningNotification("请选择区域");
   }
 }
+
+const addFormRef = ref<FormInstance>();
+const addDrawer = ref(false);
+const submitLoading = ref(false);
+const addMaterial = () => {
+  addDrawer.value = true;
+};
+const drawerCancel = () => {
+  addDrawer.value = false;
+};
+
+interface RuleForm {
+  name: string;
+  model: string;
+  position: string;
+  number: string;
+  depart?: string;
+}
+
+const addForm = reactive<RuleForm>({
+  name: "",
+  model: "",
+  position: "",
+  number: ""
+});
+
+const clearAddForm = () => {
+  const keys = Object.keys(addForm);
+
+  for (const key of keys) {
+    delete addForm[key];
+  }
+};
+
+const rules = reactive<FormRules<RuleForm>>({
+  name: [{ required: true, message: "请输入物资名称信息！", trigger: "blur" }],
+  position: [
+    { required: true, message: "请输入物资位置信息", trigger: "blur" }
+  ],
+  number: [
+    {
+      required: true,
+      message: "请输入物资数量",
+      trigger: "blur"
+    }
+  ]
+});
+
+const submitForm = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      submitLoading.value = true;
+      addForm.depart = area.value;
+      addMaterialMeta(addForm)
+        .then(res => {
+          addDrawer.value = false;
+          onSearch();
+          successNotification(`添加物资【${res.data.name}】成功`);
+        })
+        .finally(() => {
+          submitLoading.value = false;
+        });
+    } else {
+      message(`验证失败`, { type: "error" });
+    }
+  });
+};
 </script>
 
 <template>
@@ -117,6 +193,7 @@ async function onSearch() {
           clearable
           class="!w-[150px]"
           @change="areaChange"
+          @clear="areaClear"
         >
           <el-option label="隔离办" value="glb" />
           <el-option label="辅控" value="fk" />
@@ -125,7 +202,7 @@ async function onSearch() {
       </el-form-item>
     </el-form>
 
-    <PureTableBar :columns="columns">
+    <PureTableBar :columns="columns" @refresh="onSearch">
       <template #title>
         <div v-motion-fade class="h-full mb-2 pl-4 flex items-center">
           <div class="flex-auto">
@@ -142,10 +219,21 @@ async function onSearch() {
         </div>
       </template>
       <template #buttons>
-        <el-button type="primary" :icon="useRenderIcon(Add)"> 新增 </el-button>
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(Add)"
+          :disabled="!area"
+          @click="addMaterial"
+        >
+          新增
+        </el-button>
         <el-popconfirm title="确定要删除选择的数据吗？" @confirm="onBatchDel">
           <template #reference>
-            <el-button type="danger" :icon="useRenderIcon(Delete)">
+            <el-button
+              type="danger"
+              :icon="useRenderIcon(Delete)"
+              :disabled="selectedNum < 1"
+            >
               删除所选
             </el-button>
           </template>
@@ -174,6 +262,63 @@ async function onSearch() {
         />
       </template>
     </PureTableBar>
+
+    <el-drawer
+      v-model="addDrawer"
+      direction="rtl"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      @close="clearAddForm"
+    >
+      <template #header>
+        <h4>新增物资项</h4>
+      </template>
+      <template #default>
+        <div>
+          <el-form
+            ref="addFormRef"
+            style="max-width: 600px"
+            :model="addForm"
+            label-width="auto"
+            :rules="rules"
+            status-icon
+          >
+            <el-form-item label="名称" prop="name">
+              <el-input v-model="addForm.name" />
+            </el-form-item>
+            <el-form-item label="型号" prop="model">
+              <el-input v-model="addForm.model" />
+            </el-form-item>
+            <el-form-item label="位置" prop="position">
+              <el-input v-model="addForm.position" />
+            </el-form-item>
+            <el-form-item label="数量" prop="number">
+              <el-input v-model="addForm.number" />
+            </el-form-item>
+          </el-form>
+        </div>
+      </template>
+      <template #footer>
+        <div style="flex: auto; text-align: left">
+          <el-row class="row-bg" justify="space-between">
+            <el-col :span="6"
+              ><el-button
+                type="success"
+                plain
+                :loading="submitLoading"
+                @click="submitForm(addFormRef)"
+                >确定</el-button
+              ></el-col
+            >
+            <el-col :span="6" style="text-align: right"
+              ><el-button type="warning" plain @click="drawerCancel"
+                >取消</el-button
+              ></el-col
+            >
+          </el-row>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
