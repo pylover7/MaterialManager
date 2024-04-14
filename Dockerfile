@@ -29,7 +29,7 @@ RUN pip install poetry -i https://pypi.tuna.tsinghua.edu.cn/simple\
 
 COPY --from=frontend /app/frontend/dist /app/frontend
 ADD mm.conf /etc/nginx/sites-available/mm.conf
-RUN rm -f /etc/nginx/sites-enabled/default \ 
+RUN rm -f /etc/nginx/sites-enabled/default \
     && ln -s /etc/nginx/sites-available/mm.conf /etc/nginx/sites-enabled/ 
 
 ENV LANG=zh_CN.UTF-8
