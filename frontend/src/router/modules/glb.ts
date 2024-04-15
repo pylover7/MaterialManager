@@ -4,7 +4,8 @@ export default {
   path: "/glb",
   meta: {
     title: $t("glb.title"),
-    icon: "fluent:desktop-flow-24-regular"
+    icon: "fluent:desktop-flow-24-regular",
+    rank: 1
   },
   children: [
     {
@@ -28,4 +29,4 @@ export default {
       }
     }
   ]
-};
+} satisfies RouteConfigsTable;

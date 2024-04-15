@@ -2,7 +2,6 @@
 import { useI18n } from "vue-i18n";
 import Motion from "./utils/motion";
 import { useRouter } from "vue-router";
-import { message } from "@/utils/message";
 import { loginRules } from "./utils/rule";
 import { useNav } from "@/layout/hooks/useNav";
 import type { FormInstance } from "element-plus";
@@ -22,6 +21,7 @@ import globalization from "@/assets/svg/globalization.svg?component";
 import Lock from "@iconify-icons/ri/lock-fill";
 import Check from "@iconify-icons/ep/check";
 import User from "@iconify-icons/ri/user-3-fill";
+import { errorNotification, successNotification } from "@/utils/notification";
 
 defineOptions({
   name: "Login"
@@ -59,15 +59,15 @@ const onLogin = async (formEl: FormInstance | undefined) => {
             // 获取后端路由
             initRouter().then(() => {
               router.push(getTopMenu(true).path);
-              message("登录成功", { type: "success" });
+              successNotification("登录成功!");
             });
           }
         })
         .catch(error => {
           loading.value = false;
-          message(`登录失败:${error.response.data.msg}`, {
-            type: "error"
-          });
+          if (error.response && error.response.data) {
+            errorNotification(`登录失败:${error.response.data.msg}!`);
+          }
         });
     } else {
       loading.value = false;

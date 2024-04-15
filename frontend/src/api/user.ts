@@ -8,6 +8,8 @@ export type UserResult = {
   data: {
     /** 用户名 */
     username: string;
+    /** 部门 */
+    depart: string;
     /** 当前登陆用户的角色 */
     roles: Array<string>;
     /** `token` */

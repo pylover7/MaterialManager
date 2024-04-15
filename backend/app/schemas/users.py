@@ -8,6 +8,7 @@ class BaseUser(BaseModel):
     id: int
     email: Optional[EmailStr] = None
     username: Optional[str] = None
+    depart: Optional[str] = None
     is_active: Optional[bool] = True
     is_superuser: Optional[bool] = False
     created_at: Optional[datetime]
@@ -19,6 +20,7 @@ class BaseUser(BaseModel):
 class UserCreate(BaseModel):
     email: EmailStr = Field(example="admin@qq.com")
     username: str = Field(example="admin")
+    depart: str = Field(example="管理部")
     password: str = Field(example="123456")
     is_active: Optional[bool] = True
     is_superuser: Optional[bool] = False

@@ -28,6 +28,7 @@ async def login_access_token(credentials: CredentialsSchema):
 
     data = JWTOut(
         username=user.username,
+        depart=user.depart,
         roles=["admin"],
         accessToken=create_access_token(
             data=JWTPayload(
