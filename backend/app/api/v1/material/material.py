@@ -9,7 +9,7 @@ from app.models import Material
 from app.schemas.base import Success, SuccessExtra, Fail
 from app.schemas.dutyLog import DutyOverInfo
 from app.utils.onDutyInfo import OnDutyInfo
-from app.schemas.material import MaterialCreate
+from app.schemas.material import MaterialCreate, MaterialUpdate
 from app.utils.password import generate_uuid
 
 logger = logging.getLogger(__name__)
@@ -48,12 +48,14 @@ async def get_meta(
 
 
 @router.post("/add_meta", summary="添加物资源数据")
-async def add_meta(data: MaterialCreate):
-    data = data.create_dict()
-    data["uuid"] = generate_uuid(data["name"])
-    result: Material = await materialController.create(data)
+async def add_meta(data: MaterialCreate | MaterialUpdate):
+    if hasattr(data, "id"):
+        result: Material = await materialController.update(data.id, data.update_dict())
+    else:
+        data: MaterialCreate = data.create_dict()
+        data["uuid"] = generate_uuid(data["name"])
+        result: Material = await materialController.create(data)
     result = await result.to_dict()
-    print(result)
     if result:
         return Success(data=result)
     else:

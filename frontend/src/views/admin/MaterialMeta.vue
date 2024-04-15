@@ -7,21 +7,29 @@ import Add from "@iconify-icons/ep/circle-plus";
 import type { PaginationProps } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
 import { getMaterialMeta, addMaterialMeta } from "@/api/material";
-import { successNotification, warningNotification } from "@/utils/notification";
-import { message } from "@/utils/message";
 import type { FormInstance, FormRules } from "element-plus";
+import type { MaterialItem } from "@/api/type";
+import {
+  errorNotification,
+  successNotification,
+  warningNotification
+} from "@/utils/notification";
 
 defineOptions({
   name: "MaterialMeta"
 });
+// 表格ref
 const tableRef = ref();
+// 表格加载控制
 const loading = ref(false);
+// 区域选择
 const area = ref("");
-
+// 区域变化回调函数
 const areaChange = (value: string) => {
   area.value = value;
   onSearch();
 };
+// 清除区域回调函数
 const areaClear = () => {
   dataList.length = 0;
 };
@@ -44,11 +52,11 @@ const onBatchDel = () => {
 
   tableRef.value.getTableRef().clearSelection();
 };
-
+// 表格勾选项变化回调函数
 function handleSelectionChange(val) {
   selectedNum.value = val.length;
 }
-
+// 表格分页配置
 const pagination = reactive<PaginationProps>({
   total: 0,
   pageSize: 10,
@@ -56,7 +64,7 @@ const pagination = reactive<PaginationProps>({
   background: true,
   hideOnSinglePage: true
 });
-
+// 表格列
 const columns: TableColumnList = [
   {
     label: "勾选列", // 如果需要表格多选，此处label必须设置
@@ -75,19 +83,49 @@ const columns: TableColumnList = [
     width: "160",
     cellRenderer: ({ row }) => (
       <>
-        <el-button size="small" type="warning" plain>
+        <el-button
+          size="small"
+          type="warning"
+          plain
+          onClick={() => {
+            modify(row);
+          }}
+        >
           修改
         </el-button>
-        <el-button size="small" type="danger" plain>
+        <el-button
+          size="small"
+          type="danger"
+          plain
+          onClick={() => {
+            deleteById(row.id);
+          }}
+        >
           删除
         </el-button>
       </>
     )
   }
 ];
+// 表格操作列修改按钮函数
+const modify = (row: MaterialItem) => {
+  addDrawerTitle.value = "修改";
+  const keys = Object.keys(row);
 
+  for (const key of keys) {
+    addForm[key] = row[key];
+  }
+  addDrawer.value = true;
+  console.log(addForm);
+};
+// 表格操作列删除按钮函数
+const deleteById = (id: number) => {
+  console.log(id);
+};
+
+// 表格数据
 const dataList = reactive([]);
-
+// 表格刷新
 async function onSearch() {
   if (area.value) {
     loading.value = true;
@@ -109,41 +147,40 @@ async function onSearch() {
     warningNotification("请选择区域");
   }
 }
-
+// 添加物资表单ref
 const addFormRef = ref<FormInstance>();
+// 添加物资抽屉控制
 const addDrawer = ref(false);
+// 添加物资确定按钮加载控制
 const submitLoading = ref(false);
+// 添加物资抽屉标题
+const addDrawerTitle = ref("");
+// 开启添加物资抽屉
 const addMaterial = () => {
+  addDrawerTitle.value = "新增";
   addDrawer.value = true;
 };
+// 关闭添加物资抽屉
 const drawerCancel = () => {
   addDrawer.value = false;
 };
-
-interface RuleForm {
-  name: string;
-  model: string;
-  position: string;
-  number: string;
-  depart?: string;
-}
-
-const addForm = reactive<RuleForm>({
+// 添加物资表单数据
+const addForm = reactive<MaterialItem>({
   name: "",
   model: "",
   position: "",
   number: ""
 });
-
+// 清除添加物资表单数据
 const clearAddForm = () => {
   const keys = Object.keys(addForm);
 
   for (const key of keys) {
-    delete addForm[key];
+    addForm[key] = "";
   }
 };
-
-const rules = reactive<FormRules<RuleForm>>({
+// 添加物资表单数据校验
+const rules = reactive<FormRules<MaterialItem>>({
   name: [{ required: true, message: "请输入物资名称信息！", trigger: "blur" }],
   position: [
     { required: true, message: "请输入物资位置信息", trigger: "blur" }
@@ -156,7 +193,7 @@ const rules = reactive<FormRules<RuleForm>>({
     }
   ]
 });
-
+// 添加物资表单确认
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
@@ -167,13 +204,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         .then(res => {
           addDrawer.value = false;
           onSearch();
-          successNotification(`添加物资【${res.data.name}】成功`);
+          successNotification(
+            `${addDrawerTitle.value}物资【${res.data.name}】成功`
+          );
         })
         .finally(() => {
           submitLoading.value = false;
         });
     } else {
-      message(`验证失败`, { type: "error" });
+      errorNotification("验证失败");
     }
   });
 };
@@ -268,10 +307,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       direction="rtl"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      :destroy-on-close="true"
       @close="clearAddForm"
     >
       <template #header>
-        <h4>新增物资项</h4>
+        <h4>{{ addDrawerTitle }}物资项</h4>
       </template>
       <template #default>
         <div>

@@ -35,7 +35,7 @@ class MaterialUpdate(BaseModel):
 
     def update_dict(self):
         # 更新字典
-        return self.model_dump(exclude_unset=True, exclude={"id"})
+        return self.model_dump(exclude_unset=True, exclude={"id", "uuid"})
 
 
 class AttentionNote(BaseModel):

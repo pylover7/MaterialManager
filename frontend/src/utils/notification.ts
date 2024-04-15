@@ -31,7 +31,7 @@ interface NotificationParams {
   offset?: number;
   /** 设置组件的根元素，默认 `document.body` */
   appendTo?: string | HTMLElement;
-  /** 初始 zIndex，默认值 `0` */
+  /** 初始 zIndex */
   zIndex?: number;
 }
 
@@ -61,7 +61,7 @@ const notification = (
       onClose,
       offset = 100,
       appendTo = document.body,
-      zIndex = 1000
+      zIndex
     } = params;
     return ElNotification({
       title,

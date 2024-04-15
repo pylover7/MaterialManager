@@ -3,16 +3,16 @@ export type BaseResult = {
   msg: string;
 };
 
-type MaterialItem = {
-  id: number;
-  uuid: string;
+export type MaterialItem = {
+  id?: number;
+  uuid?: string;
   name: string;
   model: string;
-  depart: string;
+  depart?: string;
   position: string;
   number: string;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
 };
 
 export type addResult = BaseResult & {
