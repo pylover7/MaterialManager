@@ -6,7 +6,11 @@ import Delete from "@iconify-icons/ep/delete";
 import Add from "@iconify-icons/ep/circle-plus";
 import type { PaginationProps } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
-import { getMaterialMeta, addMaterialMeta } from "@/api/material";
+import {
+  getMaterialMeta,
+  addMaterialMeta,
+  deleteMaterialMeta
+} from "@/api/material";
 import type { FormInstance, FormRules } from "element-plus";
 import type { MaterialItem } from "@/api/type";
 import {
@@ -42,15 +46,25 @@ const onSelectionCancel = () => {
   // 用于多选表格，清空用户的选择
   tableRef.value.getTableRef().clearSelection();
 };
-
+// 删除所选按钮状态
+const onBatchBtnLoading = ref(false);
 // 删除所选择的行
 const onBatchDel = () => {
+  onBatchBtnLoading.value = true;
   const curSelected = tableRef.value.getTableRef().getSelectionRows();
   const idList = getKeyList(curSelected, "id");
-  console.log(idList);
-  onSearch();
-
-  tableRef.value.getTableRef().clearSelection();
+  deleteMaterialMeta(idList)
+    .then(res => {
+      successNotification(res.msg);
+      onSearch();
+      tableRef.value.getTableRef().clearSelection();
+    })
+    .catch(err => {
+      errorNotification(err.data.msg);
+    })
+    .finally(() => {
+      onBatchBtnLoading.value = false;
+    });
 };
 // 表格勾选项变化回调函数
 function handleSelectionChange(val) {
@@ -116,11 +130,17 @@ const modify = (row: MaterialItem) => {
     addForm[key] = row[key];
   }
   addDrawer.value = true;
-  console.log(addForm);
 };
 // 表格操作列删除按钮函数
 const deleteById = (id: number) => {
-  console.log(id);
+  deleteMaterialMeta([id])
+    .then(res => {
+      successNotification(res.msg);
+      onSearch();
+    })
+    .catch(err => {
+      errorNotification(err.msg);
+    });
 };
 
 // 表格数据
@@ -272,6 +292,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
               type="danger"
               :icon="useRenderIcon(Delete)"
               :disabled="selectedNum < 1"
+              :loading="onBatchBtnLoading"
             >
               删除所选
             </el-button>

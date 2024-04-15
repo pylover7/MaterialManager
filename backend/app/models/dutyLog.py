@@ -12,14 +12,14 @@ class DutyLog(BaseModel):
     """
     值班日志
     """
-    position = fields.CharField(max_length=255, null=False, description="位置")
-    name = fields.CharField(max_length=255, null=False, description="名称")
-    model = fields.CharField(max_length=255, null=False, description="型号")
-    number = fields.CharField(max_length=255, null=False, description="数量")
+    position = fields.CharField(max_length=20, null=False, description="位置")
+    name = fields.CharField(max_length=50, null=False, description="名称")
+    model = fields.CharField(max_length=20, null=False, description="型号")
+    number = fields.CharField(max_length=20, null=False, description="数量")
     nowNumber = fields.IntField(null=False, description="当前数量")
-    dutyPerson = fields.CharField(max_length=255, null=False, description="当班人员")
-    dutyPersonDepart = fields.CharField(max_length=255, null=False, description="当班人员部门")
-    depart = fields.CharField(max_length=255, null=False, description="部门")
+    dutyPerson = fields.CharField(max_length=20, null=False, description="当班人员")
+    dutyPersonDepart = fields.CharField(max_length=20, null=False, description="当班人员部门")
+    depart = fields.CharField(max_length=20, null=False, description="部门")
     dutyDate = fields.DatetimeField(auto_now_add=True, description="交班时间")
 
     class Meta:

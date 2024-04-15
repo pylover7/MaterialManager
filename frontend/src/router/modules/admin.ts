@@ -21,7 +21,7 @@ export default {
       name: "MaterialMeta",
       component: () => import("@/views/admin/MaterialMeta.vue"),
       meta: {
-        title: "物资源数据",
+        title: "物资数据",
         icon: "fluent:home-garage-24-regular",
         keepAlive: true
       }
@@ -31,7 +31,7 @@ export default {
       name: "OperationLogs",
       component: () => import("@/views/admin/OperationLogs.vue"),
       meta: {
-        title: "操作日志审计",
+        title: "日志审计",
         icon: "fluent:notepad-person-24-regular"
       }
     }

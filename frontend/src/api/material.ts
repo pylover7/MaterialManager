@@ -5,7 +5,8 @@ import type {
   DutyInfoResult,
   LatestNote,
   MaterialResult,
-  addResult
+  addResult,
+  BaseResult
 } from "@/api/type";
 
 export const getMaterialMeta = async (depart: string) => {
@@ -19,6 +20,14 @@ export const getMaterialMeta = async (depart: string) => {
 export const addMaterialMeta = async (data: object) => {
   return http.request<addResult>("post", baseUrlApi("material/add_meta"), {
     data
+  });
+};
+
+export const deleteMaterialMeta = async (idList: Array<number>) => {
+  return http.request<BaseResult>("delete", baseUrlApi("material/delete"), {
+    data: {
+      idList
+    }
   });
 };
 

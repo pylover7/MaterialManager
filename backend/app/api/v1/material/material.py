@@ -47,19 +47,33 @@ async def get_meta(
     return SuccessExtra(msg="物资数据获取成功", data=data, total=total, page=page, page_size=page_size)
 
 
-@router.post("/add_meta", summary="添加物资源数据")
+@router.post("/add_meta", summary="添加或修改物资源数据")
 async def add_meta(data: MaterialCreate | MaterialUpdate):
+    logger.info(data.create_dict())
     if hasattr(data, "id"):
         result: Material = await materialController.update(data.id, data.update_dict())
     else:
         data: MaterialCreate = data.create_dict()
         data["uuid"] = generate_uuid(data["name"])
+        print(data)
+        logger.info(data)
         result: Material = await materialController.create(data)
     result = await result.to_dict()
     if result:
         return Success(data=result)
     else:
         return Fail(msg="数据写入失败！")
+
+
+@router.delete("/delete", summary="删除物资源数据")
+async def delete_meta(data: dict[str, list[int]]):
+    for id in data["idList"]:
+        try:
+            await materialController.remove(id)
+        except Exception as e:
+            logger.error(f"删除物资项失败，ID为{id}")
+            return Fail(msg=f"删除物资项部分失败: {e}")
+    return Success(msg="删除成功")
 
 
 @router.get("/glb_duty_info", summary="获取隔离办值班信息")
