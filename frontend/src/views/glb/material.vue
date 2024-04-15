@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { ref, reactive, computed, onMounted } from "vue";
 import {
-  getGlbList,
+  getMaterialMeta,
   getGlbAttentionList,
   getGlbDutyInfo,
   dutyOver,
@@ -9,6 +9,7 @@ import {
 } from "@/api/material";
 import { useUserStoreHook } from "@/store/modules/user";
 import { successNotification, errorNotification } from "@/utils/notification";
+import formatCurrentTime from "@/utils/formatDatetime";
 
 defineOptions({
   name: "GlbMaterial"
@@ -40,7 +41,7 @@ interface tableDataRow {
 interface tableData extends Array<tableDataRow> {}
 
 const columns: TableColumnList = [
-  { label: "序号", prop: "id", width: "60" },
+  { label: "序号", type: "index", width: "60" },
   { label: "位置", prop: "position" },
   { label: "名称", prop: "name" },
   { label: "型号", prop: "model", width: "200" },
@@ -77,16 +78,21 @@ const columns: TableColumnList = [
     )
   }
 ];
-
+const loading = ref(false);
 onMounted(() => {
   initGlb();
 });
 
 const initGlb = () => {
-  getGlbList().then(res => {
-    confirmedData.length = 0;
-    confirmedData.push(...res.data);
-  });
+  loading.value = true;
+  getMaterialMeta("glb")
+    .then(res => {
+      confirmedData.length = 0;
+      confirmedData.push(...res.data);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
   getGlbAttentionList().then(res => {
     const result = res.data.map(item => item.note);
     attention.length = 0;
@@ -103,6 +109,8 @@ const initGlb = () => {
   step1Init.value = true;
   step2Init.value = true;
   step3Init.value = true;
+
+  handleOverBtnLoading.value = false;
 };
 
 const confirmedData: tableData = reactive([]);
@@ -160,16 +168,18 @@ const dutyPerson = ref("");
 const dutyPersonDepart = ref("");
 const dialogVisible = ref(false);
 const handleOverBtnLoading = ref(false);
+const popDisabled = computed(() => {
+  return !(step2Init.value || step2Init.value || step3Init.value);
+});
 const handoverConfirm = () => {
   // 交班
-  if (!(step2Init.value || step2Init.value || step3Init.value)) {
+  if (popDisabled.value) {
     dialogVisible.value = true;
   }
 };
 
 const handover = () => {
-  const now = new Date();
-  const date = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+  const date = formatCurrentTime();
   let data = {
     materialData: confirmedData.map((data: tableDataRow) => {
       return {
@@ -202,6 +212,7 @@ const handover = () => {
     })
     .catch(err => {
       errorNotification(err.message);
+      handleOverBtnLoading.value = false;
     });
   dialogVisible.value = false;
 };
@@ -259,6 +270,7 @@ const handover = () => {
                   :data="confirmedData"
                   :border="true"
                   stripe
+                  :loading="loading"
                   highlight-current-row
                   :header-cell-style="{ textAlign: 'center' }"
                   :cell-style="{ textAlign: 'center' }"
@@ -287,6 +299,7 @@ const handover = () => {
                     type="textarea"
                     placeholder="填写本班备注"
                     :autosize="{ minRows: 2 }"
+                    maxlength="510"
                     :show-word-limit="true"
                     style="width: 35vw"
                     @blur="burlHandle"

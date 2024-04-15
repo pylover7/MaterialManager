@@ -64,26 +64,30 @@ export function setToken(data: DataInfo<Date>) {
       : {}
   );
 
-  function setUserKey(username: string, roles: Array<string>) {
+  function setUserKey(username: string, depart: string, roles: Array<string>) {
     useUserStoreHook().SET_USERNAME(username);
+    useUserStoreHook().SET_DEPART(depart);
     useUserStoreHook().SET_ROLES(roles);
     storageLocal().setItem(userKey, {
       refreshToken,
       expires,
       username,
+      depart,
       roles
     });
   }
 
   if (data.username && data.roles) {
-    const { username, roles } = data;
-    setUserKey(username, roles);
+    const { username, depart, roles } = data;
+    setUserKey(username, depart, roles);
   } else {
     const username =
       storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "";
     const roles =
       storageLocal().getItem<DataInfo<number>>(userKey)?.roles ?? [];
-    setUserKey(username, roles);
+    const depart =
+      storageLocal().getItem<DataInfo<number>>(userKey)?.depart ?? "";
+    setUserKey(username, depart, roles);
   }
 }
 

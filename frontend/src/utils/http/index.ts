@@ -16,6 +16,7 @@ import { useUserStoreHook } from "@/store/modules/user";
 import { baseUrlApi } from "@/api/utils";
 import { router, resetRouter } from "@/router";
 import { message } from "@/utils/message";
+import { errorNotification } from "@/utils/notification";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
@@ -147,6 +148,9 @@ class PureHttp {
         // 关闭进度条动画
         NProgress.done();
         // 所有的响应异常 区分来源为取消请求/非取消请求
+        if (error.response == null) {
+          errorNotification("服务器超时故障，请重新刷新~");
+        }
         if (error.response.status == 401) {
           removeToken();
           resetRouter();

@@ -31,7 +31,7 @@ interface NotificationParams {
   offset?: number;
   /** 设置组件的根元素，默认 `document.body` */
   appendTo?: string | HTMLElement;
-  /** 初始 zIndex，默认值 `0` */
+  /** 初始 zIndex */
   zIndex?: number;
 }
 
@@ -59,9 +59,9 @@ const notification = (
       position = "top-right",
       showClose = false,
       onClose,
-      offset = 100,
+      offset = 80,
       appendTo = document.body,
-      zIndex = 0
+      zIndex
     } = params;
     return ElNotification({
       title,
@@ -100,20 +100,24 @@ const successNotification = (message: string | VNode): NotificationHandle => {
 };
 
 /**
- * 警告通知
+ * 警告通知， 默认显示时间为5s
  */
 const warningNotification = (message: string | VNode): NotificationHandle => {
   return notification("警告通知", message, {
-    type: "warning"
+    type: "warning",
+    duration: 5000,
+    showClose: true
   });
 };
 
 /**
- * 错误通知
+ * 错误通知，默认显示时间为10s
  */
 const errorNotification = (message: string | VNode): NotificationHandle => {
   return notification("错误通知", message, {
-    type: "error"
+    type: "error",
+    duration: 10000,
+    showClose: true
   });
 };
 

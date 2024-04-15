@@ -1,56 +1,40 @@
 import { http } from "@/utils/http";
 import { baseUrlApi } from "./utils";
+import type {
+  AttentionResult,
+  DutyInfoResult,
+  LatestNote,
+  MaterialResult,
+  addResult,
+  BaseResult
+} from "@/api/type";
 
-export type MaterialResult = {
-  code: number;
-  msg: string;
-  data: [
-    {
-      id: number;
-      uuid: string;
-      name: string;
-      model: string;
-      position: string;
-      number: string;
-      created_at: string;
-      updated_at: string;
+export const getMaterialMeta = async (
+  depart: string,
+  page?: number,
+  page_size?: number
+) => {
+  return http.request<MaterialResult>("get", baseUrlApi("material/meta"), {
+    params: {
+      depart,
+      page,
+      page_size
     }
-  ];
+  });
 };
 
-export type AttentionResult = {
-  code: number;
-  msg: string;
-  data: [
-    {
-      id: number;
-      uuid: string;
-      note: string;
+export const addMaterialMeta = async (data: object) => {
+  return http.request<addResult>("post", baseUrlApi("material/add_meta"), {
+    data
+  });
+};
+
+export const deleteMaterialMeta = async (idList: Array<number>) => {
+  return http.request<BaseResult>("delete", baseUrlApi("material/delete"), {
+    data: {
+      idList
     }
-  ];
-};
-
-type LatestNote = {
-  code: number;
-  msg: string;
-  data: {
-    note: string;
-    depart: string;
-    dutyDate: string;
-  };
-};
-
-export type DutyInfoResult = {
-  code: number;
-  msg: string;
-  data: {
-    dutyPerson: string;
-    dutyPersonDepart: string;
-  };
-};
-
-export const getGlbList = () => {
-  return http.request<MaterialResult>("get", baseUrlApi("material/glb_list"));
+  });
 };
 
 export const getGlbAttentionList = () => {
