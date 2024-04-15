@@ -9,10 +9,16 @@ import type {
   BaseResult
 } from "@/api/type";
 
-export const getMaterialMeta = async (depart: string) => {
+export const getMaterialMeta = async (
+  depart: string,
+  page?: number,
+  page_size?: number
+) => {
   return http.request<MaterialResult>("get", baseUrlApi("material/meta"), {
     params: {
-      depart
+      depart,
+      page,
+      page_size
     }
   });
 };

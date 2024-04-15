@@ -10,7 +10,7 @@ export type MaterialItem = {
   model: string;
   depart?: string;
   position: string;
-  number: string;
+  number: number;
   created_at?: string;
   updated_at?: string;
 };
@@ -21,7 +21,7 @@ export type addResult = BaseResult & {
 
 export type MaterialResult = BaseResult & {
   page: number;
-  pageSize: number;
+  page_size: number;
   total: number;
   data: [MaterialItem];
 };

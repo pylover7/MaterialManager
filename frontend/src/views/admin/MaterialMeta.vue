@@ -4,7 +4,7 @@ import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Delete from "@iconify-icons/ep/delete";
 import Add from "@iconify-icons/ep/circle-plus";
-import type { PaginationProps } from "@pureadmin/table";
+import { PaginationProps, PureTable } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
 import {
   getMaterialMeta,
@@ -72,12 +72,23 @@ function handleSelectionChange(val) {
 }
 // 表格分页配置
 const pagination = reactive<PaginationProps>({
-  total: 0,
+  total: 1,
   pageSize: 10,
   currentPage: 1,
-  background: true,
-  hideOnSinglePage: true
+  background: true
 });
+// 表格页面大小改变回调
+const pageSizeChange = (size: number) => {
+  pagination.pageSize = size;
+  console.log(pagination);
+  if (!!area.value) onSearch();
+};
+// 表格翻页回调
+const pageCurrentChange = (page: number) => {
+  pagination.currentPage = page;
+  console.log(pagination);
+  if (!!area.value) onSearch();
+};
 // 表格列
 const columns: TableColumnList = [
   {
@@ -150,11 +161,15 @@ async function onSearch() {
   if (area.value) {
     loading.value = true;
     dataList.length = 0;
-    await getMaterialMeta(area.value)
+    await getMaterialMeta(
+      area.value,
+      pagination.currentPage,
+      pagination.pageSize
+    )
       .then(res => {
         dataList.push(...res.data);
         pagination.total = res.total;
-        pagination.pageSize = res.pageSize;
+        pagination.pageSize = res.page_size;
         pagination.currentPage = res.page;
       })
       .catch(e => {
@@ -189,14 +204,14 @@ const addForm = reactive<MaterialItem>({
   name: "",
   model: "",
   position: "",
-  number: ""
+  number: 1
 });
 // 清除添加物资表单数据
 const clearAddForm = () => {
   const keys = Object.keys(addForm);
 
   for (const key of keys) {
-    addForm[key] = "";
+    addForm[key] = typeof addForm[key] === "string" ? "" : 1;
   }
 };
 // 添加物资表单数据校验
@@ -319,6 +334,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             color: 'var(--el-text-color-primary)'
           }"
           @selection-change="handleSelectionChange"
+          @page-current-change="pageCurrentChange"
+          @page-size-change="pageSizeChange"
         />
       </template>
     </PureTableBar>
@@ -354,7 +371,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
               <el-input v-model="addForm.position" />
             </el-form-item>
             <el-form-item label="数量" prop="number">
-              <el-input v-model="addForm.number" />
+              <el-input-number
+                v-model="addForm.number"
+                :controls="false"
+                size="default"
+              />
             </el-form-item>
           </el-form>
         </div>

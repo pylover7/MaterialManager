@@ -59,7 +59,7 @@ const notification = (
       position = "top-right",
       showClose = false,
       onClose,
-      offset = 100,
+      offset = 80,
       appendTo = document.body,
       zIndex
     } = params;

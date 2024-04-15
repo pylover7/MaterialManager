@@ -41,7 +41,7 @@ interface tableDataRow {
 interface tableData extends Array<tableDataRow> {}
 
 const columns: TableColumnList = [
-  { label: "序号", prop: "id", width: "60" },
+  { label: "序号", type: "index", width: "60" },
   { label: "位置", prop: "position" },
   { label: "名称", prop: "name" },
   { label: "型号", prop: "model", width: "200" },

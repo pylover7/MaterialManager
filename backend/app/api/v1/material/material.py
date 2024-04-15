@@ -49,14 +49,11 @@ async def get_meta(
 
 @router.post("/add_meta", summary="添加或修改物资源数据")
 async def add_meta(data: MaterialCreate | MaterialUpdate):
-    logger.info(data.create_dict())
     if hasattr(data, "id"):
         result: Material = await materialController.update(data.id, data.update_dict())
     else:
         data: MaterialCreate = data.create_dict()
         data["uuid"] = generate_uuid(data["name"])
-        print(data)
-        logger.info(data)
         result: Material = await materialController.create(data)
     result = await result.to_dict()
     if result:

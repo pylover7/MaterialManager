@@ -9,7 +9,7 @@ class Material(BaseModel):
     name: Optional[str] = None
     model: Optional[str] = None
     position: Optional[str] = None
-    number: Optional[str] = None
+    number: Optional[int] = None
     depart: Optional[str] = None
 
 
@@ -17,7 +17,7 @@ class MaterialCreate(BaseModel):
     name: str = Field(description="物资名字")
     model: str = Field(description="物资型号")
     position: str = Field(description="物资位置")
-    number: str = Field(description="物资数量")
+    number: int = Field(description="物资数量")
     depart: str = Field(description="物资所属部门")
     uuid: UUID = None
 
@@ -31,7 +31,7 @@ class MaterialUpdate(BaseModel):
     name: str = Field(description="物资名字")
     model: str = Field(description="物资型号")
     position: str = Field(description="物资位置")
-    number: str = Field(description="物资数量")
+    number: int = Field(description="物资数量")
 
     def update_dict(self):
         # 更新字典
