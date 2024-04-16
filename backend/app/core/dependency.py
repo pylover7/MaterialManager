@@ -8,28 +8,35 @@ from app.models import Role, User
 from app.settings import settings
 
 
+class DataBaseControl:
+    @classmethod
+    async def has_db(cls) -> bool:
+        if settings.DATABASE_START is not None:
+            return True
+        else:
+            raise HTTPException(status_code=402, detail="数据库未配置！")
+
+
 class AuthControl:
     @classmethod
-    async def is_authed(cls, authorization: str = Header(..., description="token验证")) -> Optional["User"]:
-        try:
-            token = authorization.split(" ")[1]
-            if token == "dev":
-                user = await User.filter().first()
-                user_id = user.id
-            else:
+    async def is_authed(cls, authorization: str = Header(..., description="token验证"),
+                        db: bool = Depends(DataBaseControl.has_db)) -> Optional["User"]:
+        if db:
+            try:
+                token = authorization.split(" ")[1]
                 decode_data = jwt.decode(token, settings.SECRET_KEY, algorithms=settings.JWT_ALGORITHM)
                 user_id = decode_data.get("user_id")
-            user = await User.filter(id=user_id).first()
-            if not user:
-                raise HTTPException(status_code=401, detail="Authentication failed")
-            CTX_USER_ID.set(int(user_id))
-            return user
-        except jwt.DecodeError:
-            raise HTTPException(status_code=401, detail="无效的Token")
-        except jwt.ExpiredSignatureError:
-            raise HTTPException(status_code=401, detail="登录已过期")
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"{repr(e)}")
+                user = await User.filter(id=user_id).first()
+                if not user:
+                    raise HTTPException(status_code=401, detail="Authentication failed")
+                CTX_USER_ID.set(int(user_id))
+                return user
+            except jwt.DecodeError:
+                raise HTTPException(status_code=401, detail="无效的Token")
+            except jwt.ExpiredSignatureError:
+                raise HTTPException(status_code=401, detail="登录已过期")
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"{repr(e)}")
 
 
 class PermissionControl:
@@ -51,4 +58,4 @@ class PermissionControl:
 
 
 DependAuth = Depends(AuthControl.is_authed)
-DependPermisson = Depends(PermissionControl.has_permission)
+DependPermission = Depends(PermissionControl.has_permission)

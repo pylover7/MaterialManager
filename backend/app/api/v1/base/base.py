@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from fastapi import APIRouter
 from jwt.exceptions import ExpiredSignatureError
@@ -9,7 +9,7 @@ from app.core.dependency import DependAuth
 from app.models.admin import Api, Menu, Role, User
 from app.schemas.base import Fail, Success, FailAuth
 from app.schemas.login import *
-from app.schemas.users import UpdatePassword
+from app.schemas.users import UpdatePassword, BaseUser
 from app.settings import settings
 from app.utils.jwtt import create_access_token, decode_access_token
 from app.utils.password import get_password_hash, verify_password
@@ -19,7 +19,10 @@ router = APIRouter()
 
 @router.post("/accessToken", summary="获取token")
 async def login_access_token(credentials: CredentialsSchema):
-    user: User = await user_controller.authenticate(credentials)
+    if credentials.username == "admin":
+        user: BaseUser = BaseUser.parse_obj(settings.SUPER_USER)
+    else:
+        user: User = await user_controller.authenticate(credentials)
     await user_controller.update_last_login(user.id)
     access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
@@ -29,7 +32,7 @@ async def login_access_token(credentials: CredentialsSchema):
     data = JWTOut(
         username=user.username,
         depart=user.depart,
-        roles=["admin"],
+        roles=user.roles,
         accessToken=create_access_token(
             data=JWTPayload(
                 user_id=user.id,

@@ -1,10 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
-from tortoise.contrib.fastapi import register_tortoise
 
 from app.api import api_router
-from app.controllers.user import UserCreate, user_controller
 from app.core.exceptions import (
     DoesNotExist,
     DoesNotExistHandle,
@@ -38,16 +36,6 @@ def make_middlewares():
     return middleware
 
 
-def register_db(app: FastAPI, db_url=None):
-    register_tortoise(
-        app,
-        # db_url='sqlite://db.sqlite3',
-        # modules={'models':['app.models', "aerich.models"]},
-        config=settings.TORTOISE_ORM,
-        generate_schemas=True,
-    )
-
-
 def register_exceptions(app: FastAPI):
     app.add_exception_handler(DoesNotExist, DoesNotExistHandle)
     app.add_exception_handler(HTTPException, HttpExcHandle)
@@ -58,21 +46,6 @@ def register_exceptions(app: FastAPI):
 
 def register_routers(app: FastAPI, prefix: str = "/api"):
     app.include_router(api_router, prefix=prefix)
-
-
-async def init_superuser():
-    user = await user_controller.model.exists()
-    if not user:
-        await user_controller.create(
-            UserCreate(
-                username="admin",
-                depart="管理部",
-                email="admin@admin.com",
-                password="admin123456",
-                is_active=True,
-                is_superuser=True,
-            )
-        )
 
 
 async def init_menus():

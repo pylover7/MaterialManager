@@ -5,7 +5,6 @@ from fastapi.exceptions import HTTPException
 from tortoise.expressions import Q
 
 from app.controllers.user import UserController
-from app.core.dependency import DependPermisson
 from app.schemas.base import Success, SuccessExtra
 from app.schemas.users import *
 
@@ -48,7 +47,7 @@ async def create_user(
 ):
     user_controller = UserController()
     user = await user_controller.get_by_email(user_in.email)
-    if user:
+    if (user is None) | (user_in.username == "admin"):
         raise HTTPException(
             status_code=400,
             detail="The user with this email already exists in the system.",

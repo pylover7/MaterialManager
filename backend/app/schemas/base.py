@@ -62,4 +62,3 @@ class FailAuth(JSONResponse):
         content = {"code": code, "msg": msg}
         content.update(kwargs)
         super().__init__(content=content, status_code=code)
-

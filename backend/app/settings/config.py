@@ -82,7 +82,7 @@ class Settings:
         return self.data["secret"]["jwt_refresh_token_expire_min"]
 
     @property
-    def DATABASE_START(self):
+    def DATABASE_START(self) -> str:
         return self.data["db"]["start"]
 
     @DATABASE_START.setter
@@ -148,6 +148,19 @@ class Settings:
         self._save()
 
     @property
+    def SUPER_USER_PWD(self) -> str:
+        return self.data["superUser"]["password"]
+
+    @SUPER_USER_PWD.setter
+    def SUPER_USER_PWD(self, value: str):
+        self.data["superUser"]["password"] = value
+        self._save()
+
+    @property
+    def SUPER_USER(self) -> dict:
+        return self.data["superUser"]
+
+    @property
     def TORTOISE_ORM(self):
         return {
             "connections": {
@@ -180,4 +193,5 @@ class Settings:
 settings = Settings()
 
 if __name__ == '__main__':
-    print(settings.data)
+    settings.DATABASE_START = "mysql"
+    print(settings.DATABASE_START)
