@@ -1,4 +1,6 @@
 # backend
+*.yml
+*.toml
 .env.*
 .env
 *.pyc

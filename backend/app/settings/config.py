@@ -1,112 +1,183 @@
-import os
-from dotenv import load_dotenv
 from pathlib import Path
-from typing import List
+from ruamel.yaml import YAML
 
-from pydantic_settings import BaseSettings
-
-env_path = Path.joinpath(Path(__file__).parent.parent.parent, ".env")
-load_dotenv(dotenv_path=env_path, verbose=True, override=True)
+config_path = Path.joinpath(Path(__file__).parent.parent.parent, "config.yml")
+yaml = YAML()
 
 
-class Settings(BaseSettings):
-    PROJECT_NAME: str
-    VERSION: str
-    APP_TITLE: str
-    APP_DESCRIPTION: str
-
-    HOST: str
-    PORT: int
-    RELOAD: bool
-
-    CORS_ORIGINS: List = ["*"]
-    CORS_ALLOW_CREDENTIALS: bool = True
-    CORS_ALLOW_METHODS: List = ["*"]
-    CORS_ALLOW_HEADERS: List = ["*"]
-
+class Settings:
     DEBUG: bool = True
-
-    PROJECT_ROOT: str = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-    BASE_DIR: str = os.path.abspath(os.path.join(PROJECT_ROOT, os.pardir))
-    LOGS_ROOT: str = os.path.join(BASE_DIR, "app/logs")
-    SECRET_KEY: str  # openssl rand -hex 32
-    JWT_ALGORITHM: str  # HS256
-    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int
-    JWT_REFRESH_TOKEN_EXPIRE_MINUTES: int
-
-    TORTOISE_ORM: dict = {
-        "connections": {
-            # "sqlite": {
-            #     "engine": "tortoise.backends.sqlite",
-            #     "credentials": {"file_path": f"{BASE_DIR}/db.sqlite3"},
-            # },
-            "mysql": {
-                "engine": "tortoise.backends.mysql",
-                "credentials": {
-                    "host": os.getenv("DB_HOST"),
-                    "port": os.getenv("DB_PORT"),
-                    "user": os.getenv("DB_USERNAME"),
-                    "password": os.getenv("DB_PASSWORD"),
-                    "database": os.getenv("DB_NAME"),
-                }
-            }
-        },
-        "apps": {
-            "models": {
-                "models": ["app.models"],
-                "default_connection": "mysql",
-            },
-        },
-        "use_tz": False,
-        "timezone": "Asia/Shanghai",
-    }
     DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S"
 
-    APP_LOG_CONFIG: object = {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "formatters": {
-            "default": {
-                "()": "uvicorn.logging.DefaultFormatter",
-                "fmt": "%(levelprefix)s %(message)s",
-                "use_colors": "null"
+    def __init__(self):
+        with open(config_path, "rb") as f:
+            self.data = yaml.load(f)
+
+    def _save(self):
+        with open(config_path, "w", encoding="utf-8") as f:
+            yaml.dump(self.data, f)
+
+    @property
+    def APP_TITLE(self) -> str:
+        return self.data["app"]["title"]
+
+    @APP_TITLE.setter
+    def APP_TITLE(self, value: str):
+        self.data["app"]["title"] = value
+
+    @property
+    def APP_DESCRIPTION(self):
+        return self.data["app"]["description"]
+
+    @property
+    def VERSION(self):
+        return self.data["app"]["version"]
+
+    @property
+    def HOST(self) -> str:
+        return self.data["server"]["host"]
+
+    @property
+    def PORT(self) -> int:
+        return self.data["server"]["port"]
+
+    @property
+    def RELOAD(self) -> bool:
+        return self.data["server"]["reload"]
+
+    @property
+    def CORS_ORIGINS(self) -> list[str]:
+        return self.data["server"]["cors_origins"]
+
+    @property
+    def CORS_ALLOW_CREDENTIALS(self) -> bool:
+        return self.data["server"]["cors_allow_credentials"]
+
+    @property
+    def CORS_ALLOW_METHODS(self) -> list[str]:
+        return self.data["server"]["cors_allow_methods"]
+
+    @property
+    def CORS_ALLOW_HEADERS(self) -> list[str]:
+        return self.data["server"]["cors_allow_headers"]
+
+    @property
+    def SECRET_KEY(self):
+        return self.data["secret"]["secret_key"]
+
+    @SECRET_KEY.setter
+    def SECRET_KEY(self, value: str):
+        self.data["secret"]["secret_key"] = value
+
+    @property
+    def JWT_ALGORITHM(self):
+        return self.data["secret"]["jwt_algorithm"]
+
+    @property
+    def JWT_ACCESS_TOKEN_EXPIRE_MINUTES(self):
+        return self.data["secret"]["jwt_access_token_expire_min"]
+
+    @property
+    def JWT_REFRESH_TOKEN_EXPIRE_MINUTES(self):
+        return self.data["secret"]["jwt_refresh_token_expire_min"]
+
+    @property
+    def DATABASE_START(self):
+        return self.data["db"]["start"]
+
+    @DATABASE_START.setter
+    def DATABASE_START(self, value: str):
+        self.data["db"]["start"] = value
+        self._save()
+
+    @property
+    def DATABASE_HOST(self):
+        return self.data["db"]["host"]
+
+    @DATABASE_HOST.setter
+    def DATABASE_HOST(self, value: int):
+        self.data["db"]["host"] = value
+        self._save()
+
+    @property
+    def DATABASE_PORT(self) -> int:
+        """
+        数据库端口
+        """
+        return self.data["db"]["port"]
+
+    @DATABASE_PORT.setter
+    def DATABASE_PORT(self, value: int):
+        self.data["db"]["port"] = value
+        self._save()
+
+    @property
+    def DATABASE_USERNAME(self) -> str:
+        """
+        数据库用户名
+        """
+        return self.data["db"]["username"]
+
+    @DATABASE_USERNAME.setter
+    def DATABASE_USERNAME(self, value: str):
+        self.data["db"]["username"] = value
+        self._save()
+
+    @property
+    def DATABASE_PASSWORD(self) -> str:
+        """
+        数据库密码
+        """
+        return self.data["db"]["password"]
+
+    @DATABASE_PASSWORD.setter
+    def DATABASE_PASSWORD(self, value: str):
+        self.data["db"]["password"] = value
+        self._save()
+
+    @property
+    def DATABASE_NAME(self) -> str:
+        """
+        数据库名
+        """
+        return self.data["db"]["name"]
+
+    @DATABASE_NAME.setter
+    def DATABASE_NAME(self, value: str):
+        self.data["db"]["name"] = value
+        self._save()
+
+    @property
+    def TORTOISE_ORM(self):
+        return {
+            "connections": {
+                "default": {
+                    "engine": "tortoise.backends.mysql",
+                    "credentials": {
+                        "host": self.DATABASE_HOST,
+                        "port": self.DATABASE_PORT,
+                        "user": self.DATABASE_USERNAME,
+                        "password": self.DATABASE_PASSWORD,
+                        "database": self.DATABASE_NAME,
+                    }
+                }
             },
-            "access": {
-                "()": "uvicorn.logging.AccessFormatter",
-                "fmt": "%(asctime)s - %(levelprefix)s %(client_addr)s - \"%(request_line)s\" %(status_code)s"
-            }
-        },
-        "handlers": {
-            "default": {
-                "formatter": "default",
-                "class": "logging.StreamHandler",
-                "stream": "ext://sys.stderr"
+            "apps": {
+                "models": {
+                    "models": ["app.models"],
+                    "default_connection": "default",
+                },
             },
-            "access": {
-                "formatter": "access",
-                "class": "logging.StreamHandler",
-                "stream": "ext://sys.stdout"
-            }
-        },
-        "loggers": {
-            "uvicorn": {
-                "handlers": [
-                    "default"
-                ],
-                "level": "INFO"
-            },
-            "uvicorn.error": {
-                "level": "INFO"
-            },
-            "uvicorn.access": {
-                "handlers": [
-                    "access"
-                ],
-                "level": "INFO",
-                "propagate": False
-            }
+            "use_tz": False,
+            "timezone": "Asia/Shanghai",
         }
-    }
+
+    @property
+    def APP_LOG_CONFIG(self) -> dict:
+        return self.data["log"]
 
 
 settings = Settings()
+
+if __name__ == '__main__':
+    print(settings.data)
