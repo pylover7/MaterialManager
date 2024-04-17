@@ -15,6 +15,15 @@ export default {
         icon: "fluent:person-edit-48-regular",
         keepAlive: true
       }
+    },
+    {
+      path: "/superAdmin/logs",
+      name: "Logs",
+      component: () => import("@/views/superAdmin/Logs.vue"),
+      meta: {
+        title: "日志",
+        icon: "fluent:person-edit-48-regular"
+      }
     }
   ]
 } satisfies RouteConfigsTable;

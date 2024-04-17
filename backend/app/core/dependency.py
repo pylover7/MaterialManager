@@ -6,6 +6,7 @@ from fastapi import Depends, Header, HTTPException, Request
 from app.core.ctx import CTX_USER_ID
 from app.models import Role, User
 from app.settings import settings
+from app.log import logger
 
 
 class DataBaseControl:
@@ -14,7 +15,8 @@ class DataBaseControl:
         if settings.DATABASE_START is not None:
             return True
         else:
-            raise HTTPException(status_code=402, detail="数据库未配置！")
+            logger.error("数据库未配置！")
+            raise HTTPException(status_code=403, detail="数据库未配置！禁止访问！")
 
 
 class AuthControl:
@@ -50,6 +52,7 @@ class PermissionControl:
         if not roles:
             raise HTTPException(status_code=403, detail="The user is not bound to a role")
         apis = [await role.apis for role in roles]
+        logger.debug(f"{current_user.username} 访问了 {method} {path} 接口")
         permission_apis = list(set((api.method, api.path) for api in sum(apis, [])))
         # path = "/api/v1/auth/userinfo"
         # method = "GET"

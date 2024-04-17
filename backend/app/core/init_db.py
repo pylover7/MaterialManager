@@ -17,11 +17,11 @@ async def tortoise_init():
 def test_db(db_info: DbInfo) -> bool:
     try:
         conn = pymysql.connect(
-            host=db_info.db_host,
-            user=db_info.db_user,
-            password=db_info.db_password,
-            db=db_info.db_name,
-            port=db_info.db_port)
+            host=db_info.host,
+            user=db_info.username,
+            password=db_info.password,
+            db=db_info.database,
+            port=db_info.port)
         with conn.cursor() as cursor:
             cursor.execute("SELECT 1")
             result = cursor.fetchone()
@@ -32,16 +32,16 @@ def test_db(db_info: DbInfo) -> bool:
         conn.close()
         return True
     except Exception as e:
-        logger.info(f"数据库测试失败，失败原因：{e}")
+        logger.error(f"数据库测试失败，失败原因：{e}")
         return False
 
 
 def set_db(db_info: DbInfo):
-    settings.DATABASE_START = db_info.db_start
-    settings.DATABASE_HOST = db_info.db_host
-    settings.DATABASE_PORT = db_info.db_port
-    settings.DATABASE_USERNAME = db_info.db_user
-    settings.DATABASE_PASSWORD = db_info.db_password
-    settings.DATABASE_NAME = db_info.db_name
+    settings.DATABASE_START = db_info.start
+    settings.DATABASE_HOST = db_info.host
+    settings.DATABASE_PORT = db_info.port
+    settings.DATABASE_USERNAME = db_info.username
+    settings.DATABASE_PASSWORD = db_info.password
+    settings.DATABASE_NAME = db_info.database
 
     run_async(tortoise_init())

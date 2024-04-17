@@ -11,9 +11,9 @@ class BaseUser(BaseModel):
     depart: Optional[str] = None
     is_active: Optional[bool] = True
     is_superuser: Optional[bool] = False
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
-    last_login: Optional[datetime]
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    last_login: Optional[datetime] = None
     roles: Optional[list] = []
 
 

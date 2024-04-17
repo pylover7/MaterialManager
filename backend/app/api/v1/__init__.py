@@ -18,4 +18,4 @@ v1_router.include_router(roles_router, prefix="/role", dependencies=[DependPermi
 v1_router.include_router(menus_router, prefix="/menu", dependencies=[DependPermission])
 v1_router.include_router(apis_router, prefix="/api", dependencies=[DependPermission])
 v1_router.include_router(material_router, prefix="/material", dependencies=[DependPermission])
-v1_router.include_router(admin_router, prefix="/admin", dependencies=[DependPermission])
+v1_router.include_router(admin_router, prefix="/admin")

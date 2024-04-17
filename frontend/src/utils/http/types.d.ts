@@ -16,6 +16,7 @@ export type RequestMethods = Extract<
 
 export interface PureHttpError extends AxiosError {
   isCancelRequest?: boolean;
+  response?: PureHttpResponse;
 }
 
 export interface PureHttpResponse extends AxiosResponse {
