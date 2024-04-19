@@ -6,6 +6,7 @@ from app.core.init_app import (
     register_exceptions,
     register_routers,
 )
+from app.core.init_db import init_db
 from app.log import logger
 
 try:
@@ -25,6 +26,7 @@ def create_app() -> FastAPI:
     register_exceptions(app)
     register_routers(app, prefix="/api")
     logger.success("应用初始化成功")
+    init_db()
     return app
 
 

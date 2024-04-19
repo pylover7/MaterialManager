@@ -3,7 +3,7 @@ from datetime import timedelta
 from fastapi import APIRouter
 from jwt.exceptions import ExpiredSignatureError
 
-from app.controllers.user import UserController, user_controller
+from app.controllers.user import user_controller
 from app.core.ctx import CTX_USER_ID
 from app.core.dependency import DependAuth
 from app.models.admin import Api, Menu, Role, User
@@ -19,7 +19,8 @@ router = APIRouter()
 
 @router.post("/accessToken", summary="获取token")
 async def login_access_token(credentials: CredentialsSchema):
-    if credentials.username == "admin":
+    if (settings.DATABASE_START is None and credentials.username == settings.SUPER_USER["username"]
+            and credentials.password == settings.SUPER_USER_PWD):
         user: BaseUser = BaseUser.parse_obj(settings.SUPER_USER)
     else:
         user: User = await user_controller.authenticate(credentials)
@@ -28,11 +29,12 @@ async def login_access_token(credentials: CredentialsSchema):
     refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
     expire = datetime.now() + access_token_expires
     expire_refresh = datetime.now() + refresh_token_expires
+    roles = await user.roles.all().values_list("name", flat=True)
 
     data = JWTOut(
         username=user.username,
         depart=user.depart,
-        roles=user.roles,
+        roles=roles,
         accessToken=create_access_token(
             data=JWTPayload(
                 user_id=user.id,
@@ -144,7 +146,6 @@ async def get_user_api():
 
 @router.post("/update_password", summary="更新用户密码", dependencies=[DependAuth])
 async def update_user_password(req_in: UpdatePassword):
-    user_controller = UserController()
     user = await user_controller.get(req_in.id)
     verified = verify_password(req_in.old_password, user.password)
     if not verified:

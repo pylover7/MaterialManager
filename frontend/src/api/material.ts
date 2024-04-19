@@ -1,13 +1,12 @@
 import { http } from "@/utils/http";
 import { baseUrlApi } from "./utils";
+import type { BaseResult } from "@/types/base";
 import type {
   AttentionResult,
   DutyInfoResult,
-  LatestNote,
-  MaterialResult,
-  addResult,
-  BaseResult
-} from "@/api/type";
+  LatestNote
+} from "@/types/material";
+import type { addResult, MaterialResult } from "@/types/admin";
 
 export const getMaterialMeta = async (
   depart: string,

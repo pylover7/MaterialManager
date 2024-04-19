@@ -4,6 +4,7 @@
 # @Author    :dayezi
 from fastapi import APIRouter
 
+from app.settings import settings
 from app.core.init_db import test_db, set_db
 from app.log import logger
 from app.schemas import Success, Fail
@@ -12,7 +13,13 @@ from app.schemas.admin import DbInfo
 router = APIRouter()
 
 
-@router.post("/test_db", summary="测试数据库连接")
+@router.get("/get_db_info")
+async def get_db_info():
+    data = settings.DATABASE_INFO.model_dump()
+    return Success(data=data)
+
+
+@router.post("/test_db_info", summary="测试数据库连接")
 async def test_db_conn(data: DbInfo):
     if test_db(data):
         return Success(msg="数据库链接成功！")
@@ -20,10 +27,10 @@ async def test_db_conn(data: DbInfo):
         return Fail(msg="数据库链接失败！")
 
 
-@router.post("/set_db", summary="设置数据库连接")
+@router.post("/set_db_info", summary="设置数据库连接")
 async def set_db_conn(data: DbInfo):
     try:
-        set_db(data)
+        await set_db(data)
         return Success(msg="数据库设置成功！")
     except Exception as e:
         logger.error(e)

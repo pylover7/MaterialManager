@@ -4,14 +4,29 @@
 # @Author    :dayezi
 from tortoise import Tortoise, run_async
 import pymysql
+
+from app.controllers import user_controller
+from app.schemas.users import UserCreate
 from app.settings import settings
 from app.log import logger
 from app.schemas.admin import DbInfo
 
 
+def init_db():
+    if settings.DATABASE_START:
+        run_async(tortoise_init())
+
+
 async def tortoise_init():
     await Tortoise.init(config=settings.TORTOISE_ORM)
     await Tortoise.generate_schemas(safe=True)
+    await register_superAdmin()
+
+
+async def register_superAdmin():
+    user = await user_controller.model.exists()
+    if not user:
+        await user_controller.create(UserCreate.parse_obj(settings.SUPER_USER))
 
 
 def test_db(db_info: DbInfo) -> bool:
@@ -36,7 +51,7 @@ def test_db(db_info: DbInfo) -> bool:
         return False
 
 
-def set_db(db_info: DbInfo):
+async def set_db(db_info: DbInfo):
     settings.DATABASE_START = db_info.start
     settings.DATABASE_HOST = db_info.host
     settings.DATABASE_PORT = db_info.port
@@ -44,4 +59,4 @@ def set_db(db_info: DbInfo):
     settings.DATABASE_PASSWORD = db_info.password
     settings.DATABASE_NAME = db_info.database
 
-    run_async(tortoise_init())
+    await tortoise_init()

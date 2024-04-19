@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import { reactive, ref, Ref } from "vue";
+import { onMounted, reactive, ref, Ref } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { testDB } from "@/api/admin";
+import { setDB, testDB, getDB } from "@/api/superAdmin";
 import { successNotification, warningNotification } from "@/utils/notification";
+import { dbInfoType } from "@/types/superAdmin";
+import { removeToken } from "@/utils/auth";
+import { resetRouter, router } from "@/router";
+import { message } from "@/utils/message";
 
 defineOptions({
   name: "Settings"
 });
 
-interface RuleForm {
-  start: string;
-  host: string;
-  port: number;
-  username: string;
-  password: string;
-  database: string;
-}
+onMounted(async () => {
+  await initDbInfoForm();
+});
+
 // 表单大小
 const formSize: Ref<"" | "default" | "small" | "large"> = ref("default");
 // 表格ref
 const dbFormRef = ref<FormInstance>();
 // 表格信息
-const dbInfoForm = reactive<RuleForm>({
+const dbInfoForm = reactive<dbInfoType>({
   start: "",
   host: "",
   port: 3306,
@@ -29,8 +29,16 @@ const dbInfoForm = reactive<RuleForm>({
   password: "",
   username: ""
 });
+// 初始化表格信息
+const initDbInfoForm = async () => {
+  getDB().then(res => {
+    for (let key in res.data) {
+      dbInfoForm[key] = res.data[key];
+    }
+  });
+};
 // 校验规则
-const rules = reactive<FormRules<RuleForm>>({
+const rules = reactive<FormRules<dbInfoType>>({
   start: [
     {
       required: true,
@@ -92,7 +100,19 @@ const setBtn = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      console.log("submit!");
+      setDB(dbInfoForm)
+        .then(res => {
+          successNotification(res.msg);
+          initDbInfoForm();
+          removeToken();
+          resetRouter();
+          router.push("/login").then(() => {
+            message("请重新登录！", { type: "warning" });
+          });
+        })
+        .catch(err => {
+          warningNotification(err.msg);
+        });
     }
   });
 };
@@ -140,7 +160,6 @@ const setBtn = async (formEl: FormInstance | undefined) => {
               <el-input
                 v-model="dbInfoForm.password"
                 type="password"
-                show-password
                 placeholder="test_pwd"
               />
             </el-form-item>

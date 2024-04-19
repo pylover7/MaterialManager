@@ -6,9 +6,9 @@ from pydantic import BaseModel, Field
 
 
 class DbInfo(BaseModel):
-    start: str = Field(..., description="数据库启动类型")
-    database: str = Field(..., description="数据库名称")
-    host: str = Field(..., description="数据库地址")
-    port: int = Field(3306, description="数据库端口")
-    username: str = Field(..., description="数据库用户名")
-    password: str = Field(..., description="数据库密码")
+    start: str | None = Field(..., description="数据库启动类型")
+    database: str | None = Field(..., description="数据库名称")
+    host: str | None = Field(..., description="数据库地址")
+    port: int | None = Field(3306, description="数据库端口")
+    username: str | None = Field(..., description="数据库用户名")
+    password: str | None = Field(..., description="数据库密码")

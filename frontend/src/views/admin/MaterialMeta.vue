@@ -12,12 +12,12 @@ import {
   deleteMaterialMeta
 } from "@/api/material";
 import type { FormInstance, FormRules } from "element-plus";
-import type { MaterialItem } from "@/api/type";
 import {
   errorNotification,
   successNotification,
   warningNotification
 } from "@/utils/notification";
+import { MaterialItem } from "@/types/base";
 
 defineOptions({
   name: "MaterialMeta"

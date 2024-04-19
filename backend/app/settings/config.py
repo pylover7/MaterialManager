@@ -1,6 +1,8 @@
 from pathlib import Path
 from ruamel.yaml import YAML
 
+from app.schemas.admin import DbInfo
+
 config_path = Path.joinpath(Path(__file__).parent.parent.parent, "config.yml")
 yaml = YAML()
 
@@ -82,6 +84,10 @@ class Settings:
         return self.data["secret"]["jwt_refresh_token_expire_min"]
 
     @property
+    def DATABASE_INFO(self) -> DbInfo:
+        return DbInfo.parse_obj(self.data["db"])
+
+    @property
     def DATABASE_START(self) -> str:
         return self.data["db"]["start"]
 
@@ -140,11 +146,11 @@ class Settings:
         """
         数据库名
         """
-        return self.data["db"]["name"]
+        return self.data["db"]["database"]
 
     @DATABASE_NAME.setter
     def DATABASE_NAME(self, value: str):
-        self.data["db"]["name"] = value
+        self.data["db"]["database"] = value
         self._save()
 
     @property
@@ -171,7 +177,7 @@ class Settings:
                         "port": self.DATABASE_PORT,
                         "user": self.DATABASE_USERNAME,
                         "password": self.DATABASE_PASSWORD,
-                        "database": self.DATABASE_NAME,
+                        "database": self.DATABASE_NAME
                     }
                 }
             },
