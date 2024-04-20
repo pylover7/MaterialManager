@@ -5,14 +5,17 @@ from fastapi import Depends, Header, HTTPException, Request
 
 from app.core.ctx import CTX_USER_ID
 from app.models import Role, User
+from app.schemas.users import BaseUser
 from app.settings import settings
 from app.log import logger
 
 
 class DataBaseControl:
     @classmethod
-    async def has_db(cls) -> bool:
-        if settings.DATABASE_START is not None:
+    async def has_db(cls, request: Request) -> bool:
+        # 设置数据库未配置时的白名单
+        whit_list = ["/api/v1/admin/test_db_info", "/api/v1/admin/set_db_info"]
+        if (settings.DATABASE_START is not None) or request.url.path in whit_list:
             return True
         else:
             logger.error("数据库未配置！")
@@ -22,13 +25,17 @@ class DataBaseControl:
 class AuthControl:
     @classmethod
     async def is_authed(cls, authorization: str = Header(..., description="token验证"),
-                        db: bool = Depends(DataBaseControl.has_db)) -> Optional["User"]:
+                        db: bool = Depends(DataBaseControl.has_db)) -> BaseUser | User:
         if db:
             try:
                 token = authorization.split(" ")[1]
                 decode_data = jwt.decode(token, settings.SECRET_KEY, algorithms=settings.JWT_ALGORITHM)
                 user_id = decode_data.get("user_id")
-                user = await User.filter(id=user_id).first()
+                username = decode_data.get("username")
+                if settings.DATABASE_START is None and username == settings.SUPER_USER["username"]:
+                    return BaseUser.parse_obj(settings.SUPER_USER)
+                else:
+                    user = await User.filter(id=user_id).first()
                 if not user:
                     raise HTTPException(status_code=401, detail="Authentication failed")
                 CTX_USER_ID.set(int(user_id))

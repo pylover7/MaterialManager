@@ -22,14 +22,15 @@ async def login_access_token(credentials: CredentialsSchema):
     if (settings.DATABASE_START is None and credentials.username == settings.SUPER_USER["username"]
             and credentials.password == settings.SUPER_USER_PWD):
         user: BaseUser = BaseUser.parse_obj(settings.SUPER_USER)
+        roles = user.roles
     else:
         user: User = await user_controller.authenticate(credentials)
         await user_controller.update_last_login(user.id)
+        roles = await user.roles.all().values_list("name", flat=True)
     access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
     expire = datetime.now() + access_token_expires
     expire_refresh = datetime.now() + refresh_token_expires
-    roles = await user.roles.all().values_list("name", flat=True)
 
     data = JWTOut(
         username=user.username,

@@ -3,7 +3,7 @@ export default {
   meta: {
     title: "超管",
     rank: 7,
-    icon: "fluent:shield-person-20-regular"
+    icon: "fluent:person-passkey-48-regular"
   },
   children: [
     {
@@ -12,7 +12,7 @@ export default {
       component: () => import("@/views/superAdmin/Settings.vue"),
       meta: {
         title: "设置",
-        icon: "fluent:person-edit-48-regular",
+        icon: "fluent:settings-48-regular",
         keepAlive: true
       }
     },
@@ -22,7 +22,7 @@ export default {
       component: () => import("@/views/superAdmin/Logs.vue"),
       meta: {
         title: "日志",
-        icon: "fluent:person-edit-48-regular"
+        icon: "fluent:text-bullet-list-square-search-20-regular"
       }
     }
   ]
