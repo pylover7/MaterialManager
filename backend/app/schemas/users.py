@@ -1,42 +1,22 @@
-from datetime import datetime
-from typing import List, Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
+from tortoise.contrib.pydantic import pydantic_model_creator
 
-
-class BaseUser(BaseModel):
-    id: int
-    email: Optional[EmailStr] = None
-    username: Optional[str] = None
-    depart: Optional[str] = None
-    is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
-    last_login: Optional[datetime] = None
-    roles: Optional[list] = []
+from app.models.users import User
 
 
-class UserCreate(BaseModel):
-    email: EmailStr = Field(example="admin@qq.com")
-    username: str = Field(example="admin")
-    depart: str = Field(example="管理部")
-    password: str = Field(example="123456")
-    is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
-    roles: Optional[List[int]] = []
+UserPydantic = pydantic_model_creator(User)
+
+
+class UserCreate(UserPydantic):
+    ...
 
     def create_dict(self):
         return self.model_dump(exclude_unset=True, exclude={"roles"})
 
 
-class UserUpdate(BaseModel):
-    id: int
-    email: EmailStr
-    username: str
-    is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
-    roles: Optional[List[int]] = []
+class UserUpdate(UserPydantic):
+    ...
 
     def update_dict(self):
         return self.model_dump(exclude_unset=True, exclude={"roles", "id"})
@@ -46,3 +26,8 @@ class UpdatePassword(BaseModel):
     id: int = Field(description="用户ID")
     old_password: str = Field(description="旧密码")
     new_password: str = Field(description="新密码")
+
+
+if __name__ == '__main__':
+    print(UserPydantic.schema())
+

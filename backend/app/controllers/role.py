@@ -1,7 +1,7 @@
 from typing import List
 
 from app.core.crud import CRUDBase
-from app.models.admin import Api, Menu, Role
+from app.models.users import Api, Menu, Role
 from app.schemas.roles import RoleCreate, RoleUpdate
 
 

@@ -13,6 +13,9 @@ class Material(BaseModel, TimestampMixin, UUIDModel):
     class Meta:
         table = "material"
 
+    class PydanticMeta:
+        exclude = ("id", "uuid", "created_at", "updated_at")
+
 
 class AttentionNote(BaseModel, TimestampMixin, UUIDModel):
     note = fields.CharField(max_length=255, description="事项")
@@ -20,3 +23,6 @@ class AttentionNote(BaseModel, TimestampMixin, UUIDModel):
 
     class Meta:
         table = "attention_note"
+
+    class PydanticMeta:
+        exclude = ("id", "uuid", "created_at", "updated_at")

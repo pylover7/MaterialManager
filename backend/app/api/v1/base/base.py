@@ -6,10 +6,10 @@ from jwt.exceptions import ExpiredSignatureError
 from app.controllers.user import user_controller
 from app.core.ctx import CTX_USER_ID
 from app.core.dependency import DependAuth
-from app.models.admin import Api, Menu, Role, User
+from app.models.users import Api, Menu, Role, User
 from app.schemas.base import Fail, Success, FailAuth
 from app.schemas.login import *
-from app.schemas.users import UpdatePassword, BaseUser
+from app.schemas.users import UpdatePassword, UserPydantic
 from app.settings import settings
 from app.utils.jwtt import create_access_token, decode_access_token
 from app.utils.password import get_password_hash, verify_password
@@ -21,7 +21,7 @@ router = APIRouter()
 async def login_access_token(credentials: CredentialsSchema):
     if (settings.DATABASE_START is None and credentials.username == settings.SUPER_USER["username"]
             and credentials.password == settings.SUPER_USER_PWD):
-        user: BaseUser = BaseUser.parse_obj(settings.SUPER_USER)
+        user = UserPydantic.parse_obj(settings.SUPER_USER)
         roles = user.roles
     else:
         user: User = await user_controller.authenticate(credentials)

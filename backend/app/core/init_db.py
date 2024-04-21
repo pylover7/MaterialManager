@@ -18,9 +18,15 @@ def init_db():
 
 
 async def tortoise_init():
+    logger.info("正在初始化数据库...")
     await Tortoise.init(config=settings.TORTOISE_ORM)
+    logger.info("数据库初始化完成")
+    logger.info("正在生成数据库表...")
     await Tortoise.generate_schemas(safe=True)
+    logger.info("数据库表生成完成")
+    logger.info("正在注册超级管理员...")
     await register_superAdmin()
+    logger.info("超级管理员注册完成")
 
 
 async def register_superAdmin():

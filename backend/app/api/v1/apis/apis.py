@@ -4,7 +4,7 @@ from tortoise.expressions import Q
 
 from app.controllers.api import api_controller
 from app.log import logger
-from app.models.admin import Api
+from app.models.users import Api
 from app.schemas import Success, SuccessExtra
 from app.schemas.apis import *
 

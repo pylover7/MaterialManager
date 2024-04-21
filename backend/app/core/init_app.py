@@ -15,7 +15,7 @@ from app.core.exceptions import (
     ResponseValidationError,
     ResponseValidationHandle,
 )
-from app.models.admin import Menu
+from app.models.users import Menu
 from app.schemas.menus import MenuType
 from app.settings.config import settings
 

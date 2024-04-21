@@ -1,4 +1,5 @@
 from tortoise import fields
+from pydantic import EmailStr
 
 from app.schemas.menus import MenuType
 
@@ -9,42 +10,30 @@ from .enums import MethodType
 class User(BaseModel, TimestampMixin):
     username = fields.CharField(max_length=20, unique=True, description="用户名称")
     alias = fields.CharField(max_length=30, null=True, description="姓名")
-    email = fields.CharField(max_length=255, unique=True, description="邮箱")
+    email = fields.CharField(max_length=255, unique=True, description="邮箱", validators=[EmailStr])
     phone = fields.CharField(max_length=20, null=True, description="电话")
-    password = fields.CharField(max_length=128, null=True, description="密码")
-    depart = fields.CharField(max_length=20, null=True, description="部门")
-    is_active = fields.BooleanField(default=True, description="是否激活")
+    password = fields.CharField(max_length=128, description="密码")
+    depart = fields.CharField(max_length=20, description="部门")
+    is_active = fields.BooleanField(default=False, description="是否激活")
     is_superuser = fields.BooleanField(default=False, description="是否为超级管理员")
     last_login = fields.DatetimeField(null=True, description="最后登录时间")
-    roles = fields.ManyToManyField("models.Role", related_name="user_roles")
+    roles: fields.ManyToManyRelation["Role"] = fields.ManyToManyField("models.Role", related_name="user_roles")
 
     class Meta:
         table = "user"
 
     class PydanticMeta:
-        # todo
-        # computed = ["full_name"]
-        ...
+        exclude = ("created_at", "updated_at", "id")
 
 
 class Role(BaseModel, TimestampMixin):
     name = fields.CharField(max_length=20, unique=True, description="角色名称")
     desc = fields.CharField(max_length=500, null=True, blank=True, description="角色描述")
-    menus = fields.ManyToManyField("models.Menu", related_name="role_menus")
-    apis = fields.ManyToManyField("models.Api", related_name="role_apis")
+    menus: fields.ManyToManyRelation["Menu"] = fields.ManyToManyField("models.Menu", related_name="role_menus")
+    apis: fields.ManyToManyRelation["Api"] = fields.ManyToManyField("models.Api", related_name="role_apis")
 
     class Meta:
         table = "role"
-
-
-class Api(BaseModel, TimestampMixin):
-    path = fields.CharField(max_length=100, description="API路径")
-    method = fields.CharEnumField(MethodType, description="请求方法")
-    summary = fields.CharField(max_length=500, description="请求简介")
-    tags = fields.CharField(max_length=100, description="API标签")
-
-    class Meta:
-        table = "api"
 
 
 class Menu(BaseModel, TimestampMixin):
@@ -62,6 +51,19 @@ class Menu(BaseModel, TimestampMixin):
 
     class Meta:
         table = "menu"
+
+    class PydanticMeta:
+        exclude = ("created_at", "updated_at")
+
+
+class Api(BaseModel, TimestampMixin):
+    path = fields.CharField(max_length=100, description="API路径")
+    method = fields.CharEnumField(MethodType, description="请求方法")
+    summary = fields.CharField(max_length=500, description="请求简介")
+    tags = fields.CharField(max_length=100, description="API标签")
+
+    class Meta:
+        table = "api"
 
 
 class Dept(BaseModel, TimestampMixin):

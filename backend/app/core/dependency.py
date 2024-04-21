@@ -5,7 +5,7 @@ from fastapi import Depends, Header, HTTPException, Request
 
 from app.core.ctx import CTX_USER_ID
 from app.models import Role, User
-from app.schemas.users import BaseUser
+from app.schemas.users import UserPydantic
 from app.settings import settings
 from app.log import logger
 
@@ -25,7 +25,7 @@ class DataBaseControl:
 class AuthControl:
     @classmethod
     async def is_authed(cls, authorization: str = Header(..., description="token验证"),
-                        db: bool = Depends(DataBaseControl.has_db)) -> BaseUser | User:
+                        db: bool = Depends(DataBaseControl.has_db)) -> UserPydantic:
         if db:
             try:
                 token = authorization.split(" ")[1]
@@ -33,7 +33,7 @@ class AuthControl:
                 user_id = decode_data.get("user_id")
                 username = decode_data.get("username")
                 if settings.DATABASE_START is None and username == settings.SUPER_USER["username"]:
-                    return BaseUser.parse_obj(settings.SUPER_USER)
+                    return UserPydantic.parse_obj(settings.SUPER_USER)
                 else:
                     user = await User.filter(id=user_id).first()
                 if not user:

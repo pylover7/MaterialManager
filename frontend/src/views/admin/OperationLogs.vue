@@ -104,6 +104,16 @@ const columns: TableColumnList = [
     minWidth: 180,
     formatter: ({ operatingTime }) =>
       dayjs(operatingTime).format("YYYY-MM-DD HH:mm:ss")
+  },
+  {
+    label: "备注",
+    prop: "remark",
+    minWidth: 100,
+    cellRenderer: ({row}) => (
+      <el-button plain type="primary">
+        查看备注
+      </el-button>
+    )
   }
 ];
 const { tagStyle } = usePublicHooks();
@@ -218,9 +228,8 @@ function handleSelectionChange(val) {
       </el-form-item>
     </el-form>
 
-    <PureTableBar :columns="columns" @refresh="onSearch">
-      <template #title>
-        <h4>值班日志</h4>
+    <PureTableBar title="值班日志" :columns="columns" @refresh="onSearch">
+      <template #buttons>
         <div class="h-full mb-2 pl-4 flex items-center">
           <div class="flex-auto">
             <span
@@ -234,8 +243,7 @@ function handleSelectionChange(val) {
             </el-button>
           </div>
         </div>
-      </template>
-      <template #buttons>
+
         <el-popconfirm title="确定要删除所有日志数据吗？" @confirm="clearAll">
           <template #reference>
             <el-button type="danger" :icon="useRenderIcon(Delete)">
@@ -247,7 +255,6 @@ function handleSelectionChange(val) {
       <template v-slot="{ size, dynamicColumns }">
         <div
           v-if="selectedNum > 0"
-          v-motion-fade
           class="bg-[var(--el-fill-color-light)] w-full h-[46px] mb-2 pl-4 flex items-center"
         >
           <div class="flex-auto">
@@ -293,4 +300,18 @@ function handleSelectionChange(val) {
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+:deep(.el-dropdown-menu__item i) {
+  margin: 0;
+}
+
+.main-content {
+  margin: 24px 24px 0 !important;
+}
+
+.search-form {
+  :deep(.el-form-item) {
+    margin-bottom: 12px;
+  }
+}
+</style>
