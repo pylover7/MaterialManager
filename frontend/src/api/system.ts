@@ -167,57 +167,12 @@ export const getMenuList = (data?: object) => {
 
 /** 获取系统管理-部门管理列表 */
 export const getDeptList = () => {
-  // return http.request<Result>("post", "/dept", { data });
-  return {
-    code: 200,
-    msg: "ok",
-    data: [
-      {
-        name: "杭州总公司",
-        parentId: 0,
-        id: 100,
-        sort: 0,
-        phone: "15888888888",
-        principal: "张三",
-        email: "xxx",
-        status: 1, // 状态 1 启用 0 停用
-        type: 1, // 1 公司 2 处室 3 科室
-        createTime: 1605456000000,
-        remark: "这里是备注信息这里是备注信息这里是备注信息这里是备注信息"
-      },
-      {
-        name: "郑州分公司",
-        parentId: 100,
-        id: 101,
-        sort: 1,
-        phone: "15888888888",
-        principal: "李四",
-        email: "yyy",
-        status: 1,
-        type: 2,
-        createTime: 1605456000000,
-        remark: "这里是备注信息这里是备注信息这里是备注信息这里是备注信息"
-      },
-      {
-        name: "研发部门",
-        parentId: 101,
-        id: 103,
-        sort: 1,
-        phone: "15888888888",
-        principal: "王五",
-        email: "zzz",
-        status: 1,
-        type: 3,
-        createTime: 1605456000000,
-        remark: "这里是备注信息这里是备注信息这里是备注信息这里是备注信息"
-      }
-    ]
-  };
+  return http.request<Result>("get", baseUrlApi("/depart/list"));
 };
 
 /** 新增部门 */
 export const addDepart = (data?: object) => {
-  return http.request("post", baseUrlApi("/depart/add"), { data });
+  return http.request<Result>("post", baseUrlApi("/depart/add"), { data });
 };
 
 /** 获取系统监控-在线用户列表 */

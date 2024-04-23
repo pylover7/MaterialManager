@@ -96,7 +96,7 @@ export function useDept() {
     if (!treeList || !treeList.length) return;
     const newTreeList = [];
     for (let i = 0; i < treeList.length; i++) {
-      treeList[i].disabled = treeList[i].status === 0 ? true : false;
+      treeList[i].disabled = treeList[i].status === 0;
       formatHigherDeptOptions(treeList[i].children);
       newTreeList.push(treeList[i]);
     }
