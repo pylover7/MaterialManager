@@ -1,0 +1,303 @@
+import { http } from "@/utils/http";
+import { baseUrlApi } from "./utils";
+
+type Result = {
+  code: number;
+  msg: string;
+  data?: Array<any>;
+};
+
+type ResultTable = {
+  success: boolean;
+  data?: {
+    /** 列表数据 */
+    list: Array<any>;
+    /** 总条目数 */
+    total?: number;
+    /** 每页显示条目个数 */
+    pageSize?: number;
+    /** 当前页数 */
+    currentPage?: number;
+  };
+};
+
+/** 获取系统管理-用户管理列表 */
+export const getUserList = (data?: object) => {
+  // return http.request<ResultTable>("post", "/user", { data });
+  console.log(data);
+  return {
+    code: 200,
+    msg: "ok",
+    data: [
+      {
+        avatar: "https://avatars.githubusercontent.com/u/44761321",
+        username: "admin",
+        nickname: "小铭",
+        phone: "15888886789",
+        email: "zzz",
+        sex: 0,
+        id: 1,
+        status: 1,
+        dept: {
+          // 部门id
+          id: 103,
+          // 部门名称
+          name: "研发部门"
+        },
+        remark: "管理员",
+        createTime: 1605456000000
+      },
+      {
+        avatar: "https://avatars.githubusercontent.com/u/52823142",
+        username: "common",
+        nickname: "小林",
+        phone: "18288882345",
+        email: "xxx",
+        sex: 1,
+        id: 2,
+        status: 1,
+        dept: {
+          id: 105,
+          name: "测试部门"
+        },
+        remark: "普通用户",
+        createTime: 1605456000000
+      }
+    ],
+    total: 2,
+    pageSize: 10,
+    currentPage: 1
+  };
+};
+
+/** 系统管理-用户管理-获取所有角色列表 */
+export const getAllRoleList = () => {
+  // return http.request<Result>("get", "/list-all-role");
+  return {
+    code: 200,
+    msg: "ok",
+    data: [
+      { id: 1, name: "超级管理员" },
+      { id: 2, name: "普通角色" }
+    ]
+  };
+};
+
+/** 系统管理-用户管理-根据userId，获取对应角色id列表（userId：用户id） */
+export const getRoleIds = (data?: object) => {
+  // return http.request<Result>("post", "/list-role-ids", { data });
+  console.log(data);
+  return {
+    code: 200,
+    msg: "ok",
+    data: [1]
+  };
+};
+
+/** 获取系统管理-角色管理列表 */
+export const getRoleList = (data?: object) => {
+  // return http.request<ResultTable>("post", "/role", { data });
+  console.log(data);
+  return {
+    code: 200,
+    msg: "ok",
+    data: {
+      total: 2,
+      pageSize: 10,
+      currentPage: 1,
+      list: [
+        {
+          createTime: 1605456000000, // 时间戳（毫秒ms）
+          updateTime: 1684512000000,
+          id: 1,
+          name: "超级管理员",
+          code: "admin",
+          status: 1, // 状态 1 启用 0 停用
+          remark: "超级管理员拥有最高权限"
+        },
+        {
+          createTime: 1605456000000,
+          updateTime: 1684512000000,
+          id: 2,
+          name: "普通角色",
+          code: "common",
+          status: 1,
+          remark: "普通角色拥有部分权限"
+        }
+      ]
+    }
+  };
+};
+
+/** 获取系统管理-菜单管理列表 */
+export const getMenuList = (data?: object) => {
+  // return http.request<Result>("post", "/menu", { data });
+  console.log(data);
+  return {
+    code: 200,
+    msg: "ok",
+    data: [
+      {
+        parentId: 0,
+        id: 100,
+        menuType: 0, // 菜单类型（0代表菜单、1代表iframe、2代表外链、3代表按钮）
+        title: "menus.pureExternalPage",
+        name: "PureIframe",
+        path: "/iframe",
+        component: "",
+        rank: 7,
+        redirect: "",
+        icon: "ri:links-fill",
+        extraIcon: "",
+        enterTransition: "",
+        leaveTransition: "",
+        activePath: "",
+        auths: "",
+        frameSrc: "",
+        frameLoading: true,
+        keepAlive: false,
+        hiddenTag: false,
+        fixedTag: false,
+        showLink: true,
+        showParent: false
+      }
+    ]
+  };
+};
+
+/** 获取系统管理-部门管理列表 */
+export const getDeptList = () => {
+  // return http.request<Result>("post", "/dept", { data });
+  return {
+    code: 200,
+    msg: "ok",
+    data: [
+      {
+        name: "杭州总公司",
+        parentId: 0,
+        id: 100,
+        sort: 0,
+        phone: "15888888888",
+        principal: "张三",
+        email: "xxx",
+        status: 1, // 状态 1 启用 0 停用
+        type: 1, // 1 公司 2 处室 3 科室
+        createTime: 1605456000000,
+        remark: "这里是备注信息这里是备注信息这里是备注信息这里是备注信息"
+      },
+      {
+        name: "郑州分公司",
+        parentId: 100,
+        id: 101,
+        sort: 1,
+        phone: "15888888888",
+        principal: "李四",
+        email: "yyy",
+        status: 1,
+        type: 2,
+        createTime: 1605456000000,
+        remark: "这里是备注信息这里是备注信息这里是备注信息这里是备注信息"
+      },
+      {
+        name: "研发部门",
+        parentId: 101,
+        id: 103,
+        sort: 1,
+        phone: "15888888888",
+        principal: "王五",
+        email: "zzz",
+        status: 1,
+        type: 3,
+        createTime: 1605456000000,
+        remark: "这里是备注信息这里是备注信息这里是备注信息这里是备注信息"
+      }
+    ]
+  };
+};
+
+/** 新增部门 */
+export const addDepart = (data?: object) => {
+  return http.request("post", baseUrlApi("/depart/add"), { data });
+};
+
+/** 获取系统监控-在线用户列表 */
+export const getOnlineLogsList = (data?: object) => {
+  return http.request<ResultTable>("post", "/online-logs", { data });
+};
+
+/** 获取系统监控-登录日志列表 */
+export const getLoginLogsList = (data?: object) => {
+  return http.request<ResultTable>("post", "/login-logs", { data });
+};
+
+/** 获取系统监控-操作日志列表 */
+export const getOperationLogsList = (data?: object) => {
+  return http.request<ResultTable>("post", "/operation-logs", { data });
+};
+
+/** 获取系统监控-系统日志列表 */
+export const getSystemLogsList = (data?: object) => {
+  return http.request<ResultTable>("post", "/system-logs", { data });
+};
+
+/** 获取系统监控-系统日志-根据 id 查日志详情 */
+export const getSystemLogsDetail = (data?: object) => {
+  return http.request<Result>("post", "/system-logs-detail", { data });
+};
+
+/** 获取角色管理-权限-菜单权限 */
+export const getRoleMenu = (data?: object) => {
+  // return http.request<Result>("post", "/role-menu", { data });
+  console.log(data);
+  return {
+    code: 200,
+    msg: "ok",
+    data: [
+      {
+        parentId: 0,
+        id: 100,
+        menuType: 0, // 菜单类型（0代表菜单、1代表iframe、2代表外链、3代表按钮）
+        title: "menus.pureExternalPage"
+      },
+      {
+        parentId: 100,
+        id: 101,
+        menuType: 0,
+        title: "menus.pureExternalDoc"
+      },
+      {
+        parentId: 101,
+        id: 102,
+        menuType: 2,
+        title: "menus.pureExternalLink"
+      },
+      {
+        parentId: 101,
+        id: 103,
+        menuType: 2,
+        title: "menus.pureUtilsLink"
+      },
+      {
+        parentId: 100,
+        id: 104,
+        menuType: 1,
+        title: "menus.pureEmbeddedDoc"
+      }
+    ]
+  };
+};
+
+/** 获取角色管理-权限-菜单权限-根据角色 id 查对应菜单 */
+export const getRoleMenuIds = (data?: object) => {
+  // return http.request<Result>("post", "/role-menu-ids", { data });
+  console.log(data);
+  return {
+    code: 200,
+    msg: "ok",
+    data: [
+      100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 200, 201, 202, 203,
+      204, 205, 300, 301, 302, 303, 304, 400, 401, 402, 403, 404, 500, 501, 502,
+      503
+    ]
+  };
+};

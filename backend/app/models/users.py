@@ -1,5 +1,4 @@
 from tortoise import fields
-from pydantic import EmailStr
 
 from app.schemas.menus import MenuType
 
@@ -10,7 +9,7 @@ from .enums import MethodType
 class User(BaseModel, TimestampMixin):
     username = fields.CharField(max_length=20, unique=True, description="用户名称")
     alias = fields.CharField(max_length=30, null=True, description="姓名")
-    email = fields.CharField(max_length=255, unique=True, description="邮箱", validators=[EmailStr])
+    email = fields.CharField(max_length=255, unique=True, description="邮箱")
     phone = fields.CharField(max_length=20, null=True, description="电话")
     password = fields.CharField(max_length=128, description="密码")
     depart = fields.CharField(max_length=20, description="部门")
@@ -66,12 +65,19 @@ class Api(BaseModel, TimestampMixin):
         table = "api"
 
 
-class Dept(BaseModel, TimestampMixin):
+class Depart(BaseModel, TimestampMixin):
     name = fields.CharField(max_length=20, unique=True, description="部门名称")
-    desc = fields.CharField(max_length=500, null=True, blank=True, description="菜单描述")
-    is_deleted = fields.BooleanField(default=False, description="软删除标记")
-    order = fields.IntField(default=0, description="排序")
-    parent_id = fields.IntField(default=0, max_length=10, description="父部门ID")
+    parentId = fields.IntField(default=0, max_length=10, description="父部门ID")
+    sort = fields.IntField(default=0, description="排序")
+    phone = fields.CharField(max_length=20, null=True, description="电话")
+    principal = fields.CharField(max_length=20, null=True, description="负责人")
+    email = fields.CharField(max_length=255, null=True, description="邮箱")
+    status = fields.BooleanField(default=True, description="状态：启用/停用")
+    type = fields.IntField(default=0, description="部门类型：1-公司，2-处室，3-科室")
+    remark = fields.CharField(max_length=500, null=True, blank=True, description="备注信息")
 
     class Meta:
-        table = "dept"
+        table = "depart"
+
+    class PydanticMeta:
+        exclude = ("id", "created_at", "updated_at")

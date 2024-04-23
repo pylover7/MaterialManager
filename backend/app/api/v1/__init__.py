@@ -9,6 +9,7 @@ from .roles import roles_router
 from .users import users_router
 from .material import material_router
 from .admin import admin_router
+from .superAdmin import depart_router
 
 v1_router = APIRouter()
 
@@ -19,3 +20,4 @@ v1_router.include_router(menus_router, prefix="/menu", dependencies=[DependPermi
 v1_router.include_router(apis_router, prefix="/api", dependencies=[DependPermission])
 v1_router.include_router(material_router, prefix="/material", dependencies=[DependPermission])
 v1_router.include_router(admin_router, prefix="/admin",  dependencies=[DependAuth])
+v1_router.include_router(depart_router, prefix="/depart",  dependencies=[DependPermission])

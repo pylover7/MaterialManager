@@ -1,9 +1,7 @@
-
 from pydantic import BaseModel, Field
 from tortoise.contrib.pydantic import pydantic_model_creator
 
-from app.models.users import User
-
+from app.models.users import User, Depart
 
 UserPydantic = pydantic_model_creator(User)
 
@@ -28,6 +26,22 @@ class UpdatePassword(BaseModel):
     new_password: str = Field(description="新密码")
 
 
+DepartPydantic = pydantic_model_creator(Depart)
+
+
+class DepartCreate(DepartPydantic):
+    ...
+
+    def create_dict(self):
+        return self.model_dump(exclude_unset=True)
+
+
+class DepartUpdate(DepartPydantic):
+    ...
+
+    def update_dict(self):
+        return self.model_dump(exclude_unset=True)
+
+
 if __name__ == '__main__':
     print(UserPydantic.schema())
-
