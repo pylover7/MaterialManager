@@ -4,11 +4,10 @@
 # @Author    :dayezi
 from fastapi import APIRouter
 
-from app.settings import settings
 from app.controllers.depart import departController
 from app.log import logger
-from app.schemas import Success, Fail
-from app.schemas.users import DepartCreate
+from app.schemas import Success
+from app.schemas.users import DepartCreate, DepartUpdate
 
 router = APIRouter()
 
@@ -27,3 +26,11 @@ async def depart_list():
     data = [await obj.to_dict() for obj in depart_obj]
     logger.success(f"部门列表查询成功！{[i['name'] for i in data]}")
     return Success(msg="部门列表查询成功！", data=data)
+
+
+@router.post("/update", summary="更新部门信息")
+async def update_depart(data: DepartUpdate):
+    result = await departController.update(data.id, data)
+    data = await result.to_dict()
+    logger.success(f"部门更新成功！{data}")
+    return Success(msg="部门更新成功！", data=data)

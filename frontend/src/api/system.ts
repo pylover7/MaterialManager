@@ -175,6 +175,11 @@ export const addDepart = (data?: object) => {
   return http.request<Result>("post", baseUrlApi("/depart/add"), { data });
 };
 
+/** 修改部门信息 */
+export const updateDepart = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("/depart/update"), { data });
+};
+
 /** 获取系统监控-在线用户列表 */
 export const getOnlineLogsList = (data?: object) => {
   return http.request<ResultTable>("post", "/online-logs", { data });

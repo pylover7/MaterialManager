@@ -37,11 +37,11 @@ class DepartCreate(DepartPydantic):
 
 
 class DepartUpdate(DepartPydantic):
-    ...
+    id: int = Field(description="部门ID")
 
     def update_dict(self):
         return self.model_dump(exclude_unset=True)
 
 
 if __name__ == '__main__':
-    print(UserPydantic.schema())
+    print(DepartCreate.schema())

@@ -73,11 +73,10 @@ class Depart(BaseModel, TimestampMixin):
     principal = fields.CharField(max_length=20, null=True, description="负责人")
     email = fields.CharField(max_length=255, null=True, description="邮箱")
     status = fields.IntField(default=1, description="状态：启用/停用")
-    type = fields.IntField(default=0, description="部门类型：1-公司，2-处室，3-科室")
     remark = fields.CharField(max_length=500, null=True, blank=True, description="备注信息")
 
     class Meta:
         table = "depart"
 
     class PydanticMeta:
-        exclude = ("id", "created_at", "updated_at")
+        exclude = ("created_at", "updated_at", "id")

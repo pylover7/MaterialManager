@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { getDeptList } from "@/api/system";
+import { getDeptList, updateDepart } from "@/api/system";
 import { usePublicHooks } from "../../../hooks";
 import { addDialog } from "@/components/ReDialog";
 import { reactive, ref, onMounted, h } from "vue";
@@ -31,7 +31,8 @@ export function useDept() {
     {
       label: "排序",
       prop: "sort",
-      minWidth: 70
+      minWidth: 70,
+      sortable: true
     },
     {
       label: "状态",
@@ -109,6 +110,7 @@ export function useDept() {
       props: {
         formInline: {
           higherDeptOptions: formatHigherDeptOptions(cloneDeep(dataList.value)),
+          id: row?.id ?? 0,
           parentId: row?.parentId ?? 0,
           name: row?.name ?? "",
           principal: row?.principal ?? "",
@@ -128,6 +130,7 @@ export function useDept() {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
+        /** 关闭弹框，刷新表格数据 */
         function chores() {
           message(`您${title}了部门名称为【${curData.name}】的这条数据`, {
             type: "success"
@@ -138,17 +141,18 @@ export function useDept() {
         FormRef.validate(valid => {
           if (valid) {
             delete curData.higherDeptOptions;
-            console.log(curData);
             // 表单规则校验通过
             if (title === "新增") {
               // 实际开发先调用新增接口，再进行下面操作
+              delete curData.id;
               addDepart(curData).then(res => {
                 console.log(res);
                 chores();
               });
             } else {
-              // 实际开发先调用修改接口，再进行下面操作
-              chores();
+              updateDepart(curData).then(() => {
+                chores();
+              });
             }
           }
         });
