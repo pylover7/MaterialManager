@@ -180,6 +180,13 @@ export const updateDepart = (data?: object) => {
   return http.request<Result>("post", baseUrlApi("/depart/update"), { data });
 };
 
+/** 删除部门 */
+export const deleteDepart = (id: number, name: string) => {
+  return http.request<Result>("delete", baseUrlApi("/depart/delete"), {
+    params: { id, name }
+  });
+};
+
 /** 获取系统监控-在线用户列表 */
 export const getOnlineLogsList = (data?: object) => {
   return http.request<ResultTable>("post", "/online-logs", { data });

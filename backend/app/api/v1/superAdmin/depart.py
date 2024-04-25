@@ -34,3 +34,10 @@ async def update_depart(data: DepartUpdate):
     data = await result.to_dict()
     logger.success(f"部门更新成功！{data}")
     return Success(msg="部门更新成功！", data=data)
+
+
+@router.delete("/delete", summary="删除部门")
+async def delete_depart(id: int, name: str):
+    await departController.remove(id)
+    logger.success(f"【{name}】部门删除成功！")
+    return Success(msg="部门删除成功！")
