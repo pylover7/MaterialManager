@@ -129,40 +129,14 @@ export const getRoleList = (data?: object) => {
   };
 };
 
-/** 获取系统管理-菜单管理列表 */
-export const getMenuList = (data?: object) => {
-  // return http.request<Result>("post", "/menu", { data });
-  console.log(data);
-  return {
-    code: 200,
-    msg: "ok",
-    data: [
-      {
-        parentId: 0,
-        id: 100,
-        menuType: 0, // 菜单类型（0代表菜单、1代表iframe、2代表外链、3代表按钮）
-        title: "menus.pureExternalPage",
-        name: "PureIframe",
-        path: "/iframe",
-        component: "",
-        rank: 7,
-        redirect: "",
-        icon: "ri:links-fill",
-        extraIcon: "",
-        enterTransition: "",
-        leaveTransition: "",
-        activePath: "",
-        auths: "",
-        frameSrc: "",
-        frameLoading: true,
-        keepAlive: false,
-        hiddenTag: false,
-        fixedTag: false,
-        showLink: true,
-        showParent: false
-      }
-    ]
-  };
+/** 获取系统管理-菜单列表 */
+export const getMenuList = () => {
+  return http.request<Result>("get", baseUrlApi("/menu/list"));
+};
+
+/** 新增菜单 */
+export const addMenu = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("/menu/add"), { data });
 };
 
 /** 获取系统管理-部门管理列表 */

@@ -21,7 +21,7 @@ class JWTReOut(BaseModel):
 class JWTOut(BaseModel):
     username: str
     depart: str
-    roles: list[int]
+    roles: list[str]
     accessToken: str
     refreshToken: str
     expires: str

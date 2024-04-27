@@ -34,6 +34,15 @@ export default {
       }
     },
     {
+      path: "/superAdmin/menuManagement",
+      name: "MenuManagement",
+      component: () => import("@/views/superAdmin/menuManagement/index.vue"),
+      meta: {
+        title: "菜单管理",
+        icon: "fluent:clover-48-regular"
+      }
+    },
+    {
       path: "/superAdmin/logs",
       name: "Logs",
       component: () => import("@/views/superAdmin/Logs.vue"),
