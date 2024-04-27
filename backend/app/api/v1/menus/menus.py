@@ -51,15 +51,17 @@ async def update_menu(
     menu_in: MenuUpdate,
 ):
     await menu_controller.update(id=menu_in.id, obj_in=menu_in.update_dict())
-    return Success(msg="Updated Success")
+    return Success(msg=f"菜单【{menu_in.name}】更新成功")
 
 
 @router.delete("/delete", summary="删除菜单")
 async def delete_menu(
         id: int = Query(..., description="菜单id"),
+        name: str = Query(..., description="菜单名称"),
 ):
-    child_menu_count = await menu_controller.model.filter(parent_id=id).count()
+    child_menu_count = await menu_controller.model.filter(parentId=id).count()
     if child_menu_count > 0:
         return Fail(msg="Cannot delete a menu with child menus")
     await menu_controller.remove(id=id)
+    logger.info(f"删除菜单【{name}】成功")
     return Success(msg="Deleted Success")

@@ -19,7 +19,7 @@ class DepartController(CRUDBase[Depart, DepartCreate, DepartUpdate]):
             obj = await super().create(obj_in)
             return obj
         except IntegrityError:
-            raise HTTPException(status_code=403, detail="部门名称已存在！")
+            raise HTTPException(status_code=406, detail="部门名称已存在！")
 
 
 departController = DepartController()

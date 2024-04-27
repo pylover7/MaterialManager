@@ -157,6 +157,9 @@ class PureHttp {
             errorNotification(error.response.data.msg);
           });
         }
+        if (error.response.status == 406) {
+          errorNotification(error.response.data.msg);
+        }
         if (error.response.status == 401) {
           removeToken();
           resetRouter();

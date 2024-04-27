@@ -139,6 +139,18 @@ export const addMenu = (data?: object) => {
   return http.request<Result>("post", baseUrlApi("/menu/add"), { data });
 };
 
+/** 修改菜单 */
+export const updateMenu = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("/menu/update"), { data });
+};
+
+/** 删除菜单 */
+export const deleteMenu = (id: number, name: string) => {
+  return http.request<Result>("delete", baseUrlApi("/menu/delete"), {
+    params: { id, name }
+  });
+};
+
 /** 获取系统管理-部门管理列表 */
 export const getDeptList = () => {
   return http.request<Result>("get", baseUrlApi("/depart/list"));
@@ -149,7 +161,7 @@ export const addDepart = (data?: object) => {
   return http.request<Result>("post", baseUrlApi("/depart/add"), { data });
 };
 
-/** 修改部门信息 */
+/** 修改部门 */
 export const updateDepart = (data?: object) => {
   return http.request<Result>("post", baseUrlApi("/depart/update"), { data });
 };

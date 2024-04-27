@@ -1,13 +1,14 @@
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import {addMenu, getMenuList} from "@/api/system";
+import { addMenu, deleteMenu, getMenuList, updateMenu } from "@/api/system";
 import { transformI18n } from "@/plugins/i18n";
 import { addDialog } from "@/components/ReDialog";
 import { reactive, ref, onMounted, h } from "vue";
 import type { FormItemProps } from "../utils/types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { cloneDeep, isAllEmpty, deviceDetection } from "@pureadmin/utils";
+import { errorNotification } from "@/utils/notification";
 
 export function useMenu() {
   const form = reactive({
@@ -136,6 +137,7 @@ export function useMenu() {
       title: `${title}菜单`,
       props: {
         formInline: {
+          id: row?.id ?? 0,
           menuType: row?.menuType ?? 0,
           higherMenuOptions: formatHigherMenuOptions(cloneDeep(dataList.value)),
           parentId: row?.parentId ?? 0,
@@ -181,16 +183,20 @@ export function useMenu() {
         }
         FormRef.validate(valid => {
           if (valid) {
-            console.log("curData", curData);
             // 表单规则校验通过
             if (title === "新增") {
               // 实际开发先调用新增接口，再进行下面操作
+              delete curData.higherMenuOptions;
+              delete curData.id;
               addMenu(curData).then(() => {
                 chores();
               });
             } else {
               // 实际开发先调用修改接口，再进行下面操作
-              chores();
+              delete curData.higherMenuOptions;
+              updateMenu(curData).then(() => {
+                chores();
+              });
             }
           }
         });
@@ -199,10 +205,16 @@ export function useMenu() {
   }
 
   function handleDelete(row) {
-    message(`您删除了菜单名称为${transformI18n(row.title)}的这条数据`, {
-      type: "success"
-    });
-    onSearch();
+    deleteMenu(row.id, row.name)
+      .then(() => {
+        message(`您删除了菜单名称为${transformI18n(row.title)}的这条数据`, {
+          type: "success"
+        });
+        onSearch();
+      })
+      .catch(err => {
+        errorNotification(err.msg);
+      });
   }
 
   onMounted(() => {
