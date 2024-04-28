@@ -7,10 +7,23 @@ import { dbInfoType } from "@/types/superAdmin";
 import { removeToken } from "@/utils/auth";
 import { resetRouter, router } from "@/router";
 import { message } from "@/utils/message";
+import Segmented, { OptionsType } from "@/components/ReSegmented";
 
 defineOptions({
   name: "Settings"
 });
+
+const menuTypeOptions: Array<OptionsType> = [
+  {
+    label: "数据库",
+    value: 0
+  },
+  {
+    label: "其他",
+    value: 1
+  }
+];
+const menuTypeOptionsValue = ref(0);
 
 onMounted(async () => {
   await initDbInfoForm();
@@ -120,15 +133,13 @@ const setBtn = async (formEl: FormInstance | undefined) => {
 
 <template>
   <div>
-    <el-tabs type="card" class="myTabs">
-      <el-tab-pane label="database">
-        <template #label>
-          <el-button
-            size="large"
-            style="color: var(--el-color-primary) !important;}"
-            >数据库</el-button
-          >
-        </template>
+    <Segmented
+      v-model="menuTypeOptionsValue"
+      :options="menuTypeOptions"
+      size="large"
+    />
+    <el-tabs v-model="menuTypeOptionsValue" type="card" class="myTabs">
+      <el-tab-pane :name="menuTypeOptions[0].value">
         <el-card shadow="never">
           <h4>数据库设置</h4>
           <el-divider />
@@ -188,6 +199,9 @@ const setBtn = async (formEl: FormInstance | undefined) => {
           </el-form>
         </el-card>
       </el-tab-pane>
+      <el-tab-pane :name="menuTypeOptions[1].value">
+        <p>其他</p>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -201,6 +215,7 @@ const setBtn = async (formEl: FormInstance | undefined) => {
   .el-tabs__header {
     border-radius: var(--el-border-radius-base);
     border: 0;
+    height: 0;
     .el-tabs__nav {
       border: 0;
       .el-tabs__item {
