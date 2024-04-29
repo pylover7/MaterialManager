@@ -23,7 +23,7 @@ async def list_role(
         q = q & Q(name__contains=data.name)
     if data.code:
         q = q & Q(code__contains=data.code)
-    if data.status:
+    if isinstance(data.status, int):
         q = q & Q(status__contains=data.status)
     total, role_objs = await role_controller.list(page=currentPage, page_size=pageSize, search=q)
     data = [await obj.to_dict() for obj in role_objs]
@@ -38,28 +38,32 @@ async def get_role(
     return Success(data=await role_obj.to_dict())
 
 
-@router.post("/create", summary="创建角色")
-async def create_role(role_in: RoleCreate):
-    if await role_controller.is_exist(name=role_in.name):
+@router.post("/add", summary="新增角色")
+async def create_role(data: RoleCreate):
+    if await role_controller.is_exist(name=data.name):
         raise HTTPException(
             status_code=400,
-            detail="The role with this rolename already exists in the system.",
+            detail="该角色名已存在！",
         )
-    await role_controller.create(obj_in=role_in)
-    return Success(msg="Created Successfully")
+    result = await role_controller.create(obj_in=data)
+    result = await result.to_dict()
+    return Success(msg="创建成功！", data=result)
 
 
 @router.post("/update", summary="更新角色")
 async def update_role(role_in: RoleUpdate):
-    await role_controller.update(id=role_in.id, obj_in=role_in.update_dict())
-    return Success(msg="Updated Successfully")
+    result = await role_controller.update(id=role_in.id, obj_in=role_in.update_dict())
+    result = await result.to_dict()
+    return Success(msg="更新成功", data=result)
 
 
 @router.delete("/delete", summary="删除角色")
 async def delete_role(
-    role_id: int = Query(..., description="角色ID"),
+    id: int = Query(..., description="角色ID"),
+    name: str = Query(..., description="角色名称"),
 ):
-    await role_controller.remove(id=role_id)
+    await role_controller.remove(id=id)
+    logger.info(f"删除角色: {name}")
     return Success(msg="Deleted Success")
 
 

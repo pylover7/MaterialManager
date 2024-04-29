@@ -103,6 +103,23 @@ export const getRoleList = (
   });
 };
 
+/** 新增角色 */
+export const addRole = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("/role/add"), { data });
+};
+
+/** 修改角色 */
+export const updateRole = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("/role/update"), { data });
+};
+
+/** 删除角色 */
+export const deleteRole = (id: number, name: string) => {
+  return http.request<Result>("delete", baseUrlApi("/role/delete"), {
+    params: { id, name }
+  });
+};
+
 /** 获取系统管理-菜单列表 */
 export const getMenuList = () => {
   return http.request<Result>("get", baseUrlApi("/menu/list"));

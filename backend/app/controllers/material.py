@@ -10,6 +10,9 @@ class MaterialController(CRUDBase[Material, MaterialCreate, MaterialUpdate]):
     def __init__(self):
         super().__init__(Material)
 
+    async def is_exist(self, name: str) -> bool:
+        return await self.model.filter(name=name).exists()
+
     async def create(self, obj_in: CreateSchemaType) -> ModelType:
         try:
             obj = await super().create(obj_in)
