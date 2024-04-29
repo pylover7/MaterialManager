@@ -11,12 +11,13 @@ import type { PaginationProps } from "@pureadmin/table";
 import { getKeyList, deviceDetection } from "@pureadmin/utils";
 import { getRoleList, getRoleMenu, getRoleMenuIds } from "@/api/system";
 import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
+import type { OptionsType } from "@/components/ReSegmented";
 
 export function useRole(treeRef: Ref) {
   const form = reactive({
     name: "",
     code: "",
-    status: ""
+    status: null
   });
   const curRow = ref();
   const formRef = ref();
@@ -30,6 +31,7 @@ export function useRole(treeRef: Ref) {
   const switchLoadMap = ref({});
   const isExpandAll = ref(false);
   const isSelectAll = ref(false);
+  const tabIndex = ref(0);
   const { switchStyle } = usePublicHooks();
   const treeProps = {
     value: "id",
@@ -42,6 +44,16 @@ export function useRole(treeRef: Ref) {
     currentPage: 1,
     background: true
   });
+  const tabOperation: Array<OptionsType> = [
+    {
+      label: "菜单权限",
+      value: 0
+    },
+    {
+      label: "API权限",
+      value: 1
+    }
+  ];
   const columns: TableColumnList = [
     {
       label: "角色编号",
@@ -80,10 +92,10 @@ export function useRole(treeRef: Ref) {
     },
     {
       label: "创建时间",
-      prop: "createTime",
+      prop: "created_at",
       minWidth: 160,
-      formatter: ({ createTime }) =>
-        dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
+      formatter: ({ created_at }) =>
+        dayjs(created_at).format("YYYY-MM-DD HH:mm:ss")
     },
     {
       label: "操作",
@@ -154,11 +166,15 @@ export function useRole(treeRef: Ref) {
 
   async function onSearch() {
     loading.value = true;
-    const { data } = getRoleList(toRaw(form));
-    dataList.value = data.list;
-    pagination.total = data.total;
-    pagination.pageSize = data.pageSize;
-    pagination.currentPage = data.currentPage;
+    const { data, total, currentPage, pageSize} = await getRoleList(
+      pagination.currentPage,
+      pagination.pageSize,
+      toRaw(form)
+    );
+    dataList.value = data;
+    pagination.total = total;
+    pagination.pageSize = pageSize;
+    pagination.currentPage = currentPage;
 
     setTimeout(() => {
       loading.value = false;
@@ -285,11 +301,13 @@ export function useRole(treeRef: Ref) {
     rowStyle,
     dataList,
     treeData,
+    tabIndex,
     treeProps,
     isLinkage,
     pagination,
     isExpandAll,
     isSelectAll,
+    tabOperation,
     treeSearchValue,
     // buttonClass,
     onSearch,

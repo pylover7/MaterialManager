@@ -14,6 +14,7 @@ class User(BaseModel, TimestampMixin):
     is_active = fields.BooleanField(default=False, description="是否激活")
     is_superuser = fields.BooleanField(default=False, description="是否为超级管理员")
     last_login = fields.DatetimeField(null=True, description="最后登录时间")
+
     roles: fields.ManyToManyRelation["Role"] = fields.ManyToManyField("models.Role", related_name="user_roles")
 
     class Meta:
@@ -25,12 +26,19 @@ class User(BaseModel, TimestampMixin):
 
 class Role(BaseModel, TimestampMixin):
     name = fields.CharField(max_length=20, unique=True, description="角色名称")
-    desc = fields.CharField(max_length=500, null=True, blank=True, description="角色描述")
+    code = fields.CharField(max_length=20, unique=True, description="角色编码")
+    status = fields.IntField(default=0, description="状态：启用/停用")
+    remark = fields.CharField(max_length=500, null=True, blank=True, description="角色描述")
+
     menus: fields.ManyToManyRelation["Menu"] = fields.ManyToManyField("models.Menu", related_name="role_menus")
     apis: fields.ManyToManyRelation["Api"] = fields.ManyToManyField("models.Api", related_name="role_apis")
+    users: fields.ManyToManyRelation["User"]
 
     class Meta:
         table = "role"
+
+    class PydanticMeta:
+        exclude = ("created_at", "updated_at", "id")
 
 
 class Menu(BaseModel, TimestampMixin):

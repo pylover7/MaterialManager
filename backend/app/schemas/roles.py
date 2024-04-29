@@ -1,18 +1,12 @@
-from datetime import datetime
-from typing import Optional
-
 from pydantic import BaseModel, Field
+from tortoise.contrib.pydantic import pydantic_model_creator
+from app.models.users import Role
+
+RolePydantic = pydantic_model_creator(Role)
 
 
-class BaseRole(BaseModel):
-    id: int
-    name: str
-    desc: str = ""
-    users: Optional[list] = []
-    menus: Optional[list] = []
-    apis: Optional[list] = []
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
+class RoleFilter(RolePydantic):
+    remark: str = None
 
 
 class RoleCreate(BaseModel):

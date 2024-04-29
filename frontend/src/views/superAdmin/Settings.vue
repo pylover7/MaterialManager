@@ -13,7 +13,7 @@ defineOptions({
   name: "Settings"
 });
 
-const menuTypeOptions: Array<OptionsType> = [
+const segmentedOptions: Array<OptionsType> = [
   {
     label: "数据库",
     value: 0
@@ -23,7 +23,7 @@ const menuTypeOptions: Array<OptionsType> = [
     value: 1
   }
 ];
-const menuTypeOptionsValue = ref(0);
+const tabIndex = ref(0);
 
 onMounted(async () => {
   await initDbInfoForm();
@@ -133,13 +133,9 @@ const setBtn = async (formEl: FormInstance | undefined) => {
 
 <template>
   <div>
-    <Segmented
-      v-model="menuTypeOptionsValue"
-      :options="menuTypeOptions"
-      size="large"
-    />
-    <el-tabs v-model="menuTypeOptionsValue" type="card" class="myTabs">
-      <el-tab-pane :name="menuTypeOptions[0].value">
+    <Segmented v-model="tabIndex" :options="segmentedOptions" size="large" />
+    <el-tabs v-model="tabIndex" type="card" class="myTabs">
+      <el-tab-pane :name="segmentedOptions[0].value">
         <el-card shadow="never">
           <h4>数据库设置</h4>
           <el-divider />
@@ -199,7 +195,7 @@ const setBtn = async (formEl: FormInstance | undefined) => {
           </el-form>
         </el-card>
       </el-tab-pane>
-      <el-tab-pane :name="menuTypeOptions[1].value">
+      <el-tab-pane :name="segmentedOptions[1].value">
         <p>其他</p>
       </el-tab-pane>
     </el-tabs>

@@ -5,7 +5,7 @@ export type addResult = BaseResult & {
 };
 export type MaterialResult = BaseResult & {
   page: number;
-  page_size: number;
+  pageSize: number;
   total: number;
   data: [MaterialItem];
 };

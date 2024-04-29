@@ -19,6 +19,8 @@ import Menu from "@iconify-icons/ep/menu";
 import AddFill from "@iconify-icons/ri/add-circle-line";
 import Close from "@iconify-icons/ep/close";
 import Check from "@iconify-icons/ep/check";
+import PureTable from "@pureadmin/table";
+import Segmented from "@/components/ReSegmented";
 
 defineOptions({
   name: "roleManagement"
@@ -57,10 +59,12 @@ const {
   dataList,
   treeData,
   treeProps,
+  tabIndex,
   isLinkage,
   pagination,
   isExpandAll,
   isSelectAll,
+  tabOperation,
   treeSearchValue,
   // buttonClass,
   onSearch,
@@ -174,7 +178,7 @@ onMounted(() => {
             :data="dataList"
             :columns="dynamicColumns"
             :pagination="pagination"
-            :paginationSmall="size === 'small' ? true : false"
+            :paginationSmall="size === 'small'"
             :header-cell-style="{
               background: 'var(--el-fill-color-light)',
               color: 'var(--el-text-color-primary)'
@@ -263,7 +267,7 @@ onMounted(() => {
         </div>
         <el-input
           v-model="treeSearchValue"
-          placeholder="请输入菜单进行搜索"
+          placeholder="筛选"
           class="mb-1"
           clearable
           @input="onQueryChanged"
@@ -273,19 +277,26 @@ onMounted(() => {
           <el-checkbox v-model="isSelectAll" label="全选/全不选" />
           <el-checkbox v-model="isLinkage" label="父子联动" />
         </div>
-        <el-tree-v2
-          ref="treeRef"
-          show-checkbox
-          :data="treeData"
-          :props="treeProps"
-          :height="treeHeight"
-          :check-strictly="!isLinkage"
-          :filter-method="filterMethod"
-        >
-          <template #default="{ node }">
-            <span>{{ transformI18n(node.label) }}</span>
-          </template>
-        </el-tree-v2>
+        <Segmented v-model="tabIndex" :options="tabOperation" size="small" />
+        <el-tabs v-model="tabIndex" type="card" class="myTabs">
+          <el-tab-pane :name="tabOperation[0].value">
+            <el-tree-v2
+              ref="treeRef"
+              show-checkbox
+              :data="treeData"
+              :props="treeProps"
+              :check-strictly="!isLinkage"
+              :filter-method="filterMethod"
+            >
+              <template #default="{ node }">
+                <span>{{ transformI18n(node.label) }}</span>
+              </template>
+            </el-tree-v2>
+          </el-tab-pane>
+          <el-tab-pane :name="tabOperation[1].value">
+            <p>test</p>
+          </el-tab-pane>
+        </el-tabs>
       </div>
     </div>
   </div>
@@ -303,6 +314,21 @@ onMounted(() => {
 .search-form {
   :deep(.el-form-item) {
     margin-bottom: 12px;
+  }
+}
+
+:deep(.myTabs) {
+  .el-tabs__header {
+    border-radius: var(--el-border-radius-base);
+    border: 0;
+    height: 0;
+    .el-tabs__nav {
+      border: 0;
+      .el-tabs__item {
+        border: 0;
+        padding-left: 0;
+      }
+    }
   }
 }
 </style>

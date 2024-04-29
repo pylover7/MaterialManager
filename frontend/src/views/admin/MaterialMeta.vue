@@ -167,7 +167,7 @@ async function onSearch() {
       .then(res => {
         dataList.push(...res.data);
         pagination.total = res.total;
-        pagination.pageSize = res.page_size;
+        pagination.pageSize = res.pageSize;
         pagination.currentPage = res.page;
       })
       .catch(e => {

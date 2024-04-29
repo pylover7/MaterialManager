@@ -12,18 +12,22 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@router.get("/list", summary="查看角色列表")
+@router.post("/list", summary="条件查询角色列表")
 async def list_role(
-    page: int = Query(1, description="页码"),
-    page_size: int = Query(10, description="每页数量"),
-    role_name: str = Query("", description="角色名称，用于查询"),
+        data: RoleFilter,
+        currentPage: int = Query(1, description="页码"),
+        pageSize: int = Query(10, description="每页数量"),
 ):
     q = Q()
-    if role_name:
-        q = Q(name__contains=role_name)
-    total, role_objs = await role_controller.list(page=page, page_size=page_size, search=q)
+    if data.name:
+        q = q & Q(name__contains=data.name)
+    if data.code:
+        q = q & Q(code__contains=data.code)
+    if data.status:
+        q = q & Q(status__contains=data.status)
+    total, role_objs = await role_controller.list(page=currentPage, page_size=pageSize, search=q)
     data = [await obj.to_dict() for obj in role_objs]
-    return SuccessExtra(data=data, total=total, page=page, page_size=page_size)
+    return SuccessExtra(data=data, total=total, currentPage=currentPage, pageSize=pageSize)
 
 
 @router.get("/get", summary="查看角色")

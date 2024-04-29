@@ -9,16 +9,13 @@ type Result = {
 
 type ResultTable = {
   success: boolean;
-  data?: {
-    /** 列表数据 */
-    list: Array<any>;
-    /** 总条目数 */
-    total?: number;
-    /** 每页显示条目个数 */
-    pageSize?: number;
-    /** 当前页数 */
-    currentPage?: number;
-  };
+  data?: Array<any>;
+  /** 总条目数 */
+  total?: number;
+  /** 每页显示条目个数 */
+  pageSize?: number;
+  /** 当前页数 */
+  currentPage?: number;
 };
 
 /** 获取系统管理-用户管理列表 */
@@ -95,38 +92,15 @@ export const getRoleIds = (data?: object) => {
 };
 
 /** 获取系统管理-角色管理列表 */
-export const getRoleList = (data?: object) => {
-  // return http.request<ResultTable>("post", "/role", { data });
-  console.log(data);
-  return {
-    code: 200,
-    msg: "ok",
-    data: {
-      total: 2,
-      pageSize: 10,
-      currentPage: 1,
-      list: [
-        {
-          createTime: 1605456000000, // 时间戳（毫秒ms）
-          updateTime: 1684512000000,
-          id: 1,
-          name: "超级管理员",
-          code: "admin",
-          status: 1, // 状态 1 启用 0 停用
-          remark: "超级管理员拥有最高权限"
-        },
-        {
-          createTime: 1605456000000,
-          updateTime: 1684512000000,
-          id: 2,
-          name: "普通角色",
-          code: "common",
-          status: 1,
-          remark: "普通角色拥有部分权限"
-        }
-      ]
-    }
-  };
+export const getRoleList = (
+  currentPage: number,
+  pageSize: number,
+  data?: object
+) => {
+  return http.request<ResultTable>("post", baseUrlApi("/role/list"), {
+    data,
+    params: { currentPage, pageSize }
+  });
 };
 
 /** 获取系统管理-菜单列表 */
