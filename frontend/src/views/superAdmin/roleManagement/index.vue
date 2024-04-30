@@ -89,9 +89,13 @@ onMounted(() => {
   useResizeObserver(contentRef, async () => {
     await nextTick();
     delay(60).then(() => {
-      treeHeight.value = parseFloat(
-        subBefore(tableRef.value.getTableDoms().tableWrapper.style.height, "px")
-      );
+      treeHeight.value =
+        parseFloat(
+          subBefore(
+            tableRef.value.getTableDoms().tableWrapper.style.height,
+            "px"
+          )
+        ) - 28; // 这个 28 是自己加的，因为加了个tab切换面板
     });
   });
 });
@@ -275,14 +279,14 @@ onMounted(() => {
           clearable
           @input="onQueryChanged"
         />
-        <div class="flex flex-wrap">
-          <el-checkbox v-model="isExpandAll" label="展开/折叠" />
-          <el-checkbox v-model="isSelectAll" label="全选/全不选" />
-          <el-checkbox v-model="isLinkage" label="父子联动" />
-        </div>
         <Segmented v-model="tabIndex" :options="tabOperation" size="small" />
         <el-tabs v-model="tabIndex" type="card" class="myTabs">
           <el-tab-pane :name="tabOperation[0].value">
+            <div class="flex flex-wrap">
+              <el-checkbox v-model="isExpandAll" label="展开/折叠" />
+              <el-checkbox v-model="isSelectAll" label="全选/全不选" />
+              <el-checkbox v-model="isLinkage" label="父子联动" />
+            </div>
             <el-tree-v2
               ref="menuTreeRef"
               show-checkbox
@@ -298,6 +302,11 @@ onMounted(() => {
             </el-tree-v2>
           </el-tab-pane>
           <el-tab-pane :name="tabOperation[1].value">
+            <div class="flex flex-wrap">
+              <el-checkbox v-model="isExpandAll" label="展开/折叠" />
+              <el-checkbox v-model="isSelectAll" label="全选/全不选" />
+              <el-checkbox v-model="isLinkage" label="父子联动" />
+            </div>
             <el-tree-v2
               ref="apiTreeRef"
               show-checkbox
@@ -337,6 +346,7 @@ onMounted(() => {
   .el-tabs__header {
     border: 0;
     height: 0;
+    margin: 0;
     .el-tabs__nav {
       border: 0;
       .el-tabs__item {
