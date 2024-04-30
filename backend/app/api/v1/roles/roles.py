@@ -1,5 +1,3 @@
-import logging
-
 from fastapi import APIRouter, Query
 from fastapi.exceptions import HTTPException
 from tortoise.expressions import Q
@@ -7,8 +5,9 @@ from tortoise.expressions import Q
 from app.controllers import role_controller
 from app.schemas.base import Success, SuccessExtra
 from app.schemas.roles import *
+from app.log import logger
 
-logger = logging.getLogger(__name__)
+
 router = APIRouter()
 
 
@@ -16,7 +15,7 @@ router = APIRouter()
 async def list_role(
         data: RoleFilter,
         currentPage: int = Query(1, description="页码"),
-        pageSize: int = Query(10, description="每页数量"),
+        pageSize: int = Query(100, description="每页数量"),
 ):
     q = Q()
     if data.name:
@@ -32,9 +31,9 @@ async def list_role(
 
 @router.get("/get", summary="查看角色")
 async def get_role(
-    role_id: int = Query(..., description="角色ID"),
+        id: int = Query(..., description="角色ID"),
 ):
-    role_obj = await role_controller.get(id=role_id)
+    role_obj = await role_controller.get(id=id)
     return Success(data=await role_obj.to_dict())
 
 
@@ -67,10 +66,15 @@ async def delete_role(
     return Success(msg="Deleted Success")
 
 
-@router.get("/authorized", summary="查看角色权限")
-async def get_role_authorized(id: int = Query(..., description="角色ID")):
+@router.get("/getRoleAuth", summary="查看角色权限")
+async def get_role_menu_id(id: int = Query(..., description="角色ID")):
     role_obj = await role_controller.get(id=id)
-    data = await role_obj.to_dict(m2m=True)
+    menuID = await role_obj.menus.all().values("id")
+    apiId = await role_obj.apis.all().values("id")
+    data = {
+        "menus": menuID,
+        "apis": apiId
+    }
     return Success(data=data)
 
 

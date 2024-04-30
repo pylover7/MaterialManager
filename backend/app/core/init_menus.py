@@ -2,7 +2,10 @@
 # @FileName  :init_menus.py
 # @Time      :2024/4/26 下午3:51
 # @Author    :dayezi
-from app.models import Menu
+from fastapi import FastAPI
+
+from app.models import Menu, Api
+from app.log import logger
 
 
 async def init_menus():
@@ -31,3 +34,21 @@ async def init_menus():
             showLink=True,
             showParent=False
         )
+
+
+async def init_api(app: FastAPI):
+    api = await Api.exists()
+    if not api:
+        logger.info("正在注册API...")
+        apis = app.openapi()["paths"]
+        for path, value in apis.items():
+            for method, value2 in value.items():
+                tag = ",".join(value2.get("tags"))
+                summary = value2.get("summary")
+                await Api.create(
+                    path=path,
+                    method=method.upper(),
+                    tags=tag,
+                    summary=summary
+                )
+        logger.info("API注册完成")

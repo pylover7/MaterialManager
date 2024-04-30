@@ -14,7 +14,7 @@ router = APIRouter()
 @router.get("/list", summary="查看API列表")
 async def list_api(
     page: int = Query(1, description="页码"),
-    page_size: int = Query(10, description="每页数量"),
+    page_size: int = Query(1000, description="每页数量"),
     path: str = Query(None, description="API路径"),
     summary: str = Query(None, description="API简介"),
     tags: str = Query(None, description="API模块"),
@@ -28,7 +28,7 @@ async def list_api(
         q &= Q(tags__contains=tags)
     total, api_objs = await api_controller.list(page=page, page_size=page_size, search=q, order=["tags", "id"])
     data = [await obj.to_dict() for obj in api_objs]
-    return SuccessExtra(data=data, total=total, page=page, page_size=page_size)
+    return SuccessExtra(data=data, total=total, currentPage=page, pageSize=page_size)
 
 
 @router.get("/get", summary="查看Api")

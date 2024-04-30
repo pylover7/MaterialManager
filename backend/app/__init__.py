@@ -25,14 +25,12 @@ def create_app() -> FastAPI:
     )
     register_exceptions(app)
     register_routers(app, prefix="/api")
-    logger.success("应用初始化成功")
-    init_db()
     return app
 
 
 app = create_app()
 
 
-# @app.on_event("startup")
-# async def startup_event():
-#     await init_menus()
+@app.on_event("startup")
+async def startup_event():
+    await init_db(app)

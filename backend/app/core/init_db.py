@@ -2,6 +2,7 @@
 # @FileName  :init_db.py
 # @Time      :2024/4/16 上午2:53
 # @Author    :dayezi
+from fastapi import FastAPI
 from tortoise import Tortoise, run_async
 import pymysql
 
@@ -10,20 +11,22 @@ from app.schemas.users import UserCreate
 from app.settings import settings
 from app.log import logger
 from app.schemas.admin import DbInfo
+from app.core.init_menus import init_api
 
 
-def init_db():
+async def init_db(app: FastAPI):
     if settings.DATABASE_START:
-        run_async(tortoise_init())
+        await tortoise_init(app)
 
 
-async def tortoise_init():
+async def tortoise_init(app: FastAPI):
     logger.info("正在初始化数据库...")
     await Tortoise.init(config=settings.TORTOISE_ORM)
     logger.info("数据库初始化完成")
     logger.info("正在生成数据库表...")
     await Tortoise.generate_schemas(safe=True)
     logger.info("数据库表生成完成")
+    await init_api(app)
     logger.info("正在注册超级管理员...")
     await register_superAdmin()
     logger.info("超级管理员注册完成")
@@ -57,7 +60,7 @@ def test_db(db_info: DbInfo) -> bool:
         return False
 
 
-async def set_db(db_info: DbInfo):
+async def set_db(db_info: DbInfo, app: FastAPI):
     settings.DATABASE_START = db_info.start
     settings.DATABASE_HOST = db_info.host
     settings.DATABASE_PORT = db_info.port
@@ -65,4 +68,4 @@ async def set_db(db_info: DbInfo):
     settings.DATABASE_PASSWORD = db_info.password
     settings.DATABASE_NAME = db_info.database
 
-    await tortoise_init()
+    await tortoise_init(app)

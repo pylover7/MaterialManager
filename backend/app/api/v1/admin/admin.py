@@ -2,7 +2,7 @@
 # @FileName  :users.py
 # @Time      :2024/4/16 下午9:31
 # @Author    :dayezi
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 from app.settings import settings
 from app.core.init_db import test_db, set_db
@@ -28,9 +28,9 @@ async def test_db_conn(data: DbInfo):
 
 
 @router.post("/set_db_info", summary="设置数据库连接")
-async def set_db_conn(data: DbInfo):
+async def set_db_conn(data: DbInfo, request: Request):
     try:
-        await set_db(data)
+        await set_db(data, request.app)
         return Success(msg="数据库设置成功！")
     except Exception as e:
         logger.error(e)

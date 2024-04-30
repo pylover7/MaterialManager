@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import editForm from "../form.vue";
-import { handleTree } from "@/utils/tree";
+import { handleTree, buildApiTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
 import { usePublicHooks } from "../../../hooks";
@@ -12,16 +12,17 @@ import { getKeyList, deviceDetection } from "@pureadmin/utils";
 import {
   addRole,
   deleteRole,
+  getApiList,
+  getMenuList,
+  getRoleAuth,
   getRoleList,
-  getRoleMenu,
-  getRoleMenuIds,
   updateRole
 } from "@/api/system";
 import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
 import type { OptionsType } from "@/components/ReSegmented";
 import { successNotification } from "@/utils/notification";
 
-export function useRole(treeRef: Ref) {
+export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
   const form = reactive({
     name: "",
     code: "",
@@ -30,8 +31,10 @@ export function useRole(treeRef: Ref) {
   const curRow = ref();
   const formRef = ref();
   const dataList = ref([]);
-  const treeIds = ref([]);
-  const treeData = ref([]);
+  const menuTreeIds = ref([]);
+  const apiTreeIds = ref([]);
+  const menuTreeData = ref([]);
+  const apiTreeData = ref([]);
   const isShow = ref(false);
   const loading = ref(true);
   const isLinkage = ref(false);
@@ -41,9 +44,14 @@ export function useRole(treeRef: Ref) {
   const isSelectAll = ref(false);
   const tabIndex = ref(0);
   const { switchStyle } = usePublicHooks();
-  const treeProps = {
+  const menuTreeProps = {
     value: "id",
     label: "title",
+    children: "children"
+  };
+  const apiTreeProps = {
+    value: "id",
+    label: "summary",
     children: "children"
   };
   const pagination = reactive<PaginationProps>({
@@ -261,8 +269,9 @@ export function useRole(treeRef: Ref) {
     if (id) {
       curRow.value = row;
       isShow.value = true;
-      const { data } = await getRoleMenuIds({ id });
-      treeRef.value.setCheckedKeys(data);
+      const { data } = await getRoleAuth({ id });
+      menuTreeRef.value.setCheckedKeys(data.menus);
+      apiTreeRef.value.setCheckedKeys(data.apis);
     } else {
       curRow.value = null;
       isShow.value = false;
@@ -281,7 +290,7 @@ export function useRole(treeRef: Ref) {
   function handleSave() {
     const { id, name } = curRow.value;
     // 根据用户 id 调用实际项目中菜单权限修改接口
-    console.log(id, treeRef.value.getCheckedKeys());
+    console.log(id, menuTreeRef.value.getCheckedKeys());
     message(`角色名称为${name}的菜单权限修改成功`, {
       type: "success"
     });
@@ -291,7 +300,7 @@ export function useRole(treeRef: Ref) {
   // function handleDatabase() {}
 
   const onQueryChanged = (query: string) => {
-    treeRef.value!.filter(query);
+    menuTreeRef.value!.filter(query);
   };
 
   const filterMethod = (query: string, node) => {
@@ -300,21 +309,25 @@ export function useRole(treeRef: Ref) {
 
   onMounted(async () => {
     onSearch();
-    const { data } = await getRoleMenu();
-    treeIds.value = getKeyList(data, "id");
-    treeData.value = handleTree(data);
+    const { data } = await getMenuList();
+    menuTreeIds.value = getKeyList(data, "id");
+    menuTreeData.value = handleTree(data);
+    getApiList().then(res => {
+      apiTreeData.value = buildApiTree(res.data);
+      apiTreeIds.value = getKeyList(res.data, "id");
+    });
   });
 
   watch(isExpandAll, val => {
     val
-      ? treeRef.value.setExpandedKeys(treeIds.value)
-      : treeRef.value.setExpandedKeys([]);
+      ? menuTreeRef.value.setExpandedKeys(menuTreeIds.value)
+      : menuTreeRef.value.setExpandedKeys([]);
   });
 
   watch(isSelectAll, val => {
     val
-      ? treeRef.value.setCheckedKeys(treeIds.value)
-      : treeRef.value.setCheckedKeys([]);
+      ? menuTreeRef.value.setCheckedKeys(menuTreeIds.value)
+      : menuTreeRef.value.setCheckedKeys([]);
   });
 
   return {
@@ -325,9 +338,11 @@ export function useRole(treeRef: Ref) {
     columns,
     rowStyle,
     dataList,
-    treeData,
+    menuTreeData,
+    apiTreeData,
     tabIndex,
-    treeProps,
+    menuTreeProps,
+    apiTreeProps,
     isLinkage,
     pagination,
     isExpandAll,

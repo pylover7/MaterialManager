@@ -216,7 +216,7 @@ const setBtn = async (formEl: FormInstance | undefined) => {
       border: 0;
       .el-tabs__item {
         border: 0;
-        padding-left: 0;
+        padding: 0;
       }
     }
   }

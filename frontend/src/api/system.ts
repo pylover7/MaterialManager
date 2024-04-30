@@ -4,6 +4,12 @@ import { baseUrlApi } from "./utils";
 type Result = {
   code: number;
   msg: string;
+  data?: object;
+};
+
+type ResultList = {
+  code: number;
+  msg: string;
   data?: Array<any>;
 };
 
@@ -105,61 +111,81 @@ export const getRoleList = (
 
 /** 新增角色 */
 export const addRole = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/role/add"), { data });
+  return http.request<ResultList>("post", baseUrlApi("/role/add"), { data });
 };
 
 /** 修改角色 */
 export const updateRole = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/role/update"), { data });
+  return http.request<ResultList>("post", baseUrlApi("/role/update"), { data });
 };
 
 /** 删除角色 */
 export const deleteRole = (id: number, name: string) => {
-  return http.request<Result>("delete", baseUrlApi("/role/delete"), {
+  return http.request<ResultList>("delete", baseUrlApi("/role/delete"), {
     params: { id, name }
   });
 };
 
+/** 获取角色管理-权限-菜单权限和API权限-根据角色 id 查对应菜单 */
+export const getRoleAuth = (data?: object) => {
+  // return http.request<Result>("post", "/role-menu-ids", { data });
+  return {
+    code: 200,
+    msg: "ok",
+    data: {
+      menus: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      apis: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    }
+  };
+};
+
+/** 获取API列表 */
+export const getApiList = () => {
+  return http.request<ResultTable>("get", baseUrlApi("/api/list"));
+};
+
 /** 获取系统管理-菜单列表 */
 export const getMenuList = () => {
-  return http.request<Result>("get", baseUrlApi("/menu/list"));
+  return http.request<ResultList>("get", baseUrlApi("/menu/list"));
 };
 
 /** 新增菜单 */
 export const addMenu = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/menu/add"), { data });
+  return http.request<ResultList>("post", baseUrlApi("/menu/add"), { data });
 };
 
 /** 修改菜单 */
 export const updateMenu = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/menu/update"), { data });
+  return http.request<ResultList>("post", baseUrlApi("/menu/update"), { data });
 };
 
 /** 删除菜单 */
 export const deleteMenu = (id: number, name: string) => {
-  return http.request<Result>("delete", baseUrlApi("/menu/delete"), {
+  return http.request<ResultList>("delete", baseUrlApi("/menu/delete"), {
     params: { id, name }
   });
 };
 
 /** 获取系统管理-部门管理列表 */
 export const getDeptList = () => {
-  return http.request<Result>("get", baseUrlApi("/depart/list"));
+  return http.request<ResultList>("get", baseUrlApi("/depart/list"));
 };
 
 /** 新增部门 */
 export const addDepart = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/depart/add"), { data });
+  return http.request<ResultList>("post", baseUrlApi("/depart/add"), { data });
 };
 
 /** 修改部门 */
 export const updateDepart = (data?: object) => {
-  return http.request<Result>("post", baseUrlApi("/depart/update"), { data });
+  return http.request<ResultList>("post", baseUrlApi("/depart/update"), {
+    data
+  });
 };
 
 /** 删除部门 */
 export const deleteDepart = (id: number, name: string) => {
-  return http.request<Result>("delete", baseUrlApi("/depart/delete"), {
+  return http.request<ResultList>("delete", baseUrlApi("/depart/delete"), {
     params: { id, name }
   });
 };
@@ -186,62 +212,5 @@ export const getSystemLogsList = (data?: object) => {
 
 /** 获取系统监控-系统日志-根据 id 查日志详情 */
 export const getSystemLogsDetail = (data?: object) => {
-  return http.request<Result>("post", "/system-logs-detail", { data });
-};
-
-/** 获取角色管理-权限-菜单权限 */
-export const getRoleMenu = (data?: object) => {
-  // return http.request<Result>("post", "/role-menu", { data });
-  console.log(data);
-  return {
-    code: 200,
-    msg: "ok",
-    data: [
-      {
-        parentId: 0,
-        id: 100,
-        menuType: 0, // 菜单类型（0代表菜单、1代表iframe、2代表外链、3代表按钮）
-        title: "menus.pureExternalPage"
-      },
-      {
-        parentId: 100,
-        id: 101,
-        menuType: 0,
-        title: "menus.pureExternalDoc"
-      },
-      {
-        parentId: 101,
-        id: 102,
-        menuType: 2,
-        title: "menus.pureExternalLink"
-      },
-      {
-        parentId: 101,
-        id: 103,
-        menuType: 2,
-        title: "menus.pureUtilsLink"
-      },
-      {
-        parentId: 100,
-        id: 104,
-        menuType: 1,
-        title: "menus.pureEmbeddedDoc"
-      }
-    ]
-  };
-};
-
-/** 获取角色管理-权限-菜单权限-根据角色 id 查对应菜单 */
-export const getRoleMenuIds = (data?: object) => {
-  // return http.request<Result>("post", "/role-menu-ids", { data });
-  console.log(data);
-  return {
-    code: 200,
-    msg: "ok",
-    data: [
-      100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 200, 201, 202, 203,
-      204, 205, 300, 301, 302, 303, 304, 400, 401, 402, 403, 404, 500, 501, 502,
-      503
-    ]
-  };
+  return http.request<ResultList>("post", "/system-logs-detail", { data });
 };

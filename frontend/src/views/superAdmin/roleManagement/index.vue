@@ -43,7 +43,8 @@ const iconClass = computed(() => {
   ];
 });
 
-const treeRef = ref();
+const menuTreeRef = ref();
+const apiTreeRef = ref();
 const formRef = ref();
 const tableRef = ref();
 const contentRef = ref();
@@ -57,8 +58,10 @@ const {
   columns,
   rowStyle,
   dataList,
-  treeData,
-  treeProps,
+  menuTreeData,
+  apiTreeData,
+  menuTreeProps,
+  apiTreeProps,
   tabIndex,
   isLinkage,
   pagination,
@@ -80,7 +83,7 @@ const {
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange
-} = useRole(treeRef);
+} = useRole(menuTreeRef, apiTreeRef);
 
 onMounted(() => {
   useResizeObserver(contentRef, async () => {
@@ -281,10 +284,11 @@ onMounted(() => {
         <el-tabs v-model="tabIndex" type="card" class="myTabs">
           <el-tab-pane :name="tabOperation[0].value">
             <el-tree-v2
-              ref="treeRef"
+              ref="menuTreeRef"
               show-checkbox
-              :data="treeData"
-              :props="treeProps"
+              :height="treeHeight"
+              :data="menuTreeData"
+              :props="menuTreeProps"
               :check-strictly="!isLinkage"
               :filter-method="filterMethod"
             >
@@ -294,7 +298,19 @@ onMounted(() => {
             </el-tree-v2>
           </el-tab-pane>
           <el-tab-pane :name="tabOperation[1].value">
-            <p>test</p>
+            <el-tree-v2
+              ref="apiTreeRef"
+              show-checkbox
+              :height="treeHeight"
+              :data="apiTreeData"
+              :props="apiTreeProps"
+              :check-strictly="!isLinkage"
+              :filter-method="filterMethod"
+            >
+              <template #default="{ node }">
+                <span>{{ transformI18n(node.label) }}</span>
+              </template>
+            </el-tree-v2>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -319,14 +335,13 @@ onMounted(() => {
 
 :deep(.myTabs) {
   .el-tabs__header {
-    border-radius: var(--el-border-radius-base);
     border: 0;
     height: 0;
     .el-tabs__nav {
       border: 0;
       .el-tabs__item {
         border: 0;
-        padding-left: 0;
+        padding: 0;
       }
     }
   }
