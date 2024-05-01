@@ -13,6 +13,13 @@ type ResultList = {
   data?: Array<any>;
 };
 
+type ResultRoleAuth = Result & {
+  data: {
+    menus: Array<number>;
+    apis: Array<number>;
+  };
+};
+
 type ResultTable = {
   success: boolean;
   data?: Array<any>;
@@ -127,16 +134,17 @@ export const deleteRole = (id: number, name: string) => {
 };
 
 /** 获取角色管理-权限-菜单权限和API权限-根据角色 id 查对应菜单 */
-export const getRoleAuth = (data?: object) => {
-  // return http.request<Result>("post", "/role-menu-ids", { data });
-  return {
-    code: 200,
-    msg: "ok",
-    data: {
-      menus: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-      apis: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    }
-  };
+export const getRoleAuth = (id: number) => {
+  return http.request<ResultRoleAuth>("get", baseUrlApi("/role/getRoleAuth"), {
+    params: { id }
+  });
+};
+
+/** 更新角色权限 */
+export const updateRoleAuth = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("/role/updateRoleAuth"), {
+    data
+  });
 };
 
 /** 获取API列表 */

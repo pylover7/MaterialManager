@@ -69,8 +69,8 @@ async def delete_role(
 @router.get("/getRoleAuth", summary="查看角色权限")
 async def get_role_menu_id(id: int = Query(..., description="角色ID")):
     role_obj = await role_controller.get(id=id)
-    menuID = await role_obj.menus.all().values("id")
-    apiId = await role_obj.apis.all().values("id")
+    menuID = await role_obj.menus.all().values_list("id", flat=True)
+    apiId = await role_obj.apis.all().values_list("id", flat=True)
     data = {
         "menus": menuID,
         "apis": apiId
@@ -78,8 +78,9 @@ async def get_role_menu_id(id: int = Query(..., description="角色ID")):
     return Success(data=data)
 
 
-@router.post("/authorized", summary="更新角色权限")
-async def update_role_authorized(role_in: RoleUpdateMenusApis):
-    role_obj = await role_controller.get(id=role_in.id)
-    await role_controller.update_roles(role=role_obj, menu_ids=role_in.menu_ids, api_infos=role_in.api_infos)
-    return Success(msg="Updated Successfully")
+@router.post("/updateRoleAuth", summary="更新角色权限")
+async def update_role_menu_id(data: RoleUpdateMenusApis):
+    role_obj = await role_controller.get(id=data.id)
+    await role_controller.update_roles(role=role_obj, menu_ids=data.menus, api_ids=data.apis)
+    return Success(msg="权限更新成功")
+

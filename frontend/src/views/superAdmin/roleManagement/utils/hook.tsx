@@ -16,7 +16,8 @@ import {
   getMenuList,
   getRoleAuth,
   getRoleList,
-  updateRole
+  updateRole,
+  updateRoleAuth
 } from "@/api/system";
 import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
 import type { OptionsType } from "@/components/ReSegmented";
@@ -32,16 +33,20 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
   const formRef = ref();
   const dataList = ref([]);
   const menuTreeIds = ref([]);
+  const apiParentTreeIds = ref([]);
   const apiTreeIds = ref([]);
   const menuTreeData = ref([]);
   const apiTreeData = ref([]);
   const isShow = ref(false);
   const loading = ref(true);
-  const isLinkage = ref(false);
+  const isLinkage = ref(true);
+  const apiIsLinkage = ref(true);
   const treeSearchValue = ref();
   const switchLoadMap = ref({});
   const isExpandAll = ref(false);
+  const apiIsExpandAll = ref(false);
   const isSelectAll = ref(false);
+  const apiIsSelectAll = ref(false);
   const tabIndex = ref(0);
   const { switchStyle } = usePublicHooks();
   const menuTreeProps = {
@@ -269,7 +274,7 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
     if (id) {
       curRow.value = row;
       isShow.value = true;
-      const { data } = await getRoleAuth({ id });
+      const { data } = await getRoleAuth(id);
       menuTreeRef.value.setCheckedKeys(data.menus);
       apiTreeRef.value.setCheckedKeys(data.apis);
     } else {
@@ -286,13 +291,20 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
     };
   }
 
-  /** 菜单权限-保存 */
+  /** 菜单API权限-保存 */
   function handleSave() {
     const { id, name } = curRow.value;
+    const apiIds = apiTreeRef.value
+      .getCheckedKeys()
+      .filter(item => typeof item === "number");
+    let data = {
+      id: id,
+      menus: menuTreeRef.value.getCheckedKeys(),
+      apis: apiIds
+    };
     // 根据用户 id 调用实际项目中菜单权限修改接口
-    console.log(id, menuTreeRef.value.getCheckedKeys());
-    message(`角色名称为${name}的菜单权限修改成功`, {
-      type: "success"
+    updateRoleAuth(data).then(() => {
+      successNotification(`角色名称为${name}的菜单权限修改成功`);
     });
   }
 
@@ -315,6 +327,7 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
     getApiList().then(res => {
       apiTreeData.value = buildApiTree(res.data);
       apiTreeIds.value = getKeyList(res.data, "id");
+      apiParentTreeIds.value = getKeyList(apiTreeData.value, "id");
     });
   });
 
@@ -328,6 +341,21 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
     val
       ? menuTreeRef.value.setCheckedKeys(menuTreeIds.value)
       : menuTreeRef.value.setCheckedKeys([]);
+  });
+
+  watch(apiIsExpandAll, val => {
+    val
+      ? apiTreeRef.value.setExpandedKeys(apiParentTreeIds.value)
+      : apiTreeRef.value.setExpandedKeys([]);
+  });
+
+  watch(apiIsSelectAll, val => {
+    val
+      ? apiTreeRef.value.setCheckedKeys([
+          ...apiTreeIds.value,
+          ...apiParentTreeIds.value
+        ])
+      : apiTreeRef.value.setCheckedKeys([]);
   });
 
   return {
@@ -346,7 +374,10 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
     isLinkage,
     pagination,
     isExpandAll,
+    apiIsExpandAll,
     isSelectAll,
+    apiIsSelectAll,
+    apiIsLinkage,
     tabOperation,
     treeSearchValue,
     // buttonClass,

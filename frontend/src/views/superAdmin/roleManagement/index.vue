@@ -64,9 +64,12 @@ const {
   apiTreeProps,
   tabIndex,
   isLinkage,
+  apiIsLinkage,
   pagination,
   isExpandAll,
+  apiIsExpandAll,
   isSelectAll,
+  apiIsSelectAll,
   tabOperation,
   treeSearchValue,
   // buttonClass,
@@ -285,7 +288,6 @@ onMounted(() => {
             <div class="flex flex-wrap">
               <el-checkbox v-model="isExpandAll" label="展开/折叠" />
               <el-checkbox v-model="isSelectAll" label="全选/全不选" />
-              <el-checkbox v-model="isLinkage" label="父子联动" />
             </div>
             <el-tree-v2
               ref="menuTreeRef"
@@ -303,9 +305,8 @@ onMounted(() => {
           </el-tab-pane>
           <el-tab-pane :name="tabOperation[1].value">
             <div class="flex flex-wrap">
-              <el-checkbox v-model="isExpandAll" label="展开/折叠" />
-              <el-checkbox v-model="isSelectAll" label="全选/全不选" />
-              <el-checkbox v-model="isLinkage" label="父子联动" />
+              <el-checkbox v-model="apiIsExpandAll" label="展开/折叠" />
+              <el-checkbox v-model="apiIsSelectAll" label="全选/全不选" />
             </div>
             <el-tree-v2
               ref="apiTreeRef"
@@ -313,7 +314,7 @@ onMounted(() => {
               :height="treeHeight"
               :data="apiTreeData"
               :props="apiTreeProps"
-              :check-strictly="!isLinkage"
+              :check-strictly="!apiIsLinkage"
               :filter-method="filterMethod"
             >
               <template #default="{ node }">
