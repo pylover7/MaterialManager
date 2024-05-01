@@ -7,10 +7,12 @@ UserPydantic = pydantic_model_creator(User)
 
 
 class UserCreate(UserPydantic):
-    ...
+    is_superuser: bool = False
+    last_login: str = None
+    departId: int = Field(description="部门ID")
 
     def create_dict(self):
-        return self.model_dump(exclude_unset=True, exclude={"roles"})
+        return self.model_dump(exclude_unset=True, exclude={"roles", "depart"})
 
 
 class UserUpdate(UserPydantic):

@@ -6,16 +6,22 @@ from .enums import MethodType
 
 class User(BaseModel, TimestampMixin):
     username = fields.CharField(max_length=20, unique=True, description="用户名称")
-    alias = fields.CharField(max_length=30, null=True, description="姓名")
+    nickname = fields.CharField(max_length=30, null=True, description="用户昵称")
+    sex = fields.IntField(default=0, description="性别, 0: 女, 1: 男")
     email = fields.CharField(max_length=255, unique=True, description="邮箱")
     phone = fields.CharField(max_length=20, null=True, description="电话")
     password = fields.CharField(max_length=128, description="密码")
-    depart = fields.CharField(max_length=20, description="部门")
-    is_active = fields.BooleanField(default=False, description="是否激活")
+    status = fields.BooleanField(default=False, description="是否激活")
     is_superuser = fields.BooleanField(default=False, description="是否为超级管理员")
     last_login = fields.DatetimeField(null=True, description="最后登录时间")
+    remark = fields.CharField(max_length=500, null=True, blank=True, description="备注")
 
     roles: fields.ManyToManyRelation["Role"] = fields.ManyToManyField("models.Role", related_name="user_roles")
+    depart: fields.ForeignKeyRelation["Depart"] = fields.ForeignKeyField(
+        "models.Depart",
+        related_name="user_depart",
+        null=True
+    )
 
     class Meta:
         table = "user"
@@ -90,6 +96,8 @@ class Depart(BaseModel, TimestampMixin):
     email = fields.CharField(max_length=255, null=True, description="邮箱")
     status = fields.IntField(default=1, description="状态：启用/停用")
     remark = fields.CharField(max_length=500, null=True, blank=True, description="备注信息")
+
+    users: fields.ReverseRelation["User"]
 
     class Meta:
         table = "depart"

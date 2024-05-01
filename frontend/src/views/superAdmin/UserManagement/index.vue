@@ -13,6 +13,7 @@ import Delete from "@iconify-icons/ep/delete";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
+import PureTable from "@pureadmin/table";
 
 defineOptions({
   name: "UserManagement"
@@ -110,11 +111,7 @@ const {
         </el-form-item>
       </el-form>
 
-      <PureTableBar
-        title="用户管理（仅演示，操作后不生效）"
-        :columns="columns"
-        @refresh="onSearch"
-      >
+      <PureTableBar title="用户管理" :columns="columns" @refresh="onSearch">
         <template #buttons>
           <el-button
             type="primary"
@@ -161,7 +158,7 @@ const {
             :data="dataList"
             :columns="dynamicColumns"
             :pagination="pagination"
-            :paginationSmall="size === 'small' ? true : false"
+            :paginationSmall="size === 'small'"
             :header-cell-style="{
               background: 'var(--el-fill-color-light)',
               color: 'var(--el-text-color-primary)'

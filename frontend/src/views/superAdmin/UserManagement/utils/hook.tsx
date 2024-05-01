@@ -22,7 +22,8 @@ import {
   getRoleIds,
   getDeptList,
   getUserList,
-  getAllRoleList
+  getAllRoleList,
+  addUser
 } from "@/api/system";
 import {
   ElForm,
@@ -316,7 +317,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         formInline: {
           title,
           higherDeptOptions: formatHigherDeptOptions(higherDeptOptions.value),
-          parentId: row?.dept.id ?? 0,
+          departId: row?.depart.id ?? 0,
           nickname: row?.nickname ?? "",
           username: row?.username ?? "",
           password: row?.password ?? "",
@@ -349,7 +350,11 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
             // 表单规则校验通过
             if (title === "新增") {
               // 实际开发先调用新增接口，再进行下面操作
-              chores();
+              delete curData.title;
+              delete curData.higherDeptOptions;
+              addUser(curData).then(() => {
+                chores();
+              });
             } else {
               // 实际开发先调用修改接口，再进行下面操作
               chores();

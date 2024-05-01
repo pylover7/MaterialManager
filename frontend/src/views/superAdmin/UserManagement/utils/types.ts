@@ -3,7 +3,7 @@ interface FormItemProps {
   /** 用于判断是`新增`还是`修改` */
   title: string;
   higherDeptOptions: Record<string, unknown>[];
-  parentId: number;
+  departId: number;
   nickname: string;
   username: string;
   password: string;
@@ -11,7 +11,7 @@ interface FormItemProps {
   email: string;
   sex: string | number;
   status: number;
-  dept?: {
+  depart?: {
     id?: number;
     name?: string;
   };
