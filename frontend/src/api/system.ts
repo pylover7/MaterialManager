@@ -32,52 +32,20 @@ type ResultTable = {
 };
 
 /** 获取系统管理-用户管理列表 */
-export const getUserList = (data?: object) => {
-  // return http.request<ResultTable>("post", "/user", { data });
-  console.log(data);
-  return {
-    code: 200,
-    msg: "ok",
-    data: [
-      {
-        avatar: "https://avatars.githubusercontent.com/u/44761321",
-        username: "admin",
-        nickname: "小铭",
-        phone: "15888886789",
-        email: "zzz",
-        sex: 0,
-        id: 1,
-        status: 1,
-        dept: {
-          // 部门id
-          id: 103,
-          // 部门名称
-          name: "研发部门"
-        },
-        remark: "管理员",
-        createTime: 1605456000000
-      },
-      {
-        avatar: "https://avatars.githubusercontent.com/u/52823142",
-        username: "common",
-        nickname: "小林",
-        phone: "18288882345",
-        email: "xxx",
-        sex: 1,
-        id: 2,
-        status: 1,
-        dept: {
-          id: 105,
-          name: "测试部门"
-        },
-        remark: "普通用户",
-        createTime: 1605456000000
-      }
-    ],
-    total: 2,
-    pageSize: 10,
-    currentPage: 1
-  };
+export const getUserList = (
+  currentPage: number,
+  pageSize: number,
+  username: string = null,
+  phone: string = null
+) => {
+  return http.request<ResultTable>("get", baseUrlApi("/user/list"), {
+    params: {
+      currentPage,
+      pageSize,
+      username,
+      phone
+    }
+  });
 };
 
 /** 新增用户 */

@@ -18,13 +18,13 @@ async def list_user(
     currentPage: int = Query(1, description="页码"),
     pageSize: int = Query(10, description="每页数量"),
     username: str = Query("", description="用户名称，用于搜索"),
-    email: str = Query("", description="邮箱地址"),
+    phone: str = Query("", description="手机号码，用于搜索"),
 ):
     q = Q()
     if username:
         q &= Q(username__contains=username)
-    if email:
-        q &= Q(email__contains=email)
+    if phone:
+        q &= Q(email__contains=phone)
     total, user_objs = await user_controller.list(page=currentPage, page_size=pageSize, search=q)
     data = [await obj.to_dict(m2m=True, exclude_fields=["password"]) for obj in user_objs]
     return SuccessExtra(data=data, total=total, currentPage=currentPage, pageSize=pageSize)

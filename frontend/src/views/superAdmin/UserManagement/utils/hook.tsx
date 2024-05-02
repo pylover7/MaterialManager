@@ -46,7 +46,7 @@ import {
 export function useUser(tableRef: Ref, treeRef: Ref) {
   const form = reactive({
     // 左侧部门树的id
-    deptId: "",
+    departId: "",
     username: "",
     phone: "",
     status: ""
@@ -121,7 +121,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     },
     {
       label: "部门",
-      prop: "dept.name",
+      prop: "depart.name",
       minWidth: 90
     },
     {
@@ -261,7 +261,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   /** 批量删除 */
-  function onbatchDel() {
+  function onBatchDel() {
     // 返回当前选中的行
     const curSelected = tableRef.value.getTableRef().getSelectionRows();
     // 接下来根据实际业务，通过选中行的某项数据，比如下面的id，调用接口进行批量删除
@@ -274,7 +274,12 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
 
   async function onSearch() {
     loading.value = true;
-    const { data, total, currentPage, pageSize } = getUserList(toRaw(form));
+    const { data, total, currentPage, pageSize } = await getUserList(
+      pagination.currentPage,
+      pagination.pageSize,
+      toRaw(form).username,
+      toRaw(form).phone
+    );
     dataList.value = data;
     pagination.total = total;
     pagination.pageSize = pageSize;
@@ -288,13 +293,13 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   const resetForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
-    form.deptId = "";
+    form.departId = "";
     treeRef.value.onTreeReset();
     onSearch();
   };
 
   function onTreeSelect({ id, selected }) {
-    form.deptId = selected ? id : "";
+    form.departId = selected ? id : "";
     onSearch();
   }
 
@@ -317,7 +322,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         formInline: {
           title,
           higherDeptOptions: formatHigherDeptOptions(higherDeptOptions.value),
-          departId: row?.depart.id ?? 0,
+          departId: row?.departId ?? 0,
           nickname: row?.nickname ?? "",
           username: row?.username ?? "",
           password: row?.password ?? "",
@@ -525,7 +530,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     deviceDetection,
     onSearch,
     resetForm,
-    onbatchDel,
+    onBatchDel,
     openDialog,
     onTreeSelect,
     handleUpdate,

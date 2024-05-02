@@ -36,7 +36,7 @@ const {
   deviceDetection,
   onSearch,
   resetForm,
-  onbatchDel,
+  onBatchDel,
   openDialog,
   onTreeSelect,
   handleUpdate,
@@ -92,8 +92,8 @@ const {
             clearable
             class="!w-[180px]"
           >
-            <el-option label="已开启" value="1" />
-            <el-option label="已关闭" value="0" />
+            <el-option label="已开启" :value="1" />
+            <el-option label="已关闭" :value="0" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -138,7 +138,7 @@ const {
                 取消选择
               </el-button>
             </div>
-            <el-popconfirm title="是否确认删除?" @confirm="onbatchDel">
+            <el-popconfirm title="是否确认删除?" @confirm="onBatchDel">
               <template #reference>
                 <el-button type="danger" text class="mr-1">
                   批量删除
