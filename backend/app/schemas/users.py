@@ -16,10 +16,18 @@ class UserCreate(UserPydantic):
 
 
 class UserUpdate(UserPydantic):
-    ...
+    id: int
+    last_login: str = None
+    password: str = None
+    departId: int = Field(description="部门ID")
 
     def update_dict(self):
         return self.model_dump(exclude_unset=True, exclude={"roles", "id"})
+
+
+class UpdateStatus(BaseModel):
+    id: int = Field(description="用户ID")
+    status: int = Field(description="状态")
 
 
 class UpdatePassword(BaseModel):

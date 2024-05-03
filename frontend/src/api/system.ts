@@ -53,6 +53,25 @@ export const addUser = (data?: object) => {
   return http.request<Result>("post", baseUrlApi("/user/add"), { data });
 };
 
+/** 更新用户 */
+export const updateUser = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("/user/update"), { data });
+};
+
+/** 更新用户状态 */
+export const updateUserStatus = (data?: object) => {
+  return http.request<Result>("post", baseUrlApi("/user/updateStatus"), {
+    data
+  });
+};
+
+/** 删除用户 */
+export const deleteUser = (id: number, name: string) => {
+  return http.request<Result>("delete", baseUrlApi("/user/delete"), {
+    params: { id, name }
+  });
+};
+
 /** 系统管理-用户管理-获取所有角色列表 */
 export const getAllRoleList = () => {
   // return http.request<Result>("get", "/list-all-role");

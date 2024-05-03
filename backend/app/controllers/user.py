@@ -58,5 +58,9 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         user.depart = depart
         await user.save()
 
+    async def update_status(self, user: User, status: int) -> None:
+        user.status = status
+        await user.save()
+
 
 user_controller = UserController()

@@ -23,7 +23,10 @@ import {
   getDeptList,
   getUserList,
   getAllRoleList,
-  addUser
+  addUser,
+  updateUser,
+  updateUserStatus,
+  deleteUser
 } from "@/api/system";
 import {
   ElForm,
@@ -42,6 +45,7 @@ import {
   reactive,
   onMounted
 } from "vue";
+import { successNotification } from "@/utils/notification";
 
 export function useUser(tableRef: Ref, treeRef: Ref) {
   const form = reactive({
@@ -211,18 +215,20 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
             loading: true
           }
         );
-        setTimeout(() => {
-          switchLoadMap.value[index] = Object.assign(
-            {},
-            switchLoadMap.value[index],
-            {
-              loading: false
-            }
-          );
-          message("已成功修改用户状态", {
-            type: "success"
-          });
-        }, 300);
+        updateUserStatus({ id: row.id, status: row.status }).then(() => {
+          setTimeout(() => {
+            switchLoadMap.value[index] = Object.assign(
+              {},
+              switchLoadMap.value[index],
+              {
+                loading: false
+              }
+            );
+            message("已成功修改用户状态", {
+              type: "success"
+            });
+          }, 300);
+        });
       })
       .catch(() => {
         row.status === 0 ? (row.status = 1) : (row.status = 0);
@@ -234,8 +240,10 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   function handleDelete(row) {
-    message(`您删除了用户编号为${row.id}的这条数据`, { type: "success" });
-    onSearch();
+    deleteUser(row.id, row.username).then(() => {
+      successNotification(`您删除了用户编号为${row.id}的这条数据`);
+      onSearch();
+    });
   }
 
   function handleSizeChange(val: number) {
@@ -321,6 +329,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       props: {
         formInline: {
           title,
+          id: row?.id ?? 0,
           higherDeptOptions: formatHigherDeptOptions(higherDeptOptions.value),
           departId: row?.departId ?? 0,
           nickname: row?.nickname ?? "",
@@ -343,26 +352,30 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
         function chores() {
-          message(`您${title}了用户名称为${curData.username}的这条数据`, {
-            type: "success"
-          });
+          successNotification(
+            `您${title}了用户名称为${curData.username}的这条数据`
+          );
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
         FormRef.validate(valid => {
           if (valid) {
+            delete curData.higherDeptOptions;
+            delete curData.title;
             console.log("curData", curData);
             // 表单规则校验通过
             if (title === "新增") {
               // 实际开发先调用新增接口，再进行下面操作
-              delete curData.title;
-              delete curData.higherDeptOptions;
+              delete curData.id;
               addUser(curData).then(() => {
                 chores();
               });
             } else {
+              delete curData.password;
               // 实际开发先调用修改接口，再进行下面操作
-              chores();
+              updateUser(curData).then(() => {
+                chores();
+              });
             }
           }
         });
