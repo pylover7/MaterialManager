@@ -1,4 +1,7 @@
+from pathlib import Path
+
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from app.core.exceptions import SettingNotFound
 from app.core.init_app import (
@@ -25,6 +28,8 @@ def create_app() -> FastAPI:
     )
     register_exceptions(app)
     register_routers(app, prefix="/api")
+    static_path = Path.joinpath(Path(__file__).parent, "static")
+    app.mount("/static", StaticFiles(directory=static_path), name="static")
     return app
 
 

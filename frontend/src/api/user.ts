@@ -37,7 +37,7 @@ export type RefreshTokenResult = {
 
 /** 登录 */
 export const getLogin = (data?: object) => {
-  return http.request<UserResult>("post", baseUrlApi("base/accessToken"), {
+  return http.request<UserResult>("post", baseUrlApi("/base/accessToken"), {
     data
   });
 };
@@ -46,11 +46,7 @@ export const getLogin = (data?: object) => {
 export const refreshTokenApi = (data?: object) => {
   return http.request<RefreshTokenResult>(
     "post",
-    baseUrlApi("base/refreshToken"),
+    baseUrlApi("/base/refreshToken"),
     { data }
   );
-};
-
-export const test = () => {
-  return http.request<UserResult>("get", "/proxy/test");
 };

@@ -1,4 +1,5 @@
-import logging
+import time
+from pathlib import Path
 
 from fastapi import APIRouter, Query
 from fastapi.exceptions import HTTPException
@@ -8,6 +9,8 @@ from app.controllers.user import user_controller
 from app.schemas.base import Success, SuccessExtra
 from app.schemas.users import *
 from app.log import logger
+from app.settings import settings
+from app.utils import base_decode
 
 router = APIRouter()
 
@@ -80,6 +83,22 @@ async def update_status(
 ):
     user = await user_controller.get(id=data.id)
     await user_controller.update_status(user, data.status)
+    return Success(msg="Updated Successfully")
+
+
+@router.post("/updateAvatar", summary="更新用户头像")
+async def update_avatar(
+        data: dict,
+        id: int = Query(..., description="用户ID"),
+):
+    user = await user_controller.get(id=id)
+    avatar_name = f"{user.uuid}_{time.time_ns()}.{data['base64'].split(';')[0].split('/')[-1]}"
+    avatar_path = Path.joinpath(settings.STATIC_PATH, "avatar", avatar_name)
+    with open(avatar_path, "wb") as f:
+        imgData = base_decode(data["base64"].split(",")[1])
+        f.write(imgData)
+    user.avatar = avatar_name
+    await user.save()
     return Success(msg="Updated Successfully")
 
 

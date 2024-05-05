@@ -1,12 +1,13 @@
 from tortoise import fields
 
-from .base import BaseModel, TimestampMixin
+from .base import BaseModel, TimestampMixin, UUIDModel
 from .enums import MethodType
 
 
-class User(BaseModel, TimestampMixin):
+class User(BaseModel, TimestampMixin, UUIDModel):
     username = fields.CharField(max_length=20, unique=True, description="用户名称")
     nickname = fields.CharField(max_length=30, null=True, description="用户昵称")
+    avatar = fields.CharField(max_length=255, null=True, description="头像文件名称")
     sex = fields.IntField(default=0, description="性别, 0: 女, 1: 男")
     email = fields.CharField(max_length=255, null=True, unique=True, description="邮箱")
     phone = fields.CharField(max_length=20, null=True, unique=True, description="电话")

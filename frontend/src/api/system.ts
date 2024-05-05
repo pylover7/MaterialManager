@@ -1,5 +1,5 @@
 import { http } from "@/utils/http";
-import { baseUrlApi } from "./utils";
+import { baseUrlApi, staticUrl } from "./utils";
 
 type Result = {
   code: number;
@@ -44,6 +44,21 @@ export const getUserList = (
       pageSize,
       username,
       phone
+    }
+  });
+};
+
+/** 获取用户头像 */
+export const getUserAvatar = (name: string) => {
+  return staticUrl(`/avatar/${name}`);
+};
+
+/** 更新用户头像 */
+export const updateUserAvatar = (id: number, data?: object) => {
+  return http.request<Result>("post", baseUrlApi("/user/updateAvatar"), {
+    data,
+    params: {
+      id
     }
   });
 };

@@ -4,6 +4,7 @@ from ruamel.yaml import YAML
 from app.schemas.admin import DbInfo
 
 config_path = Path.joinpath(Path(__file__).parent.parent.parent, "config.yml")
+static_path = Path.joinpath(Path(__file__).parent.parent, "static")
 yaml = YAML()
 
 
@@ -194,6 +195,10 @@ class Settings:
     @property
     def APP_LOG_CONFIG(self) -> dict:
         return self.data["log"]
+
+    @property
+    def STATIC_PATH(self) -> Path:
+        return static_path
 
 
 settings = Settings()

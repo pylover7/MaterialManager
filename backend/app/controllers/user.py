@@ -62,5 +62,9 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         user.status = status
         await user.save()
 
+    async def update_avatar(self, user: User, avatar: str) -> None:
+        user.avatar = avatar
+        await user.save()
+
 
 user_controller = UserController()

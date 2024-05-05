@@ -12,6 +12,7 @@ from app.settings import settings
 from app.log import logger
 from app.schemas.admin import DbInfo
 from app.core.init_menus import init_api
+from app.utils.password import generate_uuid
 
 
 async def init_db(app: FastAPI):
@@ -35,6 +36,7 @@ async def tortoise_init(app: FastAPI):
 async def register_superAdmin():
     user = await user_controller.model.exists()
     if not user:
+        settings.SUPER_USER["uuid"] = generate_uuid(settings.SUPER_USER["username"])
         await user_controller.create(UserCreate.parse_obj(settings.SUPER_USER))
 
 

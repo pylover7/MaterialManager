@@ -26,7 +26,9 @@ import {
   addUser,
   updateUser,
   updateUserStatus,
-  deleteUser
+  deleteUser,
+  getUserAvatar,
+  updateUserAvatar
 } from "@/api/system";
 import {
   ElForm,
@@ -92,8 +94,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         <el-image
           fit="cover"
           preview-teleported={true}
-          src={row.avatar || userAvatar}
-          preview-src-list={Array.of(row.avatar || userAvatar)}
+          src={getUserAvatar(row.avatar) || userAvatar}
+          preview-src-list={Array.of(getUserAvatar(row.avatar) || userAvatar)}
           class="w-[24px] h-[24px] rounded-full align-middle"
         />
       ),
@@ -394,14 +396,17 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       contentRenderer: () =>
         h(ReCropperPreview, {
           ref: cropRef,
-          imgSrc: row.avatar || userAvatar,
+          imgSrc: getUserAvatar(row.avatar) || userAvatar,
           onCropper: info => (avatarInfo.value = info)
         }),
       beforeSure: done => {
-        console.log("裁剪后的图片信息：", avatarInfo.value);
+        console.log("裁剪后的图片信息：", avatarInfo.value, row);
         // 根据实际业务使用avatarInfo.value和row里的某些字段去调用上传头像接口即可
-        done(); // 关闭弹框
-        onSearch(); // 刷新表格数据
+        updateUserAvatar(row.id, avatarInfo.value).then(() => {
+          successNotification(`头像修改成功`);
+          done(); // 关闭弹框
+          onSearch(); // 刷新表格数据
+        });
       },
       closeCallBack: () => cropRef.value.hidePopover()
     });
