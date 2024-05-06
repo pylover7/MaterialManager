@@ -5,6 +5,7 @@ from fastapi import APIRouter, Query
 from fastapi.exceptions import HTTPException
 from tortoise.expressions import Q
 
+from app.controllers.depart import departController
 from app.controllers.user import user_controller
 from app.schemas.base import Success, SuccessExtra
 from app.schemas.users import *
@@ -22,12 +23,17 @@ async def list_user(
         pageSize: int = Query(10, description="每页数量"),
         username: str = Query("", description="用户名称，用于搜索"),
         phone: str = Query("", description="手机号码，用于搜索"),
+        departId: str = Query("", description="部门ID，用于搜索")
 ):
     q = Q()
+    departId = int(departId) if departId else 0
     if username:
         q &= Q(username__contains=username)
     if phone:
         q &= Q(phone__contains=phone)
+    if departId:
+        childrenList = await departController.children_ids(departId)
+        q &= Q(depart_id__in=childrenList)
     total, user_objs = await user_controller.list(page=currentPage, page_size=pageSize, search=q)
     data = []
     for obj in user_objs:

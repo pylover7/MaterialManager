@@ -292,7 +292,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       pagination.currentPage,
       pagination.pageSize,
       toRaw(form).username,
-      toRaw(form).phone
+      toRaw(form).phone,
+      toRaw(form).departId
     );
     dataList.value = data;
     pagination.total = total;

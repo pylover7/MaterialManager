@@ -36,14 +36,16 @@ export const getUserList = (
   currentPage: number,
   pageSize: number,
   username: string = null,
-  phone: string = null
+  phone: string = null,
+  departId: string = null
 ) => {
   return http.request<ResultTable>("get", baseUrlApi("/user/list"), {
     params: {
       currentPage,
       pageSize,
       username,
-      phone
+      phone,
+      departId
     }
   });
 };
