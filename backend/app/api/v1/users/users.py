@@ -10,7 +10,8 @@ from app.schemas.base import Success, SuccessExtra
 from app.schemas.users import *
 from app.log import logger
 from app.settings import settings
-from app.utils import base_decode
+from app.utils import base_decode, generate_uuid
+from app.utils.password import get_password_hash
 
 router = APIRouter()
 
@@ -61,6 +62,7 @@ async def create_user(
         )
     id = data.departId
     del data.departId
+    data.uuid = generate_uuid(data.username)
     new_user = await user_controller.create(obj_in=data)
     await user_controller.update_depart(new_user, id)
     return Success(msg="Created Successfully")
@@ -100,6 +102,16 @@ async def update_avatar(
     user.avatar = avatar_name
     await user.save()
     return Success(msg="Updated Successfully")
+
+
+@router.post("/resetPwd", summary="重置用户密码")
+async def reset_pwd(
+        data: dict,
+):
+    user = await user_controller.get(id=data["id"])
+    user.password = get_password_hash(data["newPwd"])
+    await user.save()
+    return Success(msg="Reset Successfully")
 
 
 @router.delete("/delete", summary="删除用户")

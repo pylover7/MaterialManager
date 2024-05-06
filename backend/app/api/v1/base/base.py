@@ -150,7 +150,7 @@ async def get_user_api():
     return Success(data=apis)
 
 
-@router.post("/update_password", summary="更新用户密码", dependencies=[DependAuth])
+@router.post("/updatePwd", summary="更新用户密码", dependencies=[DependAuth])
 async def update_user_password(req_in: UpdatePassword):
     user = await user_controller.get(req_in.id)
     verified = verify_password(req_in.old_password, user.password)

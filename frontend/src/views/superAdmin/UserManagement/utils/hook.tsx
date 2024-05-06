@@ -11,6 +11,8 @@ import { addDialog } from "@/components/ReDialog";
 import type { PaginationProps } from "@pureadmin/table";
 import ReCropperPreview from "@/components/ReCropperPreview";
 import type { FormItemProps, RoleFormItemProps } from "../utils/types";
+import Refresh from "@iconify-icons/ep/refresh";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import {
   getKeyList,
   isAllEmpty,
@@ -28,7 +30,7 @@ import {
   updateUserStatus,
   deleteUser,
   getUserAvatar,
-  updateUserAvatar
+  updateUserAvatar, resetUserPwd
 } from "@/api/system";
 import {
   ElForm,
@@ -48,6 +50,7 @@ import {
   onMounted
 } from "vue";
 import { successNotification } from "@/utils/notification";
+import { generatePassword } from "../utils/util";
 
 export function useUser(tableRef: Ref, treeRef: Ref) {
   const form = reactive({
@@ -418,6 +421,15 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       (curScore.value = isAllEmpty(newPwd) ? -1 : zxcvbn(newPwd).score)
   );
 
+  const newPwdLoading = ref(false);
+  const resetPwd = () => {
+    newPwdLoading.value = true;
+    setTimeout(() => {
+      pwdForm.newPwd = generatePassword(12);
+      newPwdLoading.value = false;
+    }, 1000);
+  };
+
   /** 重置密码 */
   function handleReset(row) {
     addDialog({
@@ -435,7 +447,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
                 {
                   required: true,
                   message: "请输入新密码",
-                  trigger: "blur"
+                  trigger: "change"
                 }
               ]}
             >
@@ -445,7 +457,20 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
                 type="password"
                 v-model={pwdForm.newPwd}
                 placeholder="请输入新密码"
-              />
+              >
+                {{
+                  append: () => (
+                    <el-button
+                      icon={useRenderIcon(Refresh)}
+                      loading-icon={useRenderIcon(Refresh)}
+                      loading={newPwdLoading.value}
+                      onClick={() => {
+                        resetPwd();
+                      }}
+                    />
+                  )
+                }}
+              </ElInput>
             </ElFormItem>
           </ElForm>
           <div class="mt-4 flex">
@@ -479,13 +504,12 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         ruleFormRef.value.validate(valid => {
           if (valid) {
             // 表单规则校验通过
-            message(`已成功重置 ${row.username} 用户的密码`, {
-              type: "success"
+            resetUserPwd(row.id, pwdForm.newPwd).then(() => {
+              // 根据实际业务使用pwdForm.newPwd和row里的某些字段去调用重置用户密码接口即可
+              done(); // 关闭弹框
+              successNotification(`密码重置成功`);
+              onSearch(); // 刷新表格数据
             });
-            console.log(pwdForm.newPwd);
-            // 根据实际业务使用pwdForm.newPwd和row里的某些字段去调用重置用户密码接口即可
-            done(); // 关闭弹框
-            onSearch(); // 刷新表格数据
           }
         });
       }

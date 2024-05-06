@@ -6,7 +6,9 @@ import { isPhone, isEmail } from "@pureadmin/utils";
 export const formRules = reactive(<FormRules>{
   nickname: [{ required: true, message: "用户昵称为必填项", trigger: "blur" }],
   username: [{ required: true, message: "用户名称为必填项", trigger: "blur" }],
-  password: [{ required: true, message: "用户密码为必填项", trigger: "blur" }],
+  password: [
+    { required: true, message: "用户密码为必填项", trigger: "change" }
+  ],
   phone: [
     {
       validator: (rule, value, callback) => {

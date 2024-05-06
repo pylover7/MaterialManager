@@ -10,7 +10,7 @@ from app.schemas.base import Success, SuccessExtra, Fail
 from app.schemas.dutyLog import DutyOverInfo
 from app.utils.onDutyInfo import OnDutyInfo
 from app.schemas.material import MaterialCreate, MaterialUpdate
-from app.utils.password import generate_uuid
+from app.utils import generate_uuid
 
 logger = logging.getLogger(__name__)
 

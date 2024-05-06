@@ -4,6 +4,9 @@ import ReCol from "@/components/ReCol";
 import { formRules } from "../utils/rule";
 import { FormProps } from "../utils/types";
 import { usePublicHooks } from "../../../hooks";
+import Refresh from "@iconify-icons/ep/refresh";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import { generatePassword } from "../utils/util";
 
 const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
@@ -20,6 +23,15 @@ const props = withDefaults(defineProps<FormProps>(), {
     remark: ""
   })
 });
+
+const creatPwdLoading = ref(false);
+const creatPwd = () => {
+  creatPwdLoading.value = true;
+  setTimeout(() => {
+    creatPwdLoading.value = false;
+    newFormInline.value.password = generatePassword(12);
+  }, 1000);
+};
 
 const sexOptions = [
   {
@@ -80,7 +92,16 @@ defineExpose({ getRef });
             v-model="newFormInline.password"
             clearable
             placeholder="请输入用户密码"
-          />
+          >
+            <template #append>
+              <el-button
+                :icon="useRenderIcon(Refresh)"
+                :loading-icon="useRenderIcon(Refresh)"
+                :loading="creatPwdLoading"
+                @click="creatPwd"
+              />
+            </template>
+          </el-input>
         </el-form-item>
       </re-col>
       <re-col :value="12" :xs="24" :sm="24">

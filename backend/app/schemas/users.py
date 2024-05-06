@@ -11,6 +11,7 @@ class UserCreate(UserPydantic):
     last_login: str = None
     departId: int = None
     avatar: str = None
+    uuid: str = None
 
     def create_dict(self):
         return self.model_dump(exclude_unset=True, exclude={"roles", "depart"})

@@ -63,6 +63,13 @@ export const updateUserAvatar = (id: number, data?: object) => {
   });
 };
 
+/** 重置用户密码 */
+export const resetUserPwd = (id: number, newPwd: string) => {
+  return http.request<Result>("post", baseUrlApi("/user/resetPwd"), {
+    data: { id, newPwd }
+  });
+};
+
 /** 新增用户 */
 export const addUser = (data?: object) => {
   return http.request<Result>("post", baseUrlApi("/user/add"), { data });

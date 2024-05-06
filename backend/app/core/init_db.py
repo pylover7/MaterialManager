@@ -12,7 +12,7 @@ from app.settings import settings
 from app.log import logger
 from app.schemas.admin import DbInfo
 from app.core.init_menus import init_api
-from app.utils.password import generate_uuid
+from app.utils import generate_uuid
 
 
 async def init_db(app: FastAPI):
