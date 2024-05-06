@@ -22,6 +22,8 @@ class UserUpdate(UserPydantic):
     last_login: str = None
     password: str = None
     departId: int = Field(description="部门ID")
+    uuid: str = None
+    avatar: str = None
 
     def update_dict(self):
         return self.model_dump(exclude_unset=True, exclude={"roles", "id"})
