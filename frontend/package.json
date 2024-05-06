@@ -1,6 +1,6 @@
 {
   "name": "material-manager",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -54,8 +54,11 @@
     "@pureadmin/utils": "^2.4.7",
     "@vueuse/core": "^10.9.0",
     "@vueuse/motion": "^2.1.0",
+    "@zxcvbn-ts/core": "^3.0.4",
+    "@zxcvbn-ts/language-common": "^3.0.4",
     "animate.css": "^4.1.1",
     "axios": "^1.6.8",
+    "cropperjs": "^1.6.2",
     "dayjs": "^1.11.10",
     "echarts": "^5.5.0",
     "element-plus": "^2.6.2",
@@ -140,7 +143,7 @@
     "node": "^18.18.0 || ^20.9.0 || >=21.1.0",
     "pnpm": ">=8.6.10"
   },
-  "packageManager": "pnpm@8.6.10",
+  "packageManager": "pnpm@9.0.4",
   "pnpm": {
     "allowedDeprecatedVersions": {
       "sourcemap-codec": "*",

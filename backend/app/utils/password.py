@@ -1,7 +1,5 @@
 from passlib import pwd
 from passlib.context import CryptContext
-import uuid
-import time
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
@@ -16,8 +14,3 @@ def get_password_hash(password: str) -> str:
 
 def generate_password() -> str:
     return pwd.genword()
-
-
-def generate_uuid(name: str) -> uuid.UUID:
-    name = name + str(time.time_ns())
-    return uuid.uuid5(uuid.NAMESPACE_DNS, name)

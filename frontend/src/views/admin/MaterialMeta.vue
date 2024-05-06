@@ -12,12 +12,12 @@ import {
   deleteMaterialMeta
 } from "@/api/material";
 import type { FormInstance, FormRules } from "element-plus";
-import type { MaterialItem } from "@/api/type";
 import {
   errorNotification,
   successNotification,
   warningNotification
 } from "@/utils/notification";
+import { MaterialItem } from "@/types/base";
 
 defineOptions({
   name: "MaterialMeta"
@@ -80,13 +80,11 @@ const pagination = reactive<PaginationProps>({
 // 表格页面大小改变回调
 const pageSizeChange = (size: number) => {
   pagination.pageSize = size;
-  console.log(pagination);
   if (!!area.value) onSearch();
 };
 // 表格翻页回调
 const pageCurrentChange = (page: number) => {
   pagination.currentPage = page;
-  console.log(pagination);
   if (!!area.value) onSearch();
 };
 // 表格列
@@ -169,7 +167,7 @@ async function onSearch() {
       .then(res => {
         dataList.push(...res.data);
         pagination.total = res.total;
-        pagination.pageSize = res.page_size;
+        pagination.pageSize = res.pageSize;
         pagination.currentPage = res.page;
       })
       .catch(e => {
@@ -207,12 +205,9 @@ const addForm = reactive<MaterialItem>({
   number: 1
 });
 // 清除添加物资表单数据
-const clearAddForm = () => {
-  const keys = Object.keys(addForm);
-
-  for (const key of keys) {
-    addForm[key] = typeof addForm[key] === "string" ? "" : 1;
-  }
+const clearAddForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  formEl.resetFields();
 };
 // 添加物资表单数据校验
 const rules = reactive<FormRules<MaterialItem>>({
@@ -346,7 +341,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :destroy-on-close="true"
-      @close="clearAddForm"
+      @close="clearAddForm(addFormRef)"
     >
       <template #header>
         <h4>{{ addDrawerTitle }}物资项</h4>

@@ -20,7 +20,7 @@ class Fail(JSONResponse):
     def __init__(
         self,
         code: int = 400,
-        msg: Optional[str] = None,
+        msg: Optional[str] = "Fail",
         data: Optional[Any] = None,
         **kwargs,
     ):
@@ -33,11 +33,11 @@ class SuccessExtra(JSONResponse):
     def __init__(
         self,
         code: int = 200,
-        msg: Optional[str] = None,
+        msg: Optional[str] = "OK",
         data: Optional[Any] = None,
         total: int = 0,
-        page: int = 1,
-        page_size: int = 20,
+        currentPage: int = 1,
+        pageSize: int = 20,
         **kwargs,
     ):
         content = {
@@ -45,8 +45,8 @@ class SuccessExtra(JSONResponse):
             "msg": msg,
             "data": data,
             "total": total,
-            "page": page,
-            "page_size": page_size,
+            "currentPage": currentPage,
+            "pageSize": pageSize,
         }
         content.update(kwargs)
         super().__init__(content=content, status_code=code)
@@ -62,4 +62,3 @@ class FailAuth(JSONResponse):
         content = {"code": code, "msg": msg}
         content.update(kwargs)
         super().__init__(content=content, status_code=code)
-

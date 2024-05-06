@@ -1,15 +1,15 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from fastapi import APIRouter
 from jwt.exceptions import ExpiredSignatureError
 
-from app.controllers.user import UserController, user_controller
+from app.controllers.user import user_controller
 from app.core.ctx import CTX_USER_ID
 from app.core.dependency import DependAuth
-from app.models.admin import Api, Menu, Role, User
+from app.models.users import Api, Menu, Role, User
 from app.schemas.base import Fail, Success, FailAuth
 from app.schemas.login import *
-from app.schemas.users import UpdatePassword
+from app.schemas.users import UpdatePassword, UserPydantic
 from app.settings import settings
 from app.utils.jwtt import create_access_token, decode_access_token
 from app.utils.password import get_password_hash, verify_password
@@ -19,8 +19,19 @@ router = APIRouter()
 
 @router.post("/accessToken", summary="获取token")
 async def login_access_token(credentials: CredentialsSchema):
-    user: User = await user_controller.authenticate(credentials)
-    await user_controller.update_last_login(user.id)
+    if (settings.DATABASE_START is None and credentials.username == settings.SUPER_USER["username"]
+            and credentials.password == settings.SUPER_USER_PWD):
+        user = UserPydantic.parse_obj(settings.SUPER_USER)
+        roles = user.roles
+        depart = user.depart
+    else:
+        user: User = await user_controller.authenticate(credentials)
+        await user_controller.update_last_login(user.id)
+        roles = await user.roles.all().values_list("code", flat=True)
+        try:
+            depart = await user.depart.all().values_list("name", flat=True)
+        except Exception as e:
+            depart = ""
     access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
     expire = datetime.now() + access_token_expires
@@ -28,8 +39,8 @@ async def login_access_token(credentials: CredentialsSchema):
 
     data = JWTOut(
         username=user.username,
-        depart=user.depart,
-        roles=["admin"],
+        depart=depart,
+        roles=roles,
         accessToken=create_access_token(
             data=JWTPayload(
                 user_id=user.id,
@@ -139,9 +150,8 @@ async def get_user_api():
     return Success(data=apis)
 
 
-@router.post("/update_password", summary="更新用户密码", dependencies=[DependAuth])
+@router.post("/updatePwd", summary="更新用户密码", dependencies=[DependAuth])
 async def update_user_password(req_in: UpdatePassword):
-    user_controller = UserController()
     user = await user_controller.get(req_in.id)
     verified = verify_password(req_in.old_password, user.password)
     if not verified:

@@ -11,7 +11,7 @@ export type UserResult = {
     /** 部门 */
     depart: string;
     /** 当前登陆用户的角色 */
-    roles: Array<string>;
+    roles: Array<number>;
     /** `token` */
     accessToken: string;
     /** 用于调用刷新`accessToken`的接口时所需的`token` */
@@ -37,7 +37,7 @@ export type RefreshTokenResult = {
 
 /** 登录 */
 export const getLogin = (data?: object) => {
-  return http.request<UserResult>("post", baseUrlApi("base/accessToken"), {
+  return http.request<UserResult>("post", baseUrlApi("/base/accessToken"), {
     data
   });
 };
@@ -46,11 +46,7 @@ export const getLogin = (data?: object) => {
 export const refreshTokenApi = (data?: object) => {
   return http.request<RefreshTokenResult>(
     "post",
-    baseUrlApi("base/refreshToken"),
+    baseUrlApi("/base/refreshToken"),
     { data }
   );
-};
-
-export const test = () => {
-  return http.request<UserResult>("get", "/proxy/test");
 };

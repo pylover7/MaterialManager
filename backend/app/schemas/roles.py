@@ -1,29 +1,20 @@
-from datetime import datetime
-from typing import Optional
-
 from pydantic import BaseModel, Field
+from tortoise.contrib.pydantic import pydantic_model_creator
+from app.models.users import Role
+
+RolePydantic = pydantic_model_creator(Role)
 
 
-class BaseRole(BaseModel):
-    id: int
-    name: str
-    desc: str = ""
-    users: Optional[list] = []
-    menus: Optional[list] = []
-    apis: Optional[list] = []
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
+class RoleFilter(RolePydantic):
+    remark: str = None
 
 
-class RoleCreate(BaseModel):
-    name: str = Field(example="管理员")
-    desc: str = Field("", example="管理员角色")
+class RoleCreate(RolePydantic):
+    pass
 
 
-class RoleUpdate(BaseModel):
+class RoleUpdate(RolePydantic):
     id: int = Field(example=1)
-    name: str = Field(example="管理员")
-    desc: str = Field("", example="管理员角色")
 
     def update_dict(self):
         return self.model_dump(exclude_unset=True, exclude={"id"})
@@ -31,5 +22,5 @@ class RoleUpdate(BaseModel):
 
 class RoleUpdateMenusApis(BaseModel):
     id: int
-    menu_ids: list[int] = []
-    api_infos: list[dict] = []
+    menus: list[int] = []
+    apis: list[int] = []

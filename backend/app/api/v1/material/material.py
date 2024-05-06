@@ -10,7 +10,7 @@ from app.schemas.base import Success, SuccessExtra, Fail
 from app.schemas.dutyLog import DutyOverInfo
 from app.utils.onDutyInfo import OnDutyInfo
 from app.schemas.material import MaterialCreate, MaterialUpdate
-from app.utils.password import generate_uuid
+from app.utils import generate_uuid
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +52,7 @@ async def add_meta(data: MaterialCreate | MaterialUpdate):
     if hasattr(data, "id"):
         result: Material = await materialController.update(data.id, data.update_dict())
     else:
-        data: MaterialCreate = data.create_dict()
+        data: dict = data.model_dump()
         data["uuid"] = generate_uuid(data["name"])
         result: Material = await materialController.create(data)
     result = await result.to_dict()
