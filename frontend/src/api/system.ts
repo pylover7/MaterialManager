@@ -94,28 +94,12 @@ export const deleteUser = (id: number, name: string) => {
   });
 };
 
-/** 系统管理-用户管理-获取所有角色列表 */
-export const getAllRoleList = () => {
-  // return http.request<Result>("get", "/list-all-role");
-  return {
-    code: 200,
-    msg: "ok",
-    data: [
-      { id: 1, name: "超级管理员" },
-      { id: 2, name: "普通角色" }
-    ]
-  };
-};
-
-/** 系统管理-用户管理-根据userId，获取对应角色id列表（userId：用户id） */
-export const getRoleIds = (data?: object) => {
-  // return http.request<Result>("post", "/list-role-ids", { data });
-  console.log(data);
-  return {
-    code: 200,
-    msg: "ok",
-    data: [1]
-  };
+/** 更新用户角色信息 */
+export const updateUserRole = (id: number, data?: object) => {
+  return http.request<Result>("post", baseUrlApi("/user/updateRoles"), {
+    data,
+    params: { id }
+  });
 };
 
 /** 获取系统管理-角色管理列表 */

@@ -104,6 +104,16 @@ async def update_avatar(
     return Success(msg="Updated Successfully")
 
 
+@router.post("/updateRoles", summary="更新用户角色")
+async def update_roles(
+        data: dict,
+        id: int = Query(..., description="用户ID"),
+):
+    user = await user_controller.get(id=id)
+    await user_controller.update_roles(user, data["ids"])
+    return Success(msg="Updated Successfully")
+
+
 @router.post("/resetPwd", summary="重置用户密码")
 async def reset_pwd(
         data: dict,
