@@ -30,7 +30,8 @@ import {
   updateUserStatus,
   deleteUser,
   getUserAvatar,
-  updateUserAvatar, resetUserPwd
+  updateUserAvatar,
+  resetUserPwd
 } from "@/api/system";
 import {
   ElForm,
@@ -97,7 +98,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         <el-image
           fit="cover"
           preview-teleported={true}
-          src={getUserAvatar(row.avatar) || userAvatar}
+          src={row.avatar == null ? userAvatar : getUserAvatar(row.avatar)}
           preview-src-list={Array.of(getUserAvatar(row.avatar) || userAvatar)}
           class="w-[24px] h-[24px] rounded-full align-middle"
         />
