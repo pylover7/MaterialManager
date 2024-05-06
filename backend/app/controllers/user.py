@@ -4,10 +4,11 @@ from typing import List, Optional
 from fastapi.exceptions import HTTPException
 
 from app.core.crud import CRUDBase
-from app.models.admin import User
+from app.models.users import User
 from app.schemas.login import CredentialsSchema
 from app.schemas.users import UserCreate, UserUpdate
 from app.utils.password import get_password_hash, verify_password
+from .depart import departController
 
 from .role import role_controller
 
@@ -42,7 +43,7 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         verified = verify_password(credentials.password, user.password)
         if not verified:
             raise HTTPException(status_code=400, detail="密码错误!")
-        if not user.is_active:
+        if not user.status:
             raise HTTPException(status_code=400, detail="用户已被禁用")
         return user
 
@@ -51,6 +52,19 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         for role_id in roles:
             role_obj = await role_controller.get(id=role_id)
             await user.roles.add(role_obj)
+
+    async def update_depart(self, user: User, depart_id: int) -> None:
+        depart = await departController.get(id=depart_id)
+        user.depart = depart
+        await user.save()
+
+    async def update_status(self, user: User, status: int) -> None:
+        user.status = status
+        await user.save()
+
+    async def update_avatar(self, user: User, avatar: str) -> None:
+        user.avatar = avatar
+        await user.save()
 
 
 user_controller = UserController()

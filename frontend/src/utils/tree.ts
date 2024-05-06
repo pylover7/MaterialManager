@@ -186,3 +186,39 @@ export const handleTree = (
   }
   return tree;
 };
+
+/**
+ * @description 构造API树型结构数据
+ * @param data 数据源
+ * @returns API树
+ */
+export function buildApiTree(data) {
+  const processedData = [];
+  const groupedData = {};
+
+  data.forEach(item => {
+    const tags = item["tags"];
+    const pathParts = item["path"].split("/");
+    const path = pathParts.slice(0, -1).join("/");
+    const summary = tags.charAt(0).toUpperCase() + tags.slice(1);
+    const unique_id = item["method"].toLowerCase() + item["path"];
+    if (!(path in groupedData)) {
+      groupedData[path] = {
+        id: path,
+        path: path,
+        summary: summary,
+        children: []
+      };
+    }
+
+    groupedData[path].children.push({
+      id: item["id"],
+      path: item["path"],
+      method: item["method"],
+      summary: item["summary"],
+      unique_id: unique_id
+    });
+  });
+  processedData.push(...Object.values(groupedData));
+  return processedData;
+}

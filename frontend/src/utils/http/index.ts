@@ -151,6 +151,15 @@ class PureHttp {
         if (error.response == null) {
           errorNotification("服务器超时故障，请重新刷新~");
         }
+        if (error.response.status == 403) {
+          resetRouter();
+          router.push("/403").then(() => {
+            errorNotification(error.response.data.msg);
+          });
+        }
+        if (error.response.status == 406) {
+          errorNotification(error.response.data.msg);
+        }
         if (error.response.status == 401) {
           removeToken();
           resetRouter();

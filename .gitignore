@@ -1,4 +1,6 @@
 # backend
+*.yml
+*.toml
 .env.*
 .env
 *.pyc
@@ -20,6 +22,7 @@ npm-debug.log*
 .pnpm-error.log*
 .pnpm-debug.log
 tests/**/coverage/
+/**/static/
 
 # Editor directories and files
 .idea

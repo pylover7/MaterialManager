@@ -1,5 +1,5 @@
 from app.core.crud import CRUDBase
-from app.models.admin import Api
+from app.models.users import Api
 from app.schemas.apis import ApiCreate, ApiUpdate
 
 

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from app.core.crud import CRUDBase
-from app.models.admin import Menu
+from app.models.users import Menu
 from app.schemas.menus import MenuCreate, MenuUpdate
 
 

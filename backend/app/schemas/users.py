@@ -1,48 +1,61 @@
-from datetime import datetime
-from typing import List, Optional
+from pydantic import BaseModel, Field
+from tortoise.contrib.pydantic import pydantic_model_creator
 
-from pydantic import BaseModel, EmailStr, Field
+from app.models.users import User, Depart
 
-
-class BaseUser(BaseModel):
-    id: int
-    email: Optional[EmailStr] = None
-    username: Optional[str] = None
-    depart: Optional[str] = None
-    is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
-    last_login: Optional[datetime]
-    roles: Optional[list] = []
+UserPydantic = pydantic_model_creator(User)
 
 
-class UserCreate(BaseModel):
-    email: EmailStr = Field(example="admin@qq.com")
-    username: str = Field(example="admin")
-    depart: str = Field(example="管理部")
-    password: str = Field(example="123456")
-    is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
-    roles: Optional[List[int]] = []
+class UserCreate(UserPydantic):
+    is_superuser: bool = False
+    last_login: str = None
+    departId: int = None
+    avatar: str = None
+    uuid: str = None
 
     def create_dict(self):
-        return self.model_dump(exclude_unset=True, exclude={"roles"})
+        return self.model_dump(exclude_unset=True, exclude={"roles", "depart"})
 
 
-class UserUpdate(BaseModel):
+class UserUpdate(UserPydantic):
     id: int
-    email: EmailStr
-    username: str
-    is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
-    roles: Optional[List[int]] = []
+    last_login: str = None
+    password: str = None
+    departId: int = Field(description="部门ID")
+    uuid: str = None
+    avatar: str = None
 
     def update_dict(self):
         return self.model_dump(exclude_unset=True, exclude={"roles", "id"})
+
+
+class UpdateStatus(BaseModel):
+    id: int = Field(description="用户ID")
+    status: int = Field(description="状态")
 
 
 class UpdatePassword(BaseModel):
     id: int = Field(description="用户ID")
     old_password: str = Field(description="旧密码")
     new_password: str = Field(description="新密码")
+
+
+DepartPydantic = pydantic_model_creator(Depart)
+
+
+class DepartCreate(DepartPydantic):
+    ...
+
+    def create_dict(self):
+        return self.model_dump(exclude_unset=True)
+
+
+class DepartUpdate(DepartPydantic):
+    id: int = Field(description="部门ID")
+
+    def update_dict(self):
+        return self.model_dump(exclude_unset=True)
+
+
+if __name__ == '__main__':
+    print(DepartCreate.schema())
