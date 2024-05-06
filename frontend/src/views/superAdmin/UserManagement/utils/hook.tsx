@@ -50,7 +50,7 @@ import {
   reactive,
   onMounted
 } from "vue";
-import { successNotification } from "@/utils/notification";
+import { successNotification, warningNotification } from "@/utils/notification";
 import { generatePassword } from "../utils/util";
 
 export function useUser(tableRef: Ref, treeRef: Ref) {
@@ -401,17 +401,24 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       contentRenderer: () =>
         h(ReCropperPreview, {
           ref: cropRef,
-          imgSrc: getUserAvatar(row.avatar) || userAvatar,
+          imgSrc: row.avatar ? getUserAvatar(row.avatar) : userAvatar,
           onCropper: info => (avatarInfo.value = info)
         }),
       beforeSure: done => {
-        console.log("裁剪后的图片信息：", avatarInfo.value, row);
+        console.log("avatarInfo", avatarInfo.value.blob);
         // 根据实际业务使用avatarInfo.value和row里的某些字段去调用上传头像接口即可
-        updateUserAvatar(row.id, avatarInfo.value).then(() => {
-          successNotification(`头像修改成功`);
-          done(); // 关闭弹框
-          onSearch(); // 刷新表格数据
-        });
+        if (
+          avatarInfo.value.blob.size < 1024 * 1024 * 3 &&
+          avatarInfo.value.blob.type.startsWith("image")
+        ) {
+          updateUserAvatar(row.id, avatarInfo.value).then(() => {
+            successNotification(`头像修改成功`);
+            done(); // 关闭弹框
+            onSearch(); // 刷新表格数据
+          });
+        } else {
+          warningNotification("请选择正确的图片格式且图片小于3M！");
+        }
       },
       closeCallBack: () => cropRef.value.hidePopover()
     });
