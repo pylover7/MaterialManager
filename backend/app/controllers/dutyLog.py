@@ -13,9 +13,11 @@ class DutyLogController(CRUDBase[DutyLog, DutyLogCreate, DutyLogUpdate]):
     def __init__(self):
         super().__init__(DutyLog)
 
-    async def create_all(self, data: List[DutyLogCreate]):
+    async def create_all(self, data: List[DutyLogCreate], note):
         for log in data:
-            await self.create(log)
+            lgo = await self.create(log)
+            lgo.dutyNote = note
+            await lgo.save()
 
 
 class DutyNotesController(CRUDBase[DutyNotes, DutyNoteCreate, DutyNoteUpdate]):

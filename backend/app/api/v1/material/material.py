@@ -19,8 +19,8 @@ router = APIRouter()
 
 @router.post("/dutyOver", summary="接班")
 async def duty_over(data: DutyOverInfo):
-    await dutyLogController.create_all(data.materialData)
-    await dutyNotesController.create(data.materialNote)
+    note = await dutyNotesController.create(data.materialNote)
+    await dutyLogController.create_all(data.materialData, note)
     onDutyInfo = OnDutyInfo()
     await onDutyInfo.setGlbDutyInfo(data.dutyPerson, data.dutyPersonDepart, data.dutyDate)
 
