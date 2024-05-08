@@ -13,7 +13,7 @@ import { stringify } from "qs";
 import NProgress from "../progress";
 import { getToken, formatToken, removeToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
-import { baseUrlApi } from "@/api/utils";
+import {baseUrlApi, staticUrl} from "@/api/utils";
 import { router, resetRouter } from "@/router";
 import { message } from "@/utils/message";
 import { errorNotification } from "@/utils/notification";
@@ -78,10 +78,11 @@ class PureHttp {
         }
         /** 请求白名单，放置一些不需要token的接口（通过设置请求白名单，防止token过期后再请求造成的死循环问题） */
         const whiteList = [
-          baseUrlApi("base/refreshToken"),
-          baseUrlApi("base/accessToken")
+          baseUrlApi("/base/refreshToken"),
+          baseUrlApi("/base/accessToken"),
+          staticUrl("/avatar")
         ];
-        return whiteList.find(url => url === config.url)
+        return whiteList.find(url => url.includes(config.url))
           ? config
           : new Promise(resolve => {
               const data = getToken();
