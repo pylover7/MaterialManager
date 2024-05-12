@@ -21,7 +21,7 @@ import { MaterialItem } from "@/types/base";
 import { addDialog } from "@/components/ReDialog";
 import attentionForm from "./utils/attentionForm.vue";
 import { FormItemProps } from "./utils/types";
-import { getDutyOverList } from "@/api/admin";
+import { getDutyOverList, updateDutyOverList } from "@/api/admin";
 
 defineOptions({
   name: "MaterialMeta"
@@ -283,8 +283,15 @@ function openDialog(area: string) {
         FormRef.validate(valid => {
           if (valid) {
             // 表单规则校验通过
-            console.log(curData, valid);
-            chores();
+            curData.forEach(item => {
+              delete item.key;
+              delete item.created_at;
+              delete item.updated_at;
+            });
+            updateDutyOverList(area, curData).then(res => {
+              chores();
+              successNotification(res.msg);
+            });
           }
         });
       }

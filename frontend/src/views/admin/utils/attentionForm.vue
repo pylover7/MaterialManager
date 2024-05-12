@@ -4,6 +4,8 @@ import { FormItemProps, FormProps } from "./types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Minus from "@iconify-icons/ep/semi-select";
 import Add from "@iconify-icons/fluent/add-12-filled";
+import { deleteDutyOverList } from "@/api/admin";
+import { successNotification } from "@/utils/notification";
 
 const attentionFormRef = ref();
 function getRef() {
@@ -35,11 +37,13 @@ const addAttention = () => {
   });
 };
 const removeAttItem = (item: FormItemProps) => {
-  console.log(item);
-  const index = attList.indexOf(item);
-  if (index !== -1) {
-    attList.splice(index, 1);
-  }
+  deleteDutyOverList(item.id).then(() => {
+    const index = attList.indexOf(item);
+    if (index !== -1) {
+      attList.splice(index, 1);
+    }
+    successNotification("删除成功");
+  });
 };
 
 const editAble = ref(true);

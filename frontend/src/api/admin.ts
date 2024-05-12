@@ -1,6 +1,6 @@
 import { http } from "@/utils/http";
 import { baseUrlApi } from "./utils";
-import type { ResultTable } from "@/api/types";
+import type { ResultTable, Result } from "@/api/types";
 
 export const getDutyOverList = (area: string) => {
   return http.request<ResultTable>(
@@ -9,5 +9,21 @@ export const getDutyOverList = (area: string) => {
     {
       params: { area }
     }
+  );
+};
+
+export const updateDutyOverList = (area: string, data?: object) => {
+  return http.request<Result>(
+    "post",
+    baseUrlApi("/material/duty_over_list/update"),
+    { data, params: { area } }
+  );
+};
+
+export const deleteDutyOverList = (id: string) => {
+  return http.request<Result>(
+    "delete",
+    baseUrlApi("/material/duty_over_list/delete"),
+    { params: { id } }
   );
 };

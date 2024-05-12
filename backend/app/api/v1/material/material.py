@@ -136,3 +136,24 @@ async def get_duty_over_list(area: str = Query("glb", description="部门")):
     total, duty_over_list_objs = await dutyOverListController.list(page=1, page_size=1000, search=q)
     data = [await obj.to_dict() for obj in duty_over_list_objs]
     return SuccessExtra(msg="接班清单获取成功", data=data, total=total, page=1, pageSize=1000)
+
+
+@router.post("/duty_over_list/update", summary="更新接班清单")
+async def update_duty_over_list(data: list[dict], area: str = Query("glb", description="部门")):
+    for item in data:
+        if item.get("id"):
+            await dutyOverListController.update(item["id"], item)
+        else:
+            item["depart"] = area
+            await dutyOverListController.create(item)
+    return Success(msg="更新成功")
+
+
+@router.delete("/duty_over_list/delete", summary="删除接班清单")
+async def delete_duty_over_list(id: int):
+    try:
+        await dutyOverListController.remove(id)
+    except Exception as e:
+        logger.error(f"删除接班清单项失败，ID为{id}")
+        return Fail(msg=f"删除接班清单项部分失败: {e}")
+    return Success(msg="删除成功")
