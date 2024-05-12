@@ -26,3 +26,14 @@ class AttentionNote(BaseModel, TimestampMixin, UUIDModel):
 
     class PydanticMeta:
         exclude = ("id", "uuid", "created_at", "updated_at")
+
+
+class DutyOverList(BaseModel, TimestampMixin):
+    depart = fields.CharField(max_length=20, description="部门")
+    content = fields.CharField(max_length=255, description="交接班清单内容")
+
+    class Meta:
+        table = "duty_over_list"
+
+    class PydanticMeta:
+        exclude = ("id", "created_at", "updated_at")

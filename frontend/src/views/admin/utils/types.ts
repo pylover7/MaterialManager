@@ -1,6 +1,6 @@
 export interface FormItemProps {
   key: number;
-  value: string;
+  content: string;
 }
 
 export interface FormProps {

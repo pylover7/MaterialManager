@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { ref, reactive, h} from "vue";
+import { ref, reactive, h } from "vue";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Delete from "@iconify-icons/ep/delete";
@@ -21,6 +21,7 @@ import { MaterialItem } from "@/types/base";
 import { addDialog } from "@/components/ReDialog";
 import attentionForm from "./utils/attentionForm.vue";
 import { FormItemProps } from "./utils/types";
+import { getDutyOverList } from "@/api/admin";
 
 defineOptions({
   name: "MaterialMeta"
@@ -252,38 +253,42 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 const attRef = ref();
 // 注意事项弹窗
 function openDialog(area: string) {
-  addDialog({
-    title: `查看注意事项`,
-    props: {
-      formData: [
-        {
-          key: 0,
-          value: ""
+  getDutyOverList(area).then(res => {
+    const itemList = res.data;
+    itemList.forEach(item => {
+      item.key = item.id;
+    });
+
+    addDialog({
+      title: `查看注意事项`,
+      props: {
+        formData: itemList
+      },
+      width: "50%",
+      draggable: true,
+      fullscreen: deviceDetection(),
+      fullscreenIcon: true,
+      closeOnClickModal: false,
+      contentRenderer: () => h(attentionForm, { ref: attRef }),
+      beforeSure: (done, { options }) => {
+        const FormRef = attRef.value.getRef();
+        const curData = options.props.formData as [FormItemProps];
+
+        /** 关闭弹框，刷新表格数据 */
+        function chores() {
+          done(); // 关闭弹框
+          // onSearch(); // 刷新表格数据
         }
-      ]
-    },
-    width: "50%",
-    draggable: true,
-    fullscreen: deviceDetection(),
-    fullscreenIcon: true,
-    closeOnClickModal: false,
-    contentRenderer: () => h(attentionForm, { ref: attRef }),
-    beforeSure: (done, { options }) => {
-      const FormRef = attRef.value.getRef();
-      const curData = options.props.formData as [FormItemProps];
-      /** 关闭弹框，刷新表格数据 */
-      function chores() {
-        done(); // 关闭弹框
-        // onSearch(); // 刷新表格数据
+
+        FormRef.validate(valid => {
+          if (valid) {
+            // 表单规则校验通过
+            console.log(curData, valid);
+            chores();
+          }
+        });
       }
-      FormRef.validate(valid => {
-        if (valid) {
-          // 表单规则校验通过
-          console.log(curData, valid);
-          chores();
-        }
-      });
-    }
+    });
   });
 }
 </script>

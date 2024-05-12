@@ -2,8 +2,9 @@ from fastapi import HTTPException
 from tortoise.exceptions import IntegrityError
 
 from app.core.crud import CRUDBase, CreateSchemaType, ModelType
-from app.models.material import Material, AttentionNote
-from app.schemas.material import MaterialCreate, MaterialUpdate, AttentionNoteCreate, AttentionNoteUpdate
+from app.models.material import Material, AttentionNote, DutyOverList
+from app.schemas.material import MaterialCreate, MaterialUpdate, AttentionNoteCreate, AttentionNoteUpdate, \
+    DutyOverListCreate, DutyOverListUpdate
 
 
 class MaterialController(CRUDBase[Material, MaterialCreate, MaterialUpdate]):
@@ -29,5 +30,11 @@ class MaterialAttentionController(CRUDBase[AttentionNote, AttentionNoteCreate, A
         super().__init__(AttentionNote)
 
 
+class DutyOverListController(CRUDBase[DutyOverList, DutyOverListCreate, DutyOverListUpdate]):
+    def __init__(self):
+        super().__init__(DutyOverList)
+
+
 materialController = MaterialController()
 materialAttentionController = MaterialAttentionController()
+dutyOverListController = DutyOverListController()

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { FormProps } from "./types";
-import ReCol from "@/components/ReCol";
+import { FormItemProps, FormProps } from "./types";
+import { useRenderIcon } from "@/components/ReIcon/src/hooks";
+import Minus from "@iconify-icons/ep/semi-select";
+import Add from "@iconify-icons/fluent/add-12-filled";
 
 const attentionFormRef = ref();
 function getRef() {
@@ -13,7 +15,7 @@ const props = withDefaults(defineProps<FormProps>(), {
   formData: () => [
     {
       key: 1,
-      value: ""
+      content: ""
     }
   ]
 });
@@ -29,8 +31,21 @@ const attList = reactive(props.formData);
 const addAttention = () => {
   attList.push({
     key: Date.now(),
-    value: ""
+    content: ""
   });
+};
+const removeAttItem = (item: FormItemProps) => {
+  console.log(item);
+  const index = attList.indexOf(item);
+  if (index !== -1) {
+    attList.splice(index, 1);
+  }
+};
+
+const editAble = ref(true);
+
+const editForm = () => {
+  editAble.value = !editAble.value;
 };
 </script>
 
@@ -39,21 +54,43 @@ const addAttention = () => {
     <el-form-item
       v-for="(item, index) in attList"
       :key="item.key"
-      :prop="`formData.${index}.value`"
+      :prop="`${index}.content`"
       :rules="formItemRules"
-      :label="index.toString()"
+      :label="(index + 1).toString()"
     >
-      <el-row :gutter="10">
+      <el-row :gutter="10" style="width: 100%">
         <el-col :span="20">
-          <el-input v-model="item.value" />
+          <el-input v-model="item.content" :disabled="editAble" />
         </el-col>
         <el-col :span="4">
-          <el-button type="primary">删除</el-button>
+          <el-button
+            v-show="!editAble"
+            type="danger"
+            circle
+            size="small"
+            :icon="useRenderIcon(Minus)"
+            @click.prevent="removeAttItem(item)"
+          />
         </el-col>
       </el-row>
     </el-form-item>
     <el-form-item>
-      <el-button @click="addAttention">新建行</el-button>
+      <el-row :gutter="10">
+        <el-col :span="12">
+          <el-button type="primary" @click="editForm">{{
+            editAble ? "修改" : "保存"
+          }}</el-button>
+        </el-col>
+        <el-col :span="12">
+          <el-button
+            type="primary"
+            :icon="useRenderIcon(Add)"
+            :disabled="editAble"
+            @click="addAttention"
+            >新建行</el-button
+          >
+        </el-col>
+      </el-row>
     </el-form-item>
   </el-form>
 </template>

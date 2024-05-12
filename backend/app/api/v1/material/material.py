@@ -1,9 +1,10 @@
 import logging
+from typing import Union
 
 from fastapi import APIRouter, Query
 from tortoise.expressions import Q
 
-from app.controllers.material import materialController, materialAttentionController
+from app.controllers.material import materialController, materialAttentionController, dutyOverListController
 from app.controllers.dutyLog import dutyLogController, dutyNotesController
 from app.models import Material
 from app.schemas.base import Success, SuccessExtra, Fail
@@ -48,7 +49,7 @@ async def get_meta(
 
 
 @router.post("/add_meta", summary="添加或修改物资源数据")
-async def add_meta(data: MaterialCreate | MaterialUpdate):
+async def add_meta(data: Union[MaterialCreate, MaterialUpdate]):
     if hasattr(data, "id"):
         result: Material = await materialController.update(data.id, data.update_dict())
     else:
@@ -127,3 +128,11 @@ async def get_fk_list(
     total, material_objs = await materialController.list(page=page, page_size=page_size, search=q)
     data = [await obj.to_dict() for obj in material_objs]
     return SuccessExtra(msg="网控数据获取成功", data=data, total=total, page=page, page_size=page_size)
+
+
+@router.get("/duty_over_list/list", summary="获取接班清单")
+async def get_duty_over_list(area: str = Query("glb", description="部门")):
+    q = Q(depart__contains=area)
+    total, duty_over_list_objs = await dutyOverListController.list(page=1, page_size=1000, search=q)
+    data = [await obj.to_dict() for obj in duty_over_list_objs]
+    return SuccessExtra(msg="接班清单获取成功", data=data, total=total, page=1, pageSize=1000)
