@@ -2,6 +2,12 @@ import { http } from "@/utils/http";
 import { baseUrlApi } from "./utils";
 import type { ResultTable, Result } from "@/api/types";
 
+type ResultDutyNote = Result & {
+  data: {
+    note?: string;
+  };
+};
+
 export const getDutyOverList = (area: string) => {
   return http.request<ResultTable>(
     "get",
@@ -55,7 +61,7 @@ export const deleteDutyLogs = (idList: Array<number>) => {
 };
 
 export const getDutyNote = (id: number) => {
-  return http.request<Result>("get", baseUrlApi("/admin/getDutyNote"), {
+  return http.request<ResultDutyNote>("get", baseUrlApi("/admin/getDutyNote"), {
     params: {
       id
     }
