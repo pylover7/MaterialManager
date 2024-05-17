@@ -5,7 +5,7 @@
 from fastapi import APIRouter, Request, Query
 from tortoise.expressions import Q, F
 
-from app.controllers.dutyLog import dutyLogController
+from app.controllers.dutyLog import dutyLogController, dutyNotesController
 from app.settings import settings
 from app.core.init_db import test_db, set_db
 from app.log import logger
@@ -61,3 +61,17 @@ async def search_operation_logs(
     total, duty_logs = await dutyLogController.list(page=page, page_size=pageSize, search=q)
     data = [await obj.to_dict() for obj in duty_logs]
     return SuccessExtra(data=data, total=total, currentPage=page, pageSize=pageSize)
+
+
+@router.delete("/dutyLogs/delete", summary="批量删除操作日志")
+async def delete_operation_logs(data: list[int]):
+    for item in data:
+        await dutyLogController.remove(item)
+    return Success(msg="操作日志删除成功！")
+
+
+@router.get("/getDutyNote", summary="获取值班备注")
+async def get_duty_note(id: int = Query(..., description="值班备注id")):
+    data = await dutyNotesController.get(id)
+    data = await data.to_dict()
+    return Success(data=data)

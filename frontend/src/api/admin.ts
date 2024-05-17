@@ -47,3 +47,17 @@ export const searchDutyLogs = (
     }
   );
 };
+
+export const deleteDutyLogs = (idList: Array<number>) => {
+  return http.request<Result>("delete", baseUrlApi("/admin/dutyLogs/delete"), {
+    data: idList
+  });
+};
+
+export const getDutyNote = (id: number) => {
+  return http.request<Result>("get", baseUrlApi("/admin/getDutyNote"), {
+    params: {
+      id
+    }
+  });
+};
