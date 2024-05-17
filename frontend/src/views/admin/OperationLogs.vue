@@ -12,6 +12,7 @@ import Delete from "@iconify-icons/ep/delete";
 import Search from "@iconify-icons/ep/search";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
+import { searchDutyLogs } from "@/api/admin";
 
 defineOptions({
   name: "OperationLogs"
@@ -22,7 +23,7 @@ const operationBarRef = ref<FormInstance>();
 const operationForm = reactive({
   area: "",
   status: "",
-  operatingTime: ""
+  operatingTime: Array("")
 });
 // 操作栏表单重置
 const resetForm = formEl => {
@@ -34,7 +35,27 @@ const resetForm = formEl => {
 const loading = ref(false);
 // 搜索
 const onSearch = () => {
+  // 将operationForm中的operatingTime转换为时间格式为 2021-09-01 00:00:00
   console.log(operationForm);
+  if (operationForm.operatingTime.length > 1) {
+    operationForm.operatingTime = operationForm.operatingTime.map(time =>
+      dayjs(time).format("YYYY-MM-DD HH:mm:ss")
+    );
+  }
+  searchDutyLogs(
+    operationForm.area,
+    pagination.currentPage,
+    pagination.pageSize,
+    operationForm
+  )
+    .then(res => {
+      dataList.value = res.data;
+      pagination.total = res.total;
+    })
+    .catch(() => {
+      dataList.value = [];
+      pagination.total = 0;
+    });
 };
 // 表格ref
 const tableRef = ref();
@@ -93,7 +114,10 @@ const columns: TableColumnList = [
     prop: "status",
     minWidth: 100,
     cellRenderer: ({ row, props }) => (
-      <el-tag size={props.size} style={tagStyle.value(row.status)}>
+      <el-tag
+        size={props.size}
+        style={tagStyle.value(row.number == row.nowNumber ? 1 : 0)}
+      >
         {row.number === row.nowNumber ? "正确" : "错误"}
       </el-tag>
     )
@@ -102,8 +126,7 @@ const columns: TableColumnList = [
     label: "值班时间",
     prop: "dutyDate",
     minWidth: 180,
-    formatter: ({ operatingTime }) =>
-      dayjs(operatingTime).format("YYYY-MM-DD HH:mm:ss")
+    formatter: ({ dutyDate }) => dayjs(dutyDate).format("YYYY-MM-DD HH:mm:ss")
   },
   {
     label: "备注",
@@ -150,7 +173,8 @@ const pagination = reactive<PaginationProps>({
   total: 0,
   pageSize: 10,
   currentPage: 1,
-  background: true
+  background: true,
+  pageSizes: [10, 20, 50, 100]
 });
 
 function handleSizeChange(val: number) {

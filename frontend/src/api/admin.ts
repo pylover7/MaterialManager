@@ -27,3 +27,23 @@ export const deleteDutyOverList = (id: string) => {
     { params: { id } }
   );
 };
+
+export const searchDutyLogs = (
+  depart: string,
+  page: number,
+  pageSize: number,
+  data?: object
+) => {
+  return http.request<ResultTable>(
+    "post",
+    baseUrlApi("/admin/dutyLogs/search"),
+    {
+      data,
+      params: {
+        depart,
+        page,
+        pageSize
+      }
+    }
+  );
+};

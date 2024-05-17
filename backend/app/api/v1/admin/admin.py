@@ -2,12 +2,14 @@
 # @FileName  :users.py
 # @Time      :2024/4/16 下午9:31
 # @Author    :dayezi
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Query
+from tortoise.expressions import Q, F
 
+from app.controllers.dutyLog import dutyLogController
 from app.settings import settings
 from app.core.init_db import test_db, set_db
 from app.log import logger
-from app.schemas import Success, Fail
+from app.schemas import Success, Fail, SuccessExtra
 from app.schemas.admin import DbInfo
 
 router = APIRouter()
@@ -35,3 +37,27 @@ async def set_db_conn(data: DbInfo, request: Request):
     except Exception as e:
         logger.error(e)
         return Fail(msg="数据库设置失败！")
+
+
+@router.post("/dutyLogs/search", summary="查询操作日志")
+async def search_operation_logs(
+        data: dict,
+        depart: str = Query("glb", description="部门"),
+        page: int = Query(1, description="页码"),
+        pageSize: int = Query(10, description="每页数量"),
+):
+    q = Q(depart__contains=depart)
+    status = data.get("status")
+    operatingTime: list = data.get("operatingTime")
+    if status:
+        # 数据库字段条件筛选：字段是否相等
+        if int(status) == 1:
+            q &= Q(number=F("nowNumber"))
+        else:
+            q &= Q(number__not=F("nowNumber"))
+    if len(operatingTime) > 1:
+        # 数据库字段条件筛选：大小比较
+        q &= Q(dutyDate__gte=operatingTime[0], dutyDate__lte=operatingTime[1])
+    total, duty_logs = await dutyLogController.list(page=page, page_size=pageSize, search=q)
+    data = [await obj.to_dict() for obj in duty_logs]
+    return SuccessExtra(data=data, total=total, currentPage=page, pageSize=pageSize)
