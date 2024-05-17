@@ -3,7 +3,7 @@
 # @Time      :2024/4/16 上午2:53
 # @Author    :dayezi
 from fastapi import FastAPI
-from tortoise import Tortoise, run_async
+from tortoise import Tortoise
 import pymysql
 
 from app.controllers import user_controller
@@ -11,7 +11,7 @@ from app.schemas.users import UserCreate
 from app.settings import settings
 from app.log import logger
 from app.schemas.admin import DbInfo
-from app.core.init_menus import init_api
+from app.core.init_menus import init_api, init_menus, init_roles
 from app.utils import generate_uuid
 
 
@@ -27,17 +27,26 @@ async def tortoise_init(app: FastAPI):
     logger.info("正在生成数据库表...")
     await Tortoise.generate_schemas(safe=True)
     logger.info("数据库表生成完成")
-    await init_api(app)
+    logger.info("正在注册API...")
+    apiIdList = await init_api(app)
+    logger.info("API注册完成")
+    logger.info("正在初始化菜单...")
+    menuIdList = await init_menus()
+    logger.info("菜单初始化完成")
+    logger.info("正在初始化角色...")
+    superAdmin = await init_roles(apiIdList, menuIdList)
+    logger.info("角色初始化完成")
     logger.info("正在注册超级管理员...")
-    await register_superAdmin()
+    await register_superAdmin(superAdmin)
     logger.info("超级管理员注册完成")
 
 
-async def register_superAdmin():
+async def register_superAdmin(role):
     user = await user_controller.model.exists()
     if not user:
         settings.SUPER_USER["uuid"] = generate_uuid(settings.SUPER_USER["username"])
-        await user_controller.create(UserCreate.parse_obj(settings.SUPER_USER))
+        user = await user_controller.create(UserCreate.parse_obj(settings.SUPER_USER))
+        await user.roles.add(role)
 
 
 def test_db(db_info: DbInfo) -> bool:
