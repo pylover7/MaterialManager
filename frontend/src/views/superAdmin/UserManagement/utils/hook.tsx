@@ -532,7 +532,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   /** 分配角色 */
   async function handleRole(row) {
     // 选中的角色列表
-    const ids = row.roles ?? [];
+    const ids = row.roles.map(item => item.id) ?? [];
     addDialog({
       title: `分配 ${row.username} 用户的角色`,
       props: {
