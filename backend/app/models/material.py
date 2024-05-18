@@ -7,7 +7,7 @@ class Material(BaseModel, TimestampMixin, UUIDModel):
     name = fields.CharField(max_length=50, unique=True, description="物资名字")
     model = fields.CharField(max_length=20, null=True, description="物资型号")
     position = fields.CharField(max_length=50, description="物资位置")
-    number = fields.IntField(description="物资数量")
+    number = fields.IntField(description="物资原数量")
     depart = fields.CharField(max_length=20, description="物资所属部门")
 
     class Meta:
