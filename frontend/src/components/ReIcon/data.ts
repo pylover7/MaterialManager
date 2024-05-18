@@ -3,6 +3,8 @@
  * 如果项目在内网环境下 参考 https://www.bilibili.com/video/BV17S4y1J79d?p=4&vd_source=5a992808de6229d78e7810536c5f9ab3 教程自行离线部署图标
  * https://icones.js.org/collections/图标集前缀名-meta.json（如：https://icones.js.org/collections/ri-meta.json 取icons字段，可获得当前图标集的所有图标）
  */
+import fluent from "./fluent.json";
+
 export const IconJson = {
   // https://icones.js.org/collections/ep-meta.json
   "ep:": [
@@ -3865,5 +3867,7 @@ export const IconJson = {
     "x-ray",
     "yen-sign",
     "yin-yang"
-  ]
+  ],
+  // https://icones.js.org/collections/fluent-meta.json
+  "fluent:": fluent.icons
 };
