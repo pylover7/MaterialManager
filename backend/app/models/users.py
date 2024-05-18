@@ -55,7 +55,7 @@ class Menu(BaseModel, TimestampMixin):
     name = fields.CharField(max_length=50, description="路由名称必须唯一")
     path = fields.CharField(max_length=100, description="菜单路径")
     component = fields.CharField(max_length=100, null=True, description="组件")
-    rank = fields.IntField(default=0, description="排序")
+    rank = fields.IntField(default=1, description="排序")
     redirect = fields.CharField(max_length=100, null=True, blank=True, description="重定向")
     icon = fields.CharField(max_length=100, null=True, blank=True, description="菜单图标")
     extraIcon = fields.CharField(max_length=100, null=True, blank=True, description="右侧图标")
