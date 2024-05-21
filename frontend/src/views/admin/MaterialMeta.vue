@@ -107,9 +107,19 @@ const columns: TableColumnList = [
   {
     label: "操作",
     prop: "modify",
-    width: "160",
+    width: "240",
     cellRenderer: ({ row }) => (
       <>
+        <el-button
+          size="small"
+          type="primary"
+          plain
+          onClick={() => {
+            toCheck(row);
+          }}
+        >
+          送检
+        </el-button>
         <el-button
           size="small"
           type="warning"
@@ -154,6 +164,10 @@ const deleteById = (id: number) => {
     .catch(err => {
       errorNotification(err.msg);
     });
+};
+// 表格操作列送检按钮函数
+const toCheck = (row: MaterialItem) => {
+  console.log(row);
 };
 
 // 表格数据
@@ -206,7 +220,9 @@ const addForm = reactive<MaterialItem>({
   name: "",
   model: "",
   position: "",
-  number: 1
+  number: 1,
+  checking: 0,
+  borrowed: 0
 });
 // 清除添加物资表单数据
 const clearAddForm = (formEl: FormInstance | undefined) => {
