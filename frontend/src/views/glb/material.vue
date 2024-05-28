@@ -10,7 +10,7 @@ import {
 import { useUserStoreHook } from "@/store/modules/user";
 import { successNotification, errorNotification } from "@/utils/notification";
 import formatCurrentTime from "@/utils/formatDatetime";
-import {getDutyOverList} from "@/api/admin";
+import { getDutyOverList } from "@/api/admin";
 
 defineOptions({
   name: "GlbMaterial"
@@ -25,8 +25,8 @@ enum StepStatus {
   Error = "error"
 }
 interface tableDataRow {
-  id: number;
-  uuid: string;
+  id?: number;
+  uuid?: string;
   name: string;
   model: string;
   position: string;

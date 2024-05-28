@@ -22,6 +22,14 @@ export const getMaterialMeta = async (
   });
 };
 
+export const getAllMaterialMeta = async (depart: string) => {
+  return http.request<MaterialResult>("get", baseUrlApi("/material/all_meta"), {
+    params: {
+      depart
+    }
+  });
+};
+
 export const addMaterialMeta = async (data: object) => {
   return http.request<addResult>("post", baseUrlApi("/material/add_meta"), {
     data

@@ -10,8 +10,9 @@ export type MaterialItem = {
   depart?: string;
   position: string;
   number: number;
-  checking: number;
-  borrowed: number;
+  checking?: number;
+  borrowing?: number;
+  borrowed?: number;
   created_at?: string;
   updated_at?: string;
 };

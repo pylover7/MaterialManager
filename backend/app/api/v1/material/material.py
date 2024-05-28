@@ -48,6 +48,17 @@ async def get_meta(
     return SuccessExtra(msg="物资数据获取成功", data=data, total=total, page=page, page_size=page_size)
 
 
+@router.get("/all_meta", summary="获取所有物资源数据")
+async def get_all_meta(depart: str = Query("glb", description="物资部门")):
+    q = Q()
+    if depart:
+        q &= Q(depart__contains=depart)
+
+    material_objs = await materialController.all(search=q)
+    data = [await obj.to_dict() for obj in material_objs]
+    return Success(data=data)
+
+
 @router.post("/add_meta", summary="添加或修改物资源数据")
 async def add_meta(data: Union[MaterialCreate, MaterialUpdate]):
     if hasattr(data, "id"):
