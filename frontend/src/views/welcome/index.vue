@@ -2,7 +2,7 @@
 import { addDialog, closeDialog } from "@/components/ReDialog";
 import { deviceDetection } from "@pureadmin/utils";
 import { h, ref } from "vue";
-import borrowForm from "./form.vue";
+import MaterialBorrowDialog from "./dialog/MaterialBorrowDialog.vue";
 import useDialogStore from "./store";
 import { getAllMaterialMeta } from "@/api/material";
 
@@ -26,7 +26,7 @@ const borrowMaterial = () => {
       draggable: true,
       fullscreen: deviceDetection(),
       closeOnClickModal: false,
-      contentRenderer: () => h(borrowForm, { ref: bMForm }),
+      contentRenderer: () => h(MaterialBorrowDialog, { ref: bMForm }),
       footerRenderer: ({ options, index }) => (
         <>
           <el-button
@@ -47,6 +47,8 @@ const borrowMaterial = () => {
             v-show={store.active == 1}
             type="success"
             onClick={() => {
+              const formRef = bMForm.value.getRef();
+              console.log(formRef, "+++++++");
               closeDialog(options, index);
               store.resetActive();
             }}
@@ -54,12 +56,7 @@ const borrowMaterial = () => {
             完成
           </el-button>
         </>
-      ),
-      beforeSure(done, { options }) {
-        const formRef = bMForm.value.getRef();
-        console.log(formRef);
-        done();
-      }
+      )
     });
   });
 };

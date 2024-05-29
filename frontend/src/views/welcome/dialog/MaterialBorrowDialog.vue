@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import useDialogStore from "./store";
+import { computed, h, ref } from "vue";
+import useDialogStore from "../store";
 import Search from "@iconify-icons/ep/search";
 import Add from "@iconify-icons/fluent/add-12-filled";
 import Subtract from "@iconify-icons/fluent/subtract-12-filled";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { MaterialItem } from "@/types/base";
+import { useUserStoreHook } from "@/store/modules/user";
+import { addDialog } from "@/components/ReDialog/index";
+import verifyDialog from "./VerifyDialog.vue";
+import type { userInfo } from "../types";
 
 type materialItemList = {
   borrowInfo: {
@@ -63,12 +67,59 @@ const btnInputShow = (item: MaterialItem) =>
 
 const search = ref("");
 
-const itemShow = (item: MaterialItem) => {
+const itemSearch = (item: MaterialItem) => {
   if (search.value === "") {
     return true;
   } else {
     return item.name.includes(search.value);
   }
+};
+
+/** 用户名 */
+const username = computed(() => {
+  return useUserStoreHook()?.username;
+});
+
+const userDepart = computed(() => {
+  return useUserStoreHook()?.depart;
+});
+
+const verifyForm = ref();
+const openVerifyDialog = () => {
+  addDialog({
+    title: "信息更改",
+    width: "30%",
+    props: {
+      userInfo: {
+        account: "",
+        password: "",
+        name: "",
+        phone: "",
+        depart: ""
+      }
+    },
+    contentRenderer: () => h(verifyDialog, { ref: verifyForm }),
+    beforeSure(done, { options }) {
+      const accountFormRef = verifyForm.value.getAccountRef();
+      const infoFormRef = verifyForm.value.getInfoRef();
+      const curData = options.props.userInfo as userInfo;
+      if (curData.account !== "" || curData.password !== "") {
+        accountFormRef.validate(valid => {
+          if (valid) {
+            console.log(curData);
+            done();
+          }
+        });
+      } else {
+        infoFormRef.validate(valid => {
+          if (valid) {
+            console.log(curData);
+            done();
+          }
+        });
+      }
+    }
+  });
 };
 </script>
 
@@ -92,7 +143,7 @@ const itemShow = (item: MaterialItem) => {
             <el-scrollbar height="400" noresize>
               <p
                 v-for="(item, index) in borrowInfo.baseData"
-                v-show="itemShow(item)"
+                v-show="itemSearch(item)"
                 :key="index"
                 class="resultItem"
               >
@@ -109,6 +160,7 @@ const itemShow = (item: MaterialItem) => {
                       :icon="useRenderIcon(Subtract)"
                       type="primary"
                       circle
+                      plain
                       @click="item.borrowing -= 1"
                     />
                     <el-input-number
@@ -134,8 +186,72 @@ const itemShow = (item: MaterialItem) => {
           </el-card>
         </el-space>
       </el-tab-pane>
-      <el-tab-pane :name="1">
-        <p>test2</p>
+      <el-tab-pane :name="1" style="text-align: center">
+        <el-space direction="vertical" fill style="width: 100%">
+          <el-card
+            class="card"
+            header="借用物资确认"
+            style="width: 80%"
+            shadow="never"
+          >
+            <el-scrollbar height="300" noresize>
+              <p
+                v-for="(item, index) in borrowInfo.baseData"
+                v-show="item.borrowing > 0"
+                :key="index"
+                class="resultItem"
+              >
+                <el-row>
+                  <el-col :span="20" style="text-align: left">{{
+                    item.name
+                  }}</el-col>
+                  <el-col
+                    :span="4"
+                    style="text-align: right; padding-right: 8px"
+                  >
+                    <el-button
+                      v-show="btnInputShow(item)"
+                      :icon="useRenderIcon(Subtract)"
+                      type="primary"
+                      circle
+                      plain
+                      @click="item.borrowing -= 1"
+                    />
+                    <el-input-number
+                      v-show="btnInputShow(item)"
+                      v-model="item.borrowing"
+                      :min="0"
+                      :max="maxNumber(item)"
+                      :controls="false"
+                      style="width: 60px"
+                    />
+                    <el-button
+                      :disabled="item.borrowing >= maxNumber(item)"
+                      :icon="useRenderIcon(Add)"
+                      type="primary"
+                      circle
+                      plain
+                      @click="borrowAdd(item)"
+                    />
+                  </el-col>
+                </el-row>
+              </p>
+            </el-scrollbar>
+          </el-card>
+          <el-card class="card" header="借用人信息" shadow="never">
+            <el-row>
+              <el-col :span="8">
+                <p>姓名：{{ username }}</p>
+              </el-col>
+              <el-col :span="8">
+                <p>部门：{{ userDepart }}</p>
+              </el-col>
+              <el-col :span="8">
+                <el-button @click="openVerifyDialog">更换</el-button>
+              </el-col>
+            </el-row>
+          </el-card>
+        </el-space>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -173,6 +289,12 @@ const itemShow = (item: MaterialItem) => {
   cursor: pointer;
   &:hover {
     background-color: rgba(91, 94, 103, 0.45);
+  }
+}
+
+:deep(.card) {
+  .el-card__header {
+    padding: 10px 8px;
   }
 }
 </style>
