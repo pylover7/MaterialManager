@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, h, ref } from "vue";
+import { h, onMounted, ref } from "vue";
 import useDialogStore from "../store";
 import Search from "@iconify-icons/ep/search";
 import Add from "@iconify-icons/fluent/add-12-filled";
@@ -10,12 +10,11 @@ import { useUserStoreHook } from "@/store/modules/user";
 import { addDialog } from "@/components/ReDialog/index";
 import verifyDialog from "./VerifyDialog.vue";
 import type { userInfo } from "../types";
+import { getLogin } from "@/api/user";
+import type { borrowInfo } from "../types";
 
 type materialItemList = {
-  borrowInfo: {
-    userId: number;
-    baseData: [MaterialItem];
-  };
+  borrowInfo: borrowInfo;
 };
 
 const formRef = ref();
@@ -28,7 +27,10 @@ const store = useDialogStore();
 
 const props = withDefaults(defineProps<materialItemList>(), {
   borrowInfo: () => ({
-    userId: 0,
+    uuid: "",
+    username: "",
+    phone: "",
+    depart: "",
     baseData: [
       {
         name: "",
@@ -75,13 +77,10 @@ const itemSearch = (item: MaterialItem) => {
   }
 };
 
-/** 用户名 */
-const username = computed(() => {
-  return useUserStoreHook()?.username;
-});
-
-const userDepart = computed(() => {
-  return useUserStoreHook()?.depart;
+onMounted(() => {
+  borrowInfo.value.username = useUserStoreHook()?.username;
+  borrowInfo.value.uuid = useUserStoreHook()?.uuid;
+  borrowInfo.value.depart = useUserStoreHook()?.depart;
 });
 
 const verifyForm = ref();
@@ -106,14 +105,23 @@ const openVerifyDialog = () => {
       if (curData.account !== "" || curData.password !== "") {
         accountFormRef.validate(valid => {
           if (valid) {
-            console.log(curData);
+            getLogin({
+              username: curData.account,
+              password: curData.password
+            }).then(res => {
+              borrowInfo.value.username = res.data.username;
+              borrowInfo.value.depart = res.data.depart;
+              borrowInfo.value.uuid = res.data.uuid;
+            });
             done();
           }
         });
       } else {
         infoFormRef.validate(valid => {
           if (valid) {
-            console.log(curData);
+            borrowInfo.value.username = curData.name;
+            borrowInfo.value.depart = curData.depart;
+            borrowInfo.value.phone = curData.phone;
             done();
           }
         });
@@ -241,10 +249,10 @@ const openVerifyDialog = () => {
           <el-card class="card" header="借用人信息" shadow="never">
             <el-row>
               <el-col :span="8">
-                <p>姓名：{{ username }}</p>
+                <p>姓名：{{ borrowInfo.username }}</p>
               </el-col>
               <el-col :span="8">
-                <p>部门：{{ userDepart }}</p>
+                <p>部门：{{ borrowInfo.depart }}</p>
               </el-col>
               <el-col :span="8">
                 <el-button @click="openVerifyDialog">更换</el-button>

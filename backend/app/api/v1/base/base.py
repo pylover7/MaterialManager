@@ -3,6 +3,7 @@ from datetime import timedelta
 from fastapi import APIRouter
 from jwt.exceptions import ExpiredSignatureError
 
+from app.controllers.depart import departController
 from app.controllers.user import user_controller
 from app.core.ctx import CTX_USER_ID
 from app.core.dependency import DependAuth
@@ -28,10 +29,7 @@ async def login_access_token(credentials: CredentialsSchema):
         user: User = await user_controller.authenticate(credentials)
         await user_controller.update_last_login(user.id)
         roles = await user.roles.all().values_list("code", flat=True)
-        try:
-            depart = await user.depart.all().values_list("name", flat=True)
-        except Exception as e:
-            depart = ""
+        depart = await departController.get_all_name(user)
     access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
     expire = datetime.now() + access_token_expires
@@ -39,6 +37,7 @@ async def login_access_token(credentials: CredentialsSchema):
 
     data = JWTOut(
         username=user.username,
+        uuid=user.uuid.__str__(),
         depart=depart,
         roles=roles,
         accessToken=create_access_token(
@@ -101,7 +100,6 @@ async def get_userinfo():
     user_id = CTX_USER_ID.get()
     user_obj = await user_controller.get(id=user_id)
     data = await user_obj.to_dict(exclude_fields=["password"])
-    data["avatar"] = "https://avatars.githubusercontent.com/u/54677442?v=4"
     return Success(data=data)
 
 

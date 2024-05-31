@@ -20,6 +20,7 @@ class JWTReOut(BaseModel):
 
 class JWTOut(BaseModel):
     username: str
+    uuid: str
     depart: str
     roles: list[str]
     accessToken: str

@@ -11,6 +11,8 @@ export interface DataInfo<T> {
   refreshToken: string;
   /** 用户名 */
   username?: string;
+  /** uuid */
+  uuid?: string;
   /** 部门 */
   depart?: string;
   /** 当前登陆用户的角色 */
@@ -64,30 +66,38 @@ export function setToken(data: DataInfo<Date>) {
       : {}
   );
 
-  function setUserKey(username: string, depart: string, roles: Array<string>) {
+  function setUserKey(
+    username: string,
+    uuid: string,
+    depart: string,
+    roles: Array<string>
+  ) {
     useUserStoreHook().SET_USERNAME(username);
+    useUserStoreHook().SET_UUID(uuid);
     useUserStoreHook().SET_DEPART(depart);
     useUserStoreHook().SET_ROLES(roles);
     storageLocal().setItem(userKey, {
       refreshToken,
       expires,
       username,
+      uuid,
       depart,
       roles
     });
   }
 
   if (data.username && data.roles) {
-    const { username, depart, roles } = data;
-    setUserKey(username, depart, roles);
+    const { username, uuid, depart, roles } = data;
+    setUserKey(username, uuid, depart, roles);
   } else {
     const username =
       storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "";
+    const uuid = storageLocal().getItem<DataInfo<number>>(userKey)?.uuid ?? "";
     const roles =
       storageLocal().getItem<DataInfo<number>>(userKey)?.roles ?? [];
     const depart =
       storageLocal().getItem<DataInfo<number>>(userKey)?.depart ?? "";
-    setUserKey(username, depart, roles);
+    setUserKey(username, uuid, depart, roles);
   }
 }
 

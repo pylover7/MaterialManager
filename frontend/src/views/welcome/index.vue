@@ -5,6 +5,10 @@ import { h, ref } from "vue";
 import MaterialBorrowDialog from "./dialog/MaterialBorrowDialog.vue";
 import useDialogStore from "./store";
 import { getAllMaterialMeta } from "@/api/material";
+import { createBorrowed } from "@/api/home";
+import type { borrowInfo } from "./types";
+import type { MaterialItem } from "@/types/base";
+import { successNotification } from "@/utils/notification";
 
 defineOptions({
   name: "Welcome"
@@ -18,7 +22,10 @@ const borrowMaterial = () => {
       title: "物资借用",
       props: {
         borrowInfo: {
-          userId: 0,
+          uuid: 0,
+          username: "",
+          phone: "",
+          depart: "",
           baseData: res.data
         }
       },
@@ -47,10 +54,25 @@ const borrowMaterial = () => {
             v-show={store.active == 1}
             type="success"
             onClick={() => {
-              const formRef = bMForm.value.getRef();
-              console.log(formRef, "+++++++");
-              closeDialog(options, index);
-              store.resetActive();
+              const done = () => {
+                closeDialog(options, index);
+                store.resetActive();
+              };
+              const curData = options.props.borrowInfo as borrowInfo;
+              const borrowItemList = [];
+              for (const item of curData.baseData) {
+                if (item.borrowing !== undefined && item.borrowing > 0) {
+                  delete item.created_at;
+                  delete item.updated_at;
+                  delete item.id;
+                  borrowItemList.push(item);
+                }
+              }
+              curData.baseData = borrowItemList as [MaterialItem];
+              createBorrowed(curData).then(() => {
+                successNotification("物资借用流程发起成功！");
+                done();
+              });
             }}
           >
             完成

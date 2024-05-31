@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, Ref, ref } from "vue";
+import { computed, reactive, Ref, ref } from "vue";
 import Segmented, { OptionsType } from "@/components/ReSegmented";
 import type { FormRules } from "element-plus";
 import type { userInfo } from "../types";
@@ -29,6 +29,12 @@ const props = withDefaults(defineProps<userType>(), {
 });
 
 const tabIndex = ref(0);
+const userInfo = reactive(props.userInfo);
+
+const segmentedDisable = computed(() => {
+  return userInfo.account.length > 0 || userInfo.name.length > 0;
+});
+
 const segmentedOptions: Array<OptionsType> = [
   {
     label: "账号密码",
@@ -48,7 +54,7 @@ type infoType = {
   phone: string;
   depart: string;
 };
-const userInfo = ref(props.userInfo);
+
 const accountRules = reactive<FormRules<accountType>>({
   account: [{ required: true, message: "请输入账号", trigger: "blur" }],
   password: [{ required: true, message: "请输入密码", trigger: "blur" }]
@@ -63,7 +69,12 @@ const formSize: Ref<"" | "default" | "small" | "large"> = ref("default");
 
 <template>
   <div>
-    <Segmented v-model="tabIndex" :options="segmentedOptions" size="large" />
+    <Segmented
+      v-model="tabIndex"
+      :options="segmentedOptions"
+      size="large"
+      :disabled="segmentedDisable"
+    />
     <el-tabs v-model="tabIndex" type="card" class="myTabs">
       <el-tab-pane :name="segmentedOptions[0].value">
         <el-card shadow="never">
@@ -85,6 +96,7 @@ const formSize: Ref<"" | "default" | "small" | "large"> = ref("default");
                 v-model="userInfo.password"
                 type="password"
                 placeholder="邮箱密码"
+                show-password
               />
             </el-form-item>
           </el-form>
