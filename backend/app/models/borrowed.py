@@ -13,10 +13,9 @@ class Borrowed(BaseModel, UUIDModel):
     uuid = fields.UUIDField(pk=False, description="借用人uuid")
     phone = fields.CharField(max_length=20, description="借用人手机号")
     userDepart = fields.CharField(max_length=20, description="借用人部门")
-    borrowTime = fields.DatetimeField(auto_now=True, description="借用时间")
+    borrowTime = fields.DatetimeField(auto_now_add=True, description="借用时间")
     borrowApproveStatus = fields.BooleanField(default=False, description="借用批准状态")
     borrowApproveTime = fields.DatetimeField(null=True, description="借用批准时间")
-    returnTime = fields.DatetimeField(null=True, description="归还时间")
     returnApproveStatus = fields.BooleanField(default=False, description="归还批准状态")
     returnApproveTime = fields.DatetimeField(null=True, description="归还批准时间")
 

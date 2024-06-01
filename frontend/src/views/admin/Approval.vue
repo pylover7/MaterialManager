@@ -1,19 +1,23 @@
 <script setup lang="tsx">
 import Segmented, { OptionsType } from "@/components/ReSegmented";
-import { reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Search from "@iconify-icons/ep/search";
 import Approve from "@iconify-icons/fluent/approvals-app-16-filled";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { successNotification } from "@/utils/notification";
-import { listBorrowed } from "@/api/home";
+import { listBorrowed, updateBorrowApproveStatus } from "@/api/home";
 import { usePublicHooks } from "./utils";
+import { useUserStoreHook } from "@/store/modules/user";
 
 defineOptions({
   name: "Approval"
 });
 
+const userId = computed(() => {
+  return useUserStoreHook()?.uuid;
+});
 const tabIndex = ref(0);
 const segmentedOptions: Array<OptionsType> = [
   {
@@ -34,6 +38,7 @@ const loading = ref(false);
 const onSearch = () => {
   listBorrowed(
     borrowedOptBar.area,
+    false,
     pagination.currentPage,
     pagination.pageSize
   ).then(res => {
@@ -125,8 +130,17 @@ const columns: TableColumnList = [
   },
   {
     label: "操作",
-    cellRenderer: ({ row, props }) => (
-      <el-button plain type="primary" onClick={() => {}}>
+    cellRenderer: ({ row }) => (
+      <el-button
+        plain
+        type="primary"
+        onClick={() => {
+          updateBorrowApproveStatus(row.id, userId.value, true).then(() => {
+            onSearch();
+            successNotification("批准成功");
+          });
+        }}
+      >
         批准
       </el-button>
     )
