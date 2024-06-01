@@ -6,9 +6,10 @@ export const createBorrowed = (data: object) => {
   return http.request<Result>("post", baseUrlApi("/home/create"), { data });
 };
 
-export const listBorrowed = (page: number, pageSize: number) => {
-  return http.request<ResultTable>("post", baseUrlApi("/home/list"), {
+export const listBorrowed = (area: string, page: number, pageSize: number) => {
+  return http.request<ResultTable>("get", baseUrlApi("/home/list"), {
     params: {
+      area,
       page,
       pageSize
     }
