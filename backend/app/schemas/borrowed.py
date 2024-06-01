@@ -33,3 +33,20 @@ class CreateBorrowedInfo(BaseModel):
     phone: str
     depart: str
     baseData: list[MaterialBorrowed]
+
+
+class UpdateBorrowedInfo(BaseModel):
+    uuid: str
+    idList: list[int]
+    status: bool
+    whether: bool
+
+    class Config:
+        orm_mode = True
+        schema_extra = {
+            "example": {
+                "uuid": "uuid",
+                "idList": [1, 2, 3],
+                "status": True
+            }
+        }

@@ -23,14 +23,12 @@ export const listBorrowed = (
 };
 
 export const updateBorrowApproveStatus = (
-  id: number,
+  idList: number[],
   uuid: string,
-  status: boolean
+  status: boolean,
+  whether: boolean
 ) => {
   return http.request<Result>("post", baseUrlApi("/home/update"), {
-    data: { status, uuid },
-    params: {
-      id
-    }
+    data: { status, uuid, idList, whether }
   });
 };

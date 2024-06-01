@@ -4,12 +4,15 @@ import { computed, reactive, ref } from "vue";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Search from "@iconify-icons/ep/search";
 import Approve from "@iconify-icons/fluent/approvals-app-16-filled";
+import Reject from "@iconify-icons/fluent/text-change-reject-24-filled";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { successNotification } from "@/utils/notification";
 import { listBorrowed, updateBorrowApproveStatus } from "@/api/home";
 import { usePublicHooks } from "./utils";
 import { useUserStoreHook } from "@/store/modules/user";
+import { getKeyList } from "@pureadmin/utils";
+import { message } from "@/utils/message";
 
 defineOptions({
   name: "Approval"
@@ -21,11 +24,11 @@ const userId = computed(() => {
 const tabIndex = ref(0);
 const segmentedOptions: Array<OptionsType> = [
   {
-    label: "待借出",
+    label: "借出待审批",
     value: 0
   },
   {
-    label: "待归还",
+    label: "归还待审批",
     value: 1
   }
 ];
@@ -117,32 +120,50 @@ const columns: TableColumnList = [
     prop: "borrowTime"
   },
   {
-    label: "批准状态",
+    label: "审批状态",
     prop: "borrowApproveStatus",
     cellRenderer: ({ row, props }) => (
       <el-tag
         size={props.size}
         style={tagStyle.value(row.borrowApproveStatus ? 1 : 0)}
       >
-        {row.borrowApproveStatus ? "批准" : "待批准"}
+        {row.borrowApproveStatus ? "已审批" : "待审批"}
       </el-tag>
     )
   },
   {
     label: "操作",
     cellRenderer: ({ row }) => (
-      <el-button
-        plain
-        type="primary"
-        onClick={() => {
-          updateBorrowApproveStatus(row.id, userId.value, true).then(() => {
-            onSearch();
-            successNotification("批准成功");
-          });
-        }}
-      >
-        批准
-      </el-button>
+      <>
+        <el-button
+          plain
+          type="primary"
+          onClick={() => {
+            updateBorrowApproveStatus([row.id], userId.value, true, true).then(
+              () => {
+                message("已批准请求", { type: "success" });
+                onSearch();
+              }
+            );
+          }}
+        >
+          批准
+        </el-button>
+        <el-button
+          plain
+          type="warning"
+          onClick={() => {
+            updateBorrowApproveStatus([row.id], userId.value, true, false).then(
+              () => {
+                message("已驳回请求", { type: "info" });
+                onSearch();
+              }
+            );
+          }}
+        >
+          驳回
+        </el-button>
+      </>
     )
   }
 ];
@@ -157,17 +178,19 @@ function onSelectionCancel() {
   tableRef.value.getTableRef().clearSelection();
 }
 
-/** 清空日志 */
-function clearAll() {
-  // 根据实际业务，调用接口删除所有日志数据
-  successNotification("已删除所有日志数据");
-  onSearch();
-}
-
-/** 批量删除 */
-function onBatchDel() {
-  // 返回当前选中的行
+/** 批量批准或驳回 */
+function onBatch(whether: boolean) {
   const curSelected = tableRef.value.getTableRef().getSelectionRows();
+  updateBorrowApproveStatus(
+    getKeyList(curSelected, "id"),
+    userId.value,
+    true,
+    whether
+  ).then(() => {
+    onSearch();
+    tableRef.value.getTableRef().clearSelection();
+    successNotification(`已批${whether ? "通过" : "驳回"}选请求`);
+  });
 }
 
 // 表格数据
@@ -250,12 +273,22 @@ function handleCurrentChange(val: number) {
             </div>
 
             <el-popconfirm
-              title="确定要删除所有日志数据吗？"
-              @confirm="clearAll"
+              title="确定要批准所选请求吗？"
+              @confirm="onBatch(true)"
             >
               <template #reference>
-                <el-button type="danger" :icon="useRenderIcon(Approve)">
+                <el-button type="success" :icon="useRenderIcon(Approve)">
                   批量批准
+                </el-button>
+              </template>
+            </el-popconfirm>
+            <el-popconfirm
+              title="确定要驳回所选请求吗？"
+              @confirm="onBatch(false)"
+            >
+              <template #reference>
+                <el-button type="danger" :icon="useRenderIcon(Reject)">
+                  批量驳回
                 </el-button>
               </template>
             </el-popconfirm>

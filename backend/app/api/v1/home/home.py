@@ -10,7 +10,7 @@ from app.controllers.borrowed import borrowedController
 from app.controllers.material import materialController
 from app.models import Borrowed
 from app.schemas import Success, SuccessExtra
-from app.schemas.borrowed import CreateBorrowedInfo
+from app.schemas.borrowed import CreateBorrowedInfo, UpdateBorrowedInfo
 from app.utils import now
 
 router = APIRouter()
@@ -40,21 +40,35 @@ async def create_borrowed(data: CreateBorrowedInfo):
         item["userDepart"] = data.depart
         item["uuid"] = data.uuid
         obj: Borrowed = await borrowedController.create(obj_in=item)
+        material.borrowed += obj.borrowing
+        await material.save()
         await obj.material.add(material)
     return Success()
 
 
 @router.post("/update", summary="更新借用信息")
-async def update_borrowed(
-        data: dict,
-        id: int = Query(..., description="借用信息id"),
-
-):
-    uuid = data.get("uuid")
-    obj = await borrowedController.get(id=id)
+async def update_borrowed(data: UpdateBorrowedInfo):
+    uuid = data.uuid
     user = await user_controller.get_by_uuid(uuid)
-    await obj.borrowApproveUser.add(user)
-    obj.borrowApproveStatus = data.get("status")
-    obj.borrowApproveTime = now(False)
-    await obj.save()
+
+    for id in data.idList:
+        obj = await borrowedController.get(id=id)
+        await obj.borrowApproveUser.add(user)
+        obj.borrowApproveStatus = data.status
+        obj.borrowApproveWhether = data.whether
+        if not data.whether:
+            material_id = await obj.material.all().values_list("id", flat=True)
+            material = await materialController.get(id=material_id[0])
+            material.borrowed -= obj.borrowing
+            await material.save()
+        obj.borrowApproveTime = now(False)
+        await obj.save()
+    return Success()
+
+
+@router.delete("/delete", summary="删除借用信息")
+async def delete_borrowed(data: list[int]):
+    for id in data:
+        obj = await borrowedController.get(id=id)
+        await obj.delete()
     return Success()
