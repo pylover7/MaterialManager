@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import dayjs from "dayjs";
 import { ref, reactive } from "vue";
-import type { FormInstance } from "element-plus";
+import { ElMessageBox, FormInstance } from "element-plus";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { getPickerShortcuts, usePublicHooks } from "./utils";
 import { PureTableBar } from "@/components/RePureTableBar";
@@ -12,6 +12,7 @@ import Delete from "@iconify-icons/ep/delete";
 import Search from "@iconify-icons/ep/search";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
+import { deleteDutyLogs, getDutyNote, searchDutyLogs } from "@/api/admin";
 
 defineOptions({
   name: "OperationLogs"
@@ -22,7 +23,7 @@ const operationBarRef = ref<FormInstance>();
 const operationForm = reactive({
   area: "",
   status: "",
-  operatingTime: ""
+  operatingTime: Array<any>("")
 });
 // 操作栏表单重置
 const resetForm = formEl => {
@@ -34,7 +35,26 @@ const resetForm = formEl => {
 const loading = ref(false);
 // 搜索
 const onSearch = () => {
-  console.log(operationForm);
+  // 将operationForm中的operatingTime转换为时间格式为 2021-09-01 00:00:00
+  if (operationForm.operatingTime.length > 1) {
+    operationForm.operatingTime = operationForm.operatingTime.map(time =>
+      dayjs(time).format("YYYY-MM-DD HH:mm:ss")
+    );
+  }
+  searchDutyLogs(
+    operationForm.area,
+    pagination.currentPage,
+    pagination.pageSize,
+    operationForm
+  )
+    .then(res => {
+      dataList.value = res.data;
+      pagination.total = res.total;
+    })
+    .catch(() => {
+      dataList.value = [];
+      pagination.total = 0;
+    });
 };
 // 表格ref
 const tableRef = ref();
@@ -93,7 +113,10 @@ const columns: TableColumnList = [
     prop: "status",
     minWidth: 100,
     cellRenderer: ({ row, props }) => (
-      <el-tag size={props.size} style={tagStyle.value(row.status)}>
+      <el-tag
+        size={props.size}
+        style={tagStyle.value(row.number == row.nowNumber ? 1 : 0)}
+      >
         {row.number === row.nowNumber ? "正确" : "错误"}
       </el-tag>
     )
@@ -102,20 +125,36 @@ const columns: TableColumnList = [
     label: "值班时间",
     prop: "dutyDate",
     minWidth: 180,
-    formatter: ({ operatingTime }) =>
-      dayjs(operatingTime).format("YYYY-MM-DD HH:mm:ss")
+    formatter: ({ dutyDate }) => dayjs(dutyDate).format("YYYY-MM-DD HH:mm:ss")
   },
   {
     label: "备注",
     prop: "remark",
     minWidth: 100,
-    cellRenderer: ({row}) => (
-      <el-button plain type="primary">
+    cellRenderer: ({ row }) => (
+      <el-button
+        plain
+        type="primary"
+        onClick={() => {
+          displayNote(row.dutyNote_id);
+        }}
+      >
         查看备注
       </el-button>
     )
   }
 ];
+/** 查看备注 */
+const displayNote = (noteId: number) => {
+  getDutyNote(noteId).then(res => {
+    ElMessageBox.alert(res.data.note, "备注信息", {
+      confirmButtonText: "确定",
+      type: "info"
+    });
+  });
+};
+
+/** 标签风格 */
 const { tagStyle } = usePublicHooks();
 
 /** 清空日志 */
@@ -136,13 +175,14 @@ function onSelectionCancel() {
 }
 
 /** 批量删除 */
-function onbatchDel() {
+function onBatchDel() {
   // 返回当前选中的行
   const curSelected = tableRef.value.getTableRef().getSelectionRows();
-  // 接下来根据实际业务，通过选中行的某项数据，比如下面的id，调用接口进行批量删除
-  successNotification(`已删除序号为 ${getKeyList(curSelected, "id")} 的数据`);
-  tableRef.value.getTableRef().clearSelection();
-  onSearch();
+  deleteDutyLogs(getKeyList(curSelected, "id")).then(() => {
+    // 接下来根据实际业务，通过选中行的某项数据，比如下面的id，调用接口进行批量删除
+    tableRef.value.getTableRef().clearSelection();
+    onSearch();
+  });
 }
 
 // 分页设置
@@ -150,7 +190,8 @@ const pagination = reactive<PaginationProps>({
   total: 0,
   pageSize: 10,
   currentPage: 1,
-  background: true
+  background: true,
+  pageSizes: [10, 20, 50, 100]
 });
 
 function handleSizeChange(val: number) {
@@ -268,7 +309,7 @@ function handleSelectionChange(val) {
               取消选择
             </el-button>
           </div>
-          <el-popconfirm title="是否确认删除?" @confirm="onbatchDel">
+          <el-popconfirm title="是否确认删除?" @confirm="onBatchDel">
             <template #reference>
               <el-button type="danger" text class="mr-1"> 批量删除 </el-button>
             </template>

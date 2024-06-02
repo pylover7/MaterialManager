@@ -3,6 +3,7 @@ from datetime import timedelta
 from fastapi import APIRouter
 from jwt.exceptions import ExpiredSignatureError
 
+from app.controllers.depart import departController
 from app.controllers.user import user_controller
 from app.core.ctx import CTX_USER_ID
 from app.core.dependency import DependAuth
@@ -28,10 +29,7 @@ async def login_access_token(credentials: CredentialsSchema):
         user: User = await user_controller.authenticate(credentials)
         await user_controller.update_last_login(user.id)
         roles = await user.roles.all().values_list("code", flat=True)
-        try:
-            depart = await user.depart.all().values_list("name", flat=True)
-        except Exception as e:
-            depart = ""
+        depart = await departController.get_all_name(user)
     access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
     expire = datetime.now() + access_token_expires
@@ -39,6 +37,7 @@ async def login_access_token(credentials: CredentialsSchema):
 
     data = JWTOut(
         username=user.username,
+        uuid=user.uuid.__str__(),
         depart=depart,
         roles=roles,
         accessToken=create_access_token(
@@ -101,11 +100,10 @@ async def get_userinfo():
     user_id = CTX_USER_ID.get()
     user_obj = await user_controller.get(id=user_id)
     data = await user_obj.to_dict(exclude_fields=["password"])
-    data["avatar"] = "https://avatars.githubusercontent.com/u/54677442?v=4"
     return Success(data=data)
 
 
-@router.get("/usermenu", summary="查看用户菜单", dependencies=[DependAuth])
+@router.get("/userMenu", summary="查看用户菜单", dependencies=[DependAuth])
 async def get_user_menu():
     user_id = CTX_USER_ID.get()
     user_obj = await User.filter(id=user_id).first()
@@ -120,15 +118,43 @@ async def get_user_menu():
         menus = list(set(menus))
     parent_menus: list[Menu] = []
     for menu in menus:
-        if menu.parent_id == 0:
+        if menu.parentId == 0:
             parent_menus.append(menu)
     res = []
     for parent_menu in parent_menus:
         parent_menu_dict = await parent_menu.to_dict()
         parent_menu_dict["children"] = []
+        parent_menu_dict["meta"] = {}
+        parent_menu_dict["meta"]["title"] = parent_menu_dict["title"]
+        parent_menu_dict["meta"]["icon"] = parent_menu_dict["icon"]
+        parent_menu_dict["meta"]["showLink"] = parent_menu_dict["showLink"]
+        parent_menu_dict["meta"]["rank"] = parent_menu_dict["rank"]
+
         for menu in menus:
-            if menu.parent_id == parent_menu.id:
-                parent_menu_dict["children"].append(await menu.to_dict())
+            if menu.parentId == parent_menu.id:
+                # roles = await menu.roles.all().values_list("code", flat=True)
+                children_menu = await menu.to_dict()
+                children_menu["meta"] = {}
+                children_menu["meta"]["title"] = children_menu["title"]
+                children_menu["meta"]["icon"] = children_menu["icon"]
+                children_menu["meta"]["extraIcon"] = children_menu["extraIcon"]
+                children_menu["meta"]["showLink"] = children_menu["showLink"]
+                children_menu["meta"]["showParent"] = children_menu["showParent"]
+                # children_menu["meta"]["roles"] = roles
+                children_menu["meta"]["auths"] = children_menu["auths"]
+                children_menu["meta"]["keepAlive"] = children_menu["keepAlive"]
+                children_menu["meta"]["frameSrc"] = children_menu["frameSrc"]
+                children_menu["meta"]["frameLoading"] = children_menu["frameLoading"]
+                children_menu["meta"]["frameLoading"] = children_menu["frameLoading"]
+                children_menu["meta"]["hiddenTag"] = children_menu["hiddenTag"]
+                children_menu["meta"]["dynamicLevel"] = children_menu["dynamicLevel"]
+                children_menu["meta"]["activePath"] = children_menu["activePath"]
+                children_menu["meta"]["transition"] = {}
+                children_menu["meta"]["transition"]["name"] = children_menu["transitionName"]
+                children_menu["meta"]["transition"]["enterTransition"] = children_menu["enterTransition"]
+                children_menu["meta"]["transition"]["leaveTransition"] = children_menu["leaveTransition"]
+
+                parent_menu_dict["children"].append(children_menu)
         res.append(parent_menu_dict)
     return Success(data=res)
 

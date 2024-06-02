@@ -92,6 +92,8 @@ defineExpose({ getRef });
             v-model="newFormInline.password"
             clearable
             placeholder="请输入用户密码"
+            type="password"
+            show-password
           >
             <template #append>
               <el-button
@@ -99,7 +101,8 @@ defineExpose({ getRef });
                 :loading-icon="useRenderIcon(Refresh)"
                 :loading="creatPwdLoading"
                 @click="creatPwd"
-              />
+                >随机密码</el-button
+              >
             </template>
           </el-input>
         </el-form-item>

@@ -14,6 +14,8 @@ export const useUserStore = defineStore({
   state: (): userType => ({
     // 用户名
     username: storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "",
+    // 用户uuid
+    uuid: storageLocal().getItem<DataInfo<number>>(userKey)?.uuid ?? "",
     // 用户部门
     depart: storageLocal().getItem<DataInfo<number>>(userKey)?.depart ?? "",
     // 页面级别权限
@@ -27,6 +29,9 @@ export const useUserStore = defineStore({
     /** 存储用户名 */
     SET_USERNAME(username: string) {
       this.username = username;
+    },
+    SET_UUID(uuid: string) {
+      this.uuid = uuid;
     },
     /** 储存用户部门 */
     SET_DEPART(depart: string) {

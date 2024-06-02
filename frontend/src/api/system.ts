@@ -1,35 +1,11 @@
 import { http } from "@/utils/http";
 import { baseUrlApi, staticUrl } from "./utils";
-
-type Result = {
-  code: number;
-  msg: string;
-  data?: object;
-};
-
-type ResultList = {
-  code: number;
-  msg: string;
-  data?: Array<any>;
-};
-
-type ResultRoleAuth = Result & {
-  data: {
-    menus: Array<number>;
-    apis: Array<number>;
-  };
-};
-
-type ResultTable = {
-  success: boolean;
-  data?: Array<any>;
-  /** 总条目数 */
-  total?: number;
-  /** 每页显示条目个数 */
-  pageSize?: number;
-  /** 当前页数 */
-  currentPage?: number;
-};
+import type {
+  Result,
+  ResultList,
+  ResultRoleAuth,
+  ResultTable
+} from "@/api/types";
 
 /** 获取系统管理-用户管理列表 */
 export const getUserList = (

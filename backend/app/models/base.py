@@ -32,6 +32,7 @@ class BaseModel(models.Model):
                             for k, v in value.items()
                             if isinstance(v, datetime)
                         )
+                        value.update((k, str(v)) for k, v in value.items() if isinstance(v, UUID))
                     d[field] = values
         return d
 
