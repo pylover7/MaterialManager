@@ -4,6 +4,7 @@
 # @Author    :dayezi
 from fastapi import APIRouter, Query
 from tortoise.expressions import Q
+from typing import Union
 
 from app.controllers import user_controller
 from app.controllers.borrowed import borrowedController
@@ -16,14 +17,19 @@ from app.utils import now
 router = APIRouter()
 
 
-@router.get("/list", summary="获取全部借用信息")
+@router.get("/list", summary="获取借用信息")
 async def get_home_list(
         area: str = Query("glb", description="区域"),
-        borrowedStatus: bool = Query(False, description="借用批准状态"),
         page: int = Query(1, description="页码"),
-        pageSize: int = Query(10, description="每页数量")
+        pageSize: int = Query(10, description="每页数量"),
+        borrowedStatus: bool = Query(False, description="借用批准状态"),
+        borrowWhether: Union[bool, None] = Query(None, description="借用通过状态"),
+        returnStatus: Union[bool, None] = Query(None, description="归还批准状态")
 ):
-    q = Q(Q(material__depart=area), Q(borrowApproveStatus=borrowedStatus))
+    if returnStatus is None:
+        q = Q(Q(material__depart=area), Q(borrowApproveStatus=borrowedStatus))
+    else:
+        q = Q(Q(material__depart=area), Q(borrowApproveWhether=borrowWhether), Q(returnApproveStatus=returnStatus))
     total, objs = await borrowedController.list(page=page, page_size=pageSize, search=q)
     data = [await obj.to_dict(m2m=True) for obj in objs]
     return SuccessExtra(data=data, total=total, currentPage=page, pageSize=pageSize)
@@ -53,15 +59,21 @@ async def update_borrowed(data: UpdateBorrowedInfo):
 
     for id in data.idList:
         obj = await borrowedController.get(id=id)
-        await obj.borrowApproveUser.add(user)
-        obj.borrowApproveStatus = data.status
-        obj.borrowApproveWhether = data.whether
-        if not data.whether:
+        if data.borrowStatus:
+            await obj.borrowApproveUser.add(user)
+            obj.borrowApproveStatus = data.borrowStatus
+            obj.borrowApproveWhether = data.borrowWhether
+            obj.borrowApproveTime = now(False)
+        elif data.returnStatus:
+            await obj.returnApproveUser.add(user)
+            obj.returnApproveStatus = data.returnStatus
+            obj.returnApproveTime = now(False)
+        if not data.borrowWhether or data.returnStatus:
             material_id = await obj.material.all().values_list("id", flat=True)
             material = await materialController.get(id=material_id[0])
             material.borrowed -= obj.borrowing
             await material.save()
-        obj.borrowApproveTime = now(False)
+
         await obj.save()
     return Success()
 

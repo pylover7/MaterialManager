@@ -8,27 +8,32 @@ export const createBorrowed = (data: object) => {
 
 export const listBorrowed = (
   area: string,
-  borrowedStatus: boolean,
   page: number,
-  pageSize: number
+  pageSize: number,
+  borrowedStatus?: boolean,
+  borrowWhether?: boolean,
+  returnStatus?: boolean
 ) => {
   return http.request<ResultTable>("get", baseUrlApi("/home/list"), {
     params: {
       area,
-      borrowedStatus,
       page,
-      pageSize
+      pageSize,
+      borrowedStatus,
+      borrowWhether,
+      returnStatus
     }
   });
 };
 
-export const updateBorrowApproveStatus = (
+export const updateBorrowedInfo = (
   idList: number[],
   uuid: string,
-  status: boolean,
-  whether: boolean
+  borrowStatus?: boolean,
+  borrowWhether?: boolean,
+  returnStatus?: boolean
 ) => {
   return http.request<Result>("post", baseUrlApi("/home/update"), {
-    data: { status, uuid, idList, whether }
+    data: { borrowStatus, uuid, idList, borrowWhether, returnStatus }
   });
 };

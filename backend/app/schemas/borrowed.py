@@ -2,6 +2,8 @@
 # @FileName  :borrowed.py
 # @Time      :2024/5/31 上午12:49
 # @Author    :dayezi
+from typing import Union
+
 from pydantic import BaseModel, Field
 from tortoise.contrib.pydantic import pydantic_model_creator
 from app.models.borrowed import Borrowed
@@ -38,12 +40,13 @@ class CreateBorrowedInfo(BaseModel):
 class UpdateBorrowedInfo(BaseModel):
     uuid: str
     idList: list[int]
-    status: bool
-    whether: bool
+    borrowStatus: bool = None
+    borrowWhether: bool = None
+    returnStatus: bool = None
 
     class Config:
-        orm_mode = True
-        schema_extra = {
+        from_attributes = True
+        json_schema_extra = {
             "example": {
                 "uuid": "uuid",
                 "idList": [1, 2, 3],
