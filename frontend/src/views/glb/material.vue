@@ -10,6 +10,7 @@ import {
 import { useUserStoreHook } from "@/store/modules/user";
 import { successNotification, errorNotification } from "@/utils/notification";
 import formatCurrentTime from "@/utils/formatDatetime";
+import { getDutyOverList } from "@/api/admin";
 
 defineOptions({
   name: "GlbMaterial"
@@ -24,8 +25,8 @@ enum StepStatus {
   Error = "error"
 }
 interface tableDataRow {
-  id: number;
-  uuid: string;
+  id?: number;
+  uuid?: string;
   name: string;
   model: string;
   position: string;
@@ -93,10 +94,9 @@ const initGlb = () => {
     .finally(() => {
       loading.value = false;
     });
-  getGlbAttentionList().then(res => {
-    const result = res.data.map(item => item.note);
+  getDutyOverList("glb").then(res => {
     attention.length = 0;
-    attention.push(...result);
+    attention.push(...res.data);
   });
   getLatestNote().then(res => {
     lastRemark.value = res.data.note;
@@ -151,7 +151,7 @@ const burlHandle = () => {
   step2Init.value = false;
 };
 
-const attention: string[] = reactive([]);
+const attention = reactive([]);
 
 const step3Init = ref(true);
 const attentionStatus = computed(() => {
@@ -335,7 +335,7 @@ const handover = () => {
                   <template #default>
                     <ol>
                       <li v-for="(item, index) in attention" :key="index">
-                        {{ item }}
+                        {{ item.content }}
                       </li>
                     </ol>
                   </template>

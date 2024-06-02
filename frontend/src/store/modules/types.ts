@@ -38,6 +38,7 @@ export type setType = {
 
 export type userType = {
   username?: string;
+  uuid?: string;
   depart?: string;
   roles?: Array<string>;
   isRemembered?: boolean;

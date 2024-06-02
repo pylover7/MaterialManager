@@ -6,12 +6,12 @@ from pydantic import BaseModel
 from tortoise.contrib.pydantic import pydantic_model_creator
 from app.models.dutyLog import DutyLog, DutyNotes
 
-DutyLogPydantic = pydantic_model_creator(DutyLog, name="DutyLog")
-DutyNotesPydantic = pydantic_model_creator(DutyNotes, name="DutyNotes")
+DutyLogPydantic = pydantic_model_creator(DutyLog)
+DutyNotesPydantic = pydantic_model_creator(DutyNotes)
 
 
 class DutyLogCreate(DutyLogPydantic):
-    ...
+    dutyNote_id: int = None
 
 
 class DutyLogUpdate(DutyLogPydantic):

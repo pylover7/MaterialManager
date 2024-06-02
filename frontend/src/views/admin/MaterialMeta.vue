@@ -1,11 +1,11 @@
 <script setup lang="tsx">
-import { ref, reactive } from "vue";
+import { ref, reactive, h } from "vue";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Delete from "@iconify-icons/ep/delete";
 import Add from "@iconify-icons/ep/circle-plus";
 import { PaginationProps, PureTable } from "@pureadmin/table";
-import { getKeyList } from "@pureadmin/utils";
+import { deviceDetection, getKeyList } from "@pureadmin/utils";
 import {
   getMaterialMeta,
   addMaterialMeta,
@@ -18,6 +18,10 @@ import {
   warningNotification
 } from "@/utils/notification";
 import { MaterialItem } from "@/types/base";
+import { addDialog } from "@/components/ReDialog";
+import attentionForm from "./utils/attentionForm.vue";
+import { FormItemProps } from "./utils/types";
+import { getDutyOverList, updateDutyOverList } from "@/api/admin";
 
 defineOptions({
   name: "MaterialMeta"
@@ -103,9 +107,19 @@ const columns: TableColumnList = [
   {
     label: "操作",
     prop: "modify",
-    width: "160",
+    width: "240",
     cellRenderer: ({ row }) => (
       <>
+        <el-button
+          size="small"
+          type="primary"
+          plain
+          onClick={() => {
+            toCheck(row);
+          }}
+        >
+          送检
+        </el-button>
         <el-button
           size="small"
           type="warning"
@@ -150,6 +164,10 @@ const deleteById = (id: number) => {
     .catch(err => {
       errorNotification(err.msg);
     });
+};
+// 表格操作列送检按钮函数
+const toCheck = (row: MaterialItem) => {
+  console.log(row);
 };
 
 // 表格数据
@@ -202,7 +220,9 @@ const addForm = reactive<MaterialItem>({
   name: "",
   model: "",
   position: "",
-  number: 1
+  number: 1,
+  checking: 0,
+  borrowed: 0
 });
 // 清除添加物资表单数据
 const clearAddForm = (formEl: FormInstance | undefined) => {
@@ -246,6 +266,54 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     }
   });
 };
+const attRef = ref();
+// 注意事项弹窗
+function openDialog(area: string) {
+  getDutyOverList(area).then(res => {
+    const itemList = res.data;
+    itemList.forEach(item => {
+      item.key = item.id;
+    });
+
+    addDialog({
+      title: `查看注意事项`,
+      props: {
+        formData: itemList
+      },
+      width: "50%",
+      draggable: true,
+      fullscreen: deviceDetection(),
+      fullscreenIcon: true,
+      closeOnClickModal: false,
+      contentRenderer: () => h(attentionForm, { ref: attRef }),
+      beforeSure: (done, { options }) => {
+        const FormRef = attRef.value.getRef();
+        const curData = options.props.formData as [FormItemProps];
+
+        /** 关闭弹框，刷新表格数据 */
+        function chores() {
+          done(); // 关闭弹框
+          // onSearch(); // 刷新表格数据
+        }
+
+        FormRef.validate(valid => {
+          if (valid) {
+            // 表单规则校验通过
+            curData.forEach(item => {
+              delete item.key;
+              delete item.created_at;
+              delete item.updated_at;
+            });
+            updateDutyOverList(area, curData).then(res => {
+              chores();
+              successNotification(res.msg);
+            });
+          }
+        });
+      }
+    });
+  });
+}
 </script>
 
 <template>
@@ -268,6 +336,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           <el-option label="辅控" value="fk" />
           <el-option label="网控" value="wk" />
         </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="openDialog(area)"
+          >查看注意事项</el-button
+        >
       </el-form-item>
     </el-form>
 

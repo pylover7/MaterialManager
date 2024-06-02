@@ -52,15 +52,17 @@ class Menu(BaseModel, TimestampMixin):
     parentId = fields.IntField(default=0, max_length=10, description="父菜单ID")
     menuType = fields.IntField(default=0, max_length=10, description="菜单类型（0代表菜单、1代表iframe、2代表外链、3代表按钮）")
     title = fields.CharField(max_length=20, description="菜单名称")
-    name = fields.CharField(max_length=20, description="路由名称必须唯一")
+    name = fields.CharField(max_length=50, description="路由名称必须唯一")
     path = fields.CharField(max_length=100, description="菜单路径")
     component = fields.CharField(max_length=100, null=True, description="组件")
-    rank = fields.IntField(default=0, description="排序")
+    rank = fields.IntField(default=1, description="排序")
     redirect = fields.CharField(max_length=100, null=True, blank=True, description="重定向")
     icon = fields.CharField(max_length=100, null=True, blank=True, description="菜单图标")
     extraIcon = fields.CharField(max_length=100, null=True, blank=True, description="右侧图标")
+    transitionName = fields.CharField(max_length=100, null=True, blank=True, description="当前页面动画")
     enterTransition = fields.CharField(max_length=100, null=True, blank=True, description="进入动画")
     leaveTransition = fields.CharField(max_length=100, null=True, blank=True, description="离开动画")
+    dynamicLevel = fields.IntField(default=1, description="显示在标签页的最大数量")
     activePath = fields.CharField(max_length=100, null=True, blank=True, description="菜单激活")
     auths = fields.CharField(max_length=100, null=True, description="权限标识")
     frameSrc = fields.CharField(max_length=100, null=True, blank=True, description="iframe地址")
@@ -70,6 +72,8 @@ class Menu(BaseModel, TimestampMixin):
     fixedTag = fields.BooleanField(default=False, description="固定标签")
     showLink = fields.BooleanField(default=True, description="显示链接")
     showParent = fields.BooleanField(default=False, description="显示父菜单")
+
+    roles: fields.ManyToManyRelation["Role"]
 
     class Meta:
         table = "menu"

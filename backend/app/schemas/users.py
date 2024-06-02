@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import BaseModel, Field
 from tortoise.contrib.pydantic import pydantic_model_creator
 
@@ -7,11 +9,11 @@ UserPydantic = pydantic_model_creator(User)
 
 
 class UserCreate(UserPydantic):
+    uuid: UUID = None
     is_superuser: bool = False
     last_login: str = None
     departId: int = None
     avatar: str = None
-    uuid: str = None
 
     def create_dict(self):
         return self.model_dump(exclude_unset=True, exclude={"roles", "depart"})

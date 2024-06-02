@@ -25,7 +25,7 @@ async def menu_tree():
 
 @router.get("/list", summary="查看菜单列表")
 async def menu_list():
-    _, menus_objs = await menu_controller.list(page=1, page_size=1000)
+    _, menus_objs = await menu_controller.list(page=1, page_size=100)
     menu = [await obj.to_dict() for obj in menus_objs]
     return Success(data=menu)
 

@@ -79,6 +79,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     currentPage: 1,
     background: true
   });
+  const avatar = (avatar: string | null) =>
+    avatar ? getUserAvatar(avatar) : userAvatar;
   const columns: TableColumnList = [
     {
       label: "勾选列", // 如果需要表格多选，此处label必须设置
@@ -98,8 +100,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         <el-image
           fit="cover"
           preview-teleported={true}
-          src={row.avatar == null ? userAvatar : getUserAvatar(row.avatar)}
-          preview-src-list={Array.of(getUserAvatar(row.avatar) || userAvatar)}
+          src={avatar(row.avatar)}
+          preview-src-list={Array.of(avatar(row.avatar))}
           class="w-[24px] h-[24px] rounded-full align-middle"
         />
       ),
@@ -401,7 +403,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       contentRenderer: () =>
         h(ReCropperPreview, {
           ref: cropRef,
-          imgSrc: row.avatar ? getUserAvatar(row.avatar) : userAvatar,
+          imgSrc: avatar(row.avatar),
           onCropper: info => (avatarInfo.value = info)
         }),
       beforeSure: done => {
@@ -476,7 +478,9 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
                       onClick={() => {
                         resetPwd();
                       }}
-                    />
+                    >
+                      随机密码
+                    </el-button>
                   )
                 }}
               </ElInput>
@@ -528,7 +532,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   /** 分配角色 */
   async function handleRole(row) {
     // 选中的角色列表
-    const ids = row.roles ?? [];
+    const ids = row.roles.map(item => item.id) ?? [];
     addDialog({
       title: `分配 ${row.username} 用户的角色`,
       props: {

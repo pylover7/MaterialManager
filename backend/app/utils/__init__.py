@@ -5,6 +5,7 @@
 import base64
 import time
 import uuid
+from datetime import datetime
 
 
 def base_decode(data: str) -> bytes:
@@ -18,3 +19,16 @@ def base_decode(data: str) -> bytes:
 def generate_uuid(name: str) -> uuid.UUID:
     name = name + str(time.time_ns())
     return uuid.uuid5(uuid.NAMESPACE_DNS, name)
+
+
+def now(s: bool = True) -> str | datetime:
+    """
+    获取当前时间，datatime格式或 xxxx-xx-xx xx:xx:xx 字符串格式
+
+    :return: 当前日期时间
+    """
+    today = datetime.now()
+    if s:
+        return today.strftime("%Y-%m-%d %H:%M:%S")
+    else:
+        return today
