@@ -104,6 +104,8 @@ const columns: TableColumnList = [
   { label: "名称", prop: "name" },
   { label: "型号", prop: "model", width: "200" },
   { label: "数量", prop: "number", width: "100" },
+  { label: "借出数量", prop: "borrowed", width: "100" },
+  { label: "送检数量", prop: "checking", width: "100" },
   {
     label: "操作",
     prop: "modify",

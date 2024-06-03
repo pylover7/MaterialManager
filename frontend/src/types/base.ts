@@ -10,6 +10,7 @@ export type MaterialItem = {
   depart?: string;
   position: string;
   number: number;
+  nowNumber?: number;
   checking?: number;
   borrowing?: number;
   borrowed?: number;

@@ -65,6 +65,8 @@ async def login_access_token(credentials: CredentialsSchema):
 async def refresh_token(refreshToken: refreshTokenSchema):
     try:
         payload = decode_access_token(refreshToken.refreshToken)
+        if payload.exp < datetime.now():
+            raise ExpiredSignatureError
     except ExpiredSignatureError:
         return FailAuth(msg="refreshToken已过期")
     access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)

@@ -117,7 +117,7 @@ const columns: TableColumnList = [
         size={props.size}
         style={tagStyle.value(row.number == row.nowNumber ? 1 : 0)}
       >
-        {row.number === row.nowNumber ? "正确" : "错误"}
+        {row.number === row.nowNumber ? "正常" : "异常"}
       </el-tag>
     )
   },
@@ -237,8 +237,8 @@ function handleSelectionChange(val) {
           clearable
           class="!w-[150px]"
         >
-          <el-option label="正确" value="1" />
-          <el-option label="错误" value="0" />
+          <el-option label="正常" value="1" />
+          <el-option label="异常" value="0" />
         </el-select>
       </el-form-item>
       <el-form-item label="操作时间" prop="operatingTime">
