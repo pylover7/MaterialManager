@@ -34,6 +34,7 @@ class CreateBorrowedInfo(BaseModel):
     username: str
     phone: str
     depart: str
+    reason: str
     baseData: list[MaterialBorrowed]
 
 

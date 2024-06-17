@@ -26,6 +26,7 @@ const borrowMaterial = () => {
           username: "",
           phone: "",
           depart: "",
+          reason: "",
           baseData: res.data
         }
       },

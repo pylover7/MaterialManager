@@ -37,16 +37,16 @@ async def get_meta(
         area: str = Query("glb", description="物资区域"),
         metaType: str = Query("", description="物资类型"),
         page: int = Query(1, description="页码"),
-        page_size: int = Query(1000, description="每页数量"),
+        pageSize: int = Query(1000, description="每页数量"),
         name: str = Query("", description="物资名称"),
 ):
     q = Q(Q(area__contains=area), Q(type__contains=metaType))
     if name:
         q &= Q(name__contains=name)
 
-    total, material_objs = await materialController.list(page=page, page_size=page_size, search=q)
+    total, material_objs = await materialController.list(page=page, page_size=pageSize, search=q)
     data = [await obj.to_dict() for obj in material_objs]
-    return SuccessExtra(msg="物资数据获取成功", data=data, total=total, page=page, page_size=page_size)
+    return SuccessExtra(msg="物资数据获取成功", data=data, total=total, page=page, pageSize=pageSize)
 
 
 @router.get("/all_meta", summary="获取所有物资源数据")
@@ -54,7 +54,7 @@ async def get_all_meta(
         area: str = Query("glb", description="物资区域"),
         metaType: str = Query("", description="物资类型")
 ):
-    q = Q(Q(area_contains=area), Q(type__contains=metaType))
+    q = Q(Q(area__contains=area), Q(type__contains=metaType))
     material_objs = await materialController.all(search=q)
     data = [await obj.to_dict() for obj in material_objs]
     return Success(data=data)

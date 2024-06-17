@@ -12,14 +12,14 @@ export const getMaterialMeta = async (
   area: string,
   metaType: string,
   page?: number,
-  page_size?: number
+  pageSize?: number
 ) => {
   return http.request<MaterialResult>("get", baseUrlApi("/material/meta"), {
     params: {
       area,
       metaType,
       page,
-      page_size
+      pageSize
     }
   });
 };

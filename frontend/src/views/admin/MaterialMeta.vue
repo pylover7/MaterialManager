@@ -89,20 +89,27 @@ const onBatchDel = () => {
 function handleSelectionChange(val) {
   selectedNum.value = val.length;
 }
+// 搜索按钮可用
+const searchDisable = computed(() => {
+  return area.value == "" || type.value == "";
+});
 // 表格分页配置
 const pagination = reactive<PaginationProps>({
   total: 1,
   pageSize: 10,
   currentPage: 1,
-  background: true
+  background: true,
+  hideOnSinglePage: true
 });
 // 表格页面大小改变回调
 const pageSizeChange = (size: number) => {
   pagination.pageSize = size;
+  onSearch();
 };
 // 表格翻页回调
 const pageCurrentChange = (page: number) => {
   pagination.currentPage = page;
+  onSearch();
 };
 // 表格列
 const columns: TableColumnList = [
@@ -198,10 +205,6 @@ function onSearch() {
       loading.value = false;
     });
 }
-// 搜索按钮可用
-const searchDisable = computed(() => {
-  return area.value == "" || type.value == "";
-});
 // 添加物资表单ref
 const addFormRef = ref<FormInstance>();
 // 添加物资抽屉控制

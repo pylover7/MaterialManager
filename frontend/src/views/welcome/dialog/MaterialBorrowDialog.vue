@@ -31,8 +31,11 @@ const props = withDefaults(defineProps<materialItemList>(), {
     username: "",
     phone: "",
     depart: "",
+    reason: "",
     baseData: [
       {
+        type: "",
+        area: "",
         name: "",
         model: "",
         number: 0,
@@ -246,6 +249,14 @@ const openVerifyDialog = () => {
               </p>
             </el-scrollbar>
           </el-card>
+          <el-input
+            v-model="borrowInfo.reason"
+            :rows="2"
+            maxlength="200"
+            show-word-limit
+            type="textarea"
+            placeholder="请填写借用理由"
+          />
           <el-card class="card" header="借用人信息" shadow="never">
             <el-row>
               <el-col :span="8">
