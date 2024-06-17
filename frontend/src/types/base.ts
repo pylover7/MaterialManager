@@ -7,7 +7,8 @@ export type MaterialItem = {
   uuid?: string;
   name: string;
   model: string;
-  depart?: string;
+  type: string;
+  area: string;
   position: string;
   number: number;
   nowNumber?: number;

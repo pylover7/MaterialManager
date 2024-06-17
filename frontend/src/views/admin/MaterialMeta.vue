@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { ref, reactive, h } from "vue";
+import { ref, reactive, h, computed } from "vue";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Delete from "@iconify-icons/ep/delete";
@@ -12,16 +12,13 @@ import {
   deleteMaterialMeta
 } from "@/api/material";
 import type { FormInstance, FormRules } from "element-plus";
-import {
-  errorNotification,
-  successNotification,
-  warningNotification
-} from "@/utils/notification";
+import { errorNotification, successNotification } from "@/utils/notification";
 import { MaterialItem } from "@/types/base";
 import { addDialog } from "@/components/ReDialog";
 import attentionForm from "./utils/attentionForm.vue";
-import { FormItemProps } from "./utils/types";
+import { SelectOpt, FormItemProps } from "./utils/types";
 import { getDutyOverList, updateDutyOverList } from "@/api/admin";
+import Search from "@iconify-icons/ep/search";
 
 defineOptions({
   name: "MaterialMeta"
@@ -30,17 +27,35 @@ defineOptions({
 const tableRef = ref();
 // 表格加载控制
 const loading = ref(false);
-// 区域选择
+// 区域配置
+const areaOpt: SelectOpt = [
+  {
+    label: "隔离办",
+    value: "glb"
+  },
+  {
+    label: "辅控",
+    value: "fk"
+  },
+  {
+    label: "网控",
+    value: "wk"
+  }
+];
+// 类型配置
+const typeOpt: SelectOpt = [
+  {
+    label: "工具",
+    value: "tool"
+  },
+  {
+    label: "钥匙",
+    value: "key"
+  }
+];
+
 const area = ref("");
-// 区域变化回调函数
-const areaChange = (value: string) => {
-  area.value = value;
-  onSearch();
-};
-// 清除区域回调函数
-const areaClear = () => {
-  dataList.length = 0;
-};
+const type = ref("");
 
 // 表格选择的数量
 const selectedNum = ref(0);
@@ -84,12 +99,10 @@ const pagination = reactive<PaginationProps>({
 // 表格页面大小改变回调
 const pageSizeChange = (size: number) => {
   pagination.pageSize = size;
-  if (!!area.value) onSearch();
 };
 // 表格翻页回调
 const pageCurrentChange = (page: number) => {
   pagination.currentPage = page;
-  if (!!area.value) onSearch();
 };
 // 表格列
 const columns: TableColumnList = [
@@ -100,8 +113,8 @@ const columns: TableColumnList = [
     reserveSelection: true // 数据刷新后保留选项
   },
   { label: "序号", type: "index", width: "60" },
-  { label: "位置", prop: "position" },
   { label: "名称", prop: "name" },
+  { label: "位置", prop: "position" },
   { label: "型号", prop: "model", width: "200" },
   { label: "数量", prop: "number", width: "100" },
   { label: "借出数量", prop: "borrowed", width: "100" },
@@ -127,7 +140,7 @@ const columns: TableColumnList = [
           type="warning"
           plain
           onClick={() => {
-            modify(row);
+            addMaterial("修改", row);
           }}
         >
           修改
@@ -146,16 +159,7 @@ const columns: TableColumnList = [
     )
   }
 ];
-// 表格操作列修改按钮函数
-const modify = (row: MaterialItem) => {
-  addDrawerTitle.value = "修改";
-  const keys = Object.keys(row);
 
-  for (const key of keys) {
-    addForm[key] = row[key];
-  }
-  addDrawer.value = true;
-};
 // 表格操作列删除按钮函数
 const deleteById = (id: number) => {
   deleteMaterialMeta([id])
@@ -175,31 +179,29 @@ const toCheck = (row: MaterialItem) => {
 // 表格数据
 const dataList = reactive([]);
 // 表格刷新
-async function onSearch() {
-  if (area.value) {
-    loading.value = true;
-    dataList.length = 0;
-    await getMaterialMeta(
-      area.value,
-      pagination.currentPage,
-      pagination.pageSize
-    )
-      .then(res => {
-        dataList.push(...res.data);
-        pagination.total = res.total;
-        pagination.pageSize = res.pageSize;
-        pagination.currentPage = res.page;
-      })
-      .catch(e => {
-        area.value = "";
-      })
-      .finally(() => {
-        loading.value = false;
-      });
-  } else {
-    warningNotification("请选择区域");
-  }
+function onSearch() {
+  loading.value = true;
+  dataList.length = 0;
+  getMaterialMeta(
+    area.value,
+    type.value,
+    pagination.currentPage,
+    pagination.pageSize
+  )
+    .then(res => {
+      dataList.push(...res.data);
+      pagination.total = res.total;
+      pagination.pageSize = res.pageSize;
+      pagination.currentPage = res.page;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
+// 搜索按钮可用
+const searchDisable = computed(() => {
+  return area.value == "" || type.value == "";
+});
 // 添加物资表单ref
 const addFormRef = ref<FormInstance>();
 // 添加物资抽屉控制
@@ -209,8 +211,17 @@ const submitLoading = ref(false);
 // 添加物资抽屉标题
 const addDrawerTitle = ref("");
 // 开启添加物资抽屉
-const addMaterial = () => {
-  addDrawerTitle.value = "新增";
+const addMaterial = (title: string, row?: MaterialItem) => {
+  addDrawerTitle.value = title;
+  addForm.area = area.value;
+  addForm.type = type.value;
+  addForm.number = row?.number ?? 1;
+  addForm.position = row?.position ?? "";
+  addForm.name = row?.name ?? "";
+  addForm.model = row?.model ?? "";
+  addForm.borrowed = row?.borrowed ?? 0;
+  addForm.checking = row?.checking ?? 0;
+  addForm.id = row?.id;
   addDrawer.value = true;
 };
 // 关闭添加物资抽屉
@@ -219,6 +230,8 @@ const drawerCancel = () => {
 };
 // 添加物资表单数据
 const addForm = reactive<MaterialItem>({
+  type: "",
+  area: "",
   name: "",
   model: "",
   position: "",
@@ -226,13 +239,17 @@ const addForm = reactive<MaterialItem>({
   checking: 0,
   borrowed: 0
 });
+
 // 清除添加物资表单数据
 const clearAddForm = (formEl: FormInstance | undefined) => {
+  delete addForm.id;
   if (!formEl) return;
   formEl.resetFields();
 };
 // 添加物资表单数据校验
 const rules = reactive<FormRules<MaterialItem>>({
+  area: [{ required: true, message: "请选择区域！", trigger: "blur" }],
+  type: [{ required: true, message: "请选择物资类型！", trigger: "blur" }],
   name: [{ required: true, message: "请输入物资名称信息！", trigger: "blur" }],
   position: [
     { required: true, message: "请输入物资位置信息", trigger: "blur" }
@@ -251,7 +268,6 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       submitLoading.value = true;
-      addForm.depart = area.value;
       addMaterialMeta(addForm)
         .then(res => {
           addDrawer.value = false;
@@ -263,8 +279,6 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         .finally(() => {
           submitLoading.value = false;
         });
-    } else {
-      errorNotification("验证失败");
     }
   });
 };
@@ -325,22 +339,37 @@ function openDialog(area: string) {
       :inline="true"
       class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px] overflow-auto"
     >
-      <el-form-item label="选择区域" prop="area">
-        <el-select
-          v-model="area"
-          placeholder="请选择"
-          clearable
+      <el-form-item label="选择类型" prop="type">
+        <el-select-v2
+          v-model="type"
+          :options="typeOpt"
+          placeholder="请选择类型"
           class="!w-[150px]"
-          @change="areaChange"
-          @clear="areaClear"
-        >
-          <el-option label="隔离办" value="glb" />
-          <el-option label="辅控" value="fk" />
-          <el-option label="网控" value="wk" />
-        </el-select>
+        />
+      </el-form-item>
+      <el-form-item label="选择区域" prop="area">
+        <el-select-v2
+          v-model="area"
+          :options="areaOpt"
+          placeholder="请选择区域"
+          class="!w-[150px]"
+        />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="openDialog(area)"
+        <el-button
+          type="primary"
+          :icon="useRenderIcon(Search)"
+          :loading="loading"
+          :disabled="searchDisable"
+          @click="onSearch"
+          >搜索</el-button
+        >
+      </el-form-item>
+      <el-form-item style="margin-left: auto">
+        <el-button
+          type="primary"
+          :disabled="searchDisable"
+          @click="openDialog(addForm.area)"
           >查看注意事项</el-button
         >
       </el-form-item>
@@ -366,8 +395,8 @@ function openDialog(area: string) {
         <el-button
           type="primary"
           :icon="useRenderIcon(Add)"
-          :disabled="!area"
-          @click="addMaterial"
+          :disabled="searchDisable"
+          @click="addMaterial('新增')"
         >
           新增
         </el-button>
@@ -416,6 +445,7 @@ function openDialog(area: string) {
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :destroy-on-close="true"
+      :show-close="false"
       @close="clearAddForm(addFormRef)"
     >
       <template #header>
@@ -431,6 +461,22 @@ function openDialog(area: string) {
             :rules="rules"
             status-icon
           >
+            <el-form-item label="类型" prop="type">
+              <el-select-v2
+                v-model="addForm.type"
+                disabled
+                :options="typeOpt"
+                class="!w-[150px]"
+              />
+            </el-form-item>
+            <el-form-item label="区域" prop="area">
+              <el-select-v2
+                v-model="addForm.area"
+                disabled
+                :options="areaOpt"
+                class="!w-[150px]"
+              />
+            </el-form-item>
             <el-form-item label="名称" prop="name">
               <el-input v-model="addForm.name" />
             </el-form-item>
@@ -484,6 +530,7 @@ function openDialog(area: string) {
 }
 
 .search-form {
+  display: flex;
   :deep(.el-form-item) {
     margin-bottom: 12px;
   }

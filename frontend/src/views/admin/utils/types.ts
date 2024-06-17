@@ -9,3 +9,8 @@ export interface FormItemProps {
 export interface FormProps {
   formData: [FormItemProps];
 }
+
+export type SelectOpt = Array<{
+  label: string;
+  value: string;
+}>;

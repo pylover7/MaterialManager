@@ -9,23 +9,26 @@ import type {
 import type { addResult, MaterialResult } from "@/types/admin";
 
 export const getMaterialMeta = async (
-  depart: string,
+  area: string,
+  metaType: string,
   page?: number,
   page_size?: number
 ) => {
   return http.request<MaterialResult>("get", baseUrlApi("/material/meta"), {
     params: {
-      depart,
+      area,
+      metaType,
       page,
       page_size
     }
   });
 };
 
-export const getAllMaterialMeta = async (depart: string) => {
+export const getAllMaterialMeta = async (area: string, metaType: string) => {
   return http.request<MaterialResult>("get", baseUrlApi("/material/all_meta"), {
     params: {
-      depart
+      area,
+      metaType
     }
   });
 };

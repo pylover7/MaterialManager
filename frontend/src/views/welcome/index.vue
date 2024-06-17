@@ -17,7 +17,7 @@ const store = useDialogStore();
 const bMForm = ref();
 // 借用物资弹窗
 const borrowMaterial = () => {
-  getAllMaterialMeta("glb").then(res => {
+  getAllMaterialMeta("glb", "tool").then(res => {
     addDialog({
       title: "物资借用",
       props: {

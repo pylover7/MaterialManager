@@ -67,7 +67,7 @@ onMounted(() => {
 
 const initGlb = () => {
   loading.value = true;
-  getMaterialMeta("glb")
+  getMaterialMeta("glb", "tool")
     .then(res => {
       confirmedData.length = 0;
       confirmedData.push(...res.data);

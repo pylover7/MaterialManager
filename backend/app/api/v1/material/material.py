@@ -34,12 +34,13 @@ async def duty_over(data: DutyOverInfo):
 
 @router.get("/meta", summary="获取物资源数据")
 async def get_meta(
-        depart: str = Query("glb", description="物资部门"),
+        area: str = Query("glb", description="物资区域"),
+        metaType: str = Query("", description="物资类型"),
         page: int = Query(1, description="页码"),
         page_size: int = Query(1000, description="每页数量"),
         name: str = Query("", description="物资名称"),
 ):
-    q = Q(depart__contains=depart)
+    q = Q(Q(area__contains=area), Q(type__contains=metaType))
     if name:
         q &= Q(name__contains=name)
 
@@ -49,11 +50,11 @@ async def get_meta(
 
 
 @router.get("/all_meta", summary="获取所有物资源数据")
-async def get_all_meta(depart: str = Query("glb", description="物资部门")):
-    q = Q()
-    if depart:
-        q &= Q(depart__contains=depart)
-
+async def get_all_meta(
+        area: str = Query("glb", description="物资区域"),
+        metaType: str = Query("", description="物资类型")
+):
+    q = Q(Q(area_contains=area), Q(type__contains=metaType))
     material_objs = await materialController.all(search=q)
     data = [await obj.to_dict() for obj in material_objs]
     return Success(data=data)
@@ -62,7 +63,7 @@ async def get_all_meta(depart: str = Query("glb", description="物资部门")):
 @router.post("/add_meta", summary="添加或修改物资源数据")
 async def add_meta(data: Union[MaterialCreate, MaterialUpdate]):
     if hasattr(data, "id"):
-        result: Material = await materialController.update(data.id, data.update_dict())
+        result: Material = await materialController.update(data.id, data)
     else:
         data: dict = data.model_dump()
         data["uuid"] = generate_uuid(data["name"])
@@ -94,7 +95,7 @@ async def get_glb_duty_info():
 
 @router.get("/glb_attention", summary="获取隔离办物资注意事项")
 async def get_glb_attention():
-    q = Q(depart__contains="glb")
+    q = Q(area__contains="glb")
     total, note_objs = await materialAttentionController.list(page=1, page_size=100, search=q)
     data = [await obj.to_dict() for obj in note_objs]
     return Success(msg="隔离办注意事项", data=data)
@@ -102,7 +103,7 @@ async def get_glb_attention():
 
 @router.get("/glb_latest_note", summary="获取隔离办最近一条备注")
 async def get_glb_latest_note():
-    q = Q(depart__contains="glb")
+    q = Q(area__contains="glb")
     data = await dutyNotesController.latest(search=q)
     if data:
         data = await data.to_dict()
@@ -117,7 +118,7 @@ async def get_fk_list(
         page_size: int = Query(1000, description="每页数量"),
         name: str = Query("", description="物资名称")
 ):
-    q = Q(depart__contains="fk")
+    q = Q(area__contains="fk")
     if name:
         q &= Q(name__contains=name)
 
@@ -132,7 +133,7 @@ async def get_fk_list(
         page_size: int = Query(1000, description="每页数量"),
         name: str = Query("", description="物资名称")
 ):
-    q = Q(depart__contains="wk")
+    q = Q(area__contains="wk")
     if name:
         q &= Q(name__contains=name)
 
@@ -143,7 +144,7 @@ async def get_fk_list(
 
 @router.get("/duty_over_list/list", summary="获取接班清单")
 async def get_duty_over_list(area: str = Query("glb", description="部门")):
-    q = Q(depart__contains=area)
+    q = Q(area__contains=area)
     total, duty_over_list_objs = await dutyOverListController.list(page=1, page_size=1000, search=q)
     data = [await obj.to_dict() for obj in duty_over_list_objs]
     return SuccessExtra(msg="接班清单获取成功", data=data, total=total, page=1, pageSize=1000)
@@ -155,7 +156,7 @@ async def update_duty_over_list(data: list[dict], area: str = Query("glb", descr
         if item.get("id"):
             await dutyOverListController.update(item["id"], item)
         else:
-            item["depart"] = area
+            item["area"] = area
             await dutyOverListController.create(item)
     return Success(msg="更新成功")
 
