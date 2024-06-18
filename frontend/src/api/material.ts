@@ -54,26 +54,33 @@ export const getGlbAttentionList = () => {
   );
 };
 
-export const getGlbDutyInfo = () => {
+export const getDutyInfo = (area: string, metaType: string) => {
   return http.request<DutyInfoResult>(
     "get",
-    baseUrlApi("/material/glb_duty_info")
+    baseUrlApi("/material/duty_info"),
+    { params: { area, metaType } }
   );
 };
 
-export const getLatestNote = () => {
-  return http.request<LatestNote>(
-    "get",
-    baseUrlApi("/material/glb_latest_note")
-  );
+export const getLatestNote = (area: string, metaType: string) => {
+  return http.request<LatestNote>("get", baseUrlApi("/material/latest_note"), {
+    params: {
+      area,
+      metaType
+    }
+  });
 };
 
-export const dutyOver = (data?: object) => {
+export const dutyOver = (area: string, metaType: string, data?: object) => {
   return http.request<DutyInfoResult>(
     "post",
     baseUrlApi("/material/dutyOver"),
     {
-      data
+      data,
+      params: {
+        area,
+        metaType
+      }
     }
   );
 };

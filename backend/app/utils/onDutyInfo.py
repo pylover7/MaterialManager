@@ -5,6 +5,8 @@
 from configparser import ConfigParser
 from pathlib import Path
 
+from app.utils import now
+
 path = Path.joinpath(Path(__file__).parent, "dutyInfo.ini")
 
 
@@ -13,17 +15,16 @@ class OnDutyInfo:
         self.conf = ConfigParser()
         self.conf.read(filenames=path, encoding='utf-8')
 
-    async def getGlbDutyInfo(self) -> dict[str, str]:
+    def getDutyInfo(self, area: str, metaType: str) -> dict[str, str]:
         return {
-            "dutyPerson": self.conf["glb"]["dutyPerson"],
-            "dutyPersonDepart": self.conf["glb"]["dutyPersonDepart"],
+            "dutyPerson": self.conf[f"{area}.{metaType}"]["dutyPerson"],
+            "dutyPersonDepart": self.conf[f"{area}.{metaType}"]["dutyPersonDepart"],
         }
 
-    async def setGlbDutyInfo(self, dutyPerson: str, dutyPersonDepart: str, takeoverTime: str) -> None:
-        self.conf["glb"]["dutyPerson"] = dutyPerson
-        self.conf["glb"]["dutyPersonDepart"] = dutyPersonDepart
-        self.conf["glb"]["takeoverTime"] = takeoverTime
+    def setDutyInfo(self, area: str, metaType: str, dutyPerson: str, dutyPersonDepart: str) -> None:
+        self.conf[f"{area}.{metaType}"]["dutyPerson"] = dutyPerson
+        self.conf[f"{area}.{metaType}"]["dutyPersonDepart"] = dutyPersonDepart
+        self.conf[f"{area}.{metaType}"]["takeoverTime"] = now()
         with open(path, "w", encoding="utf-8") as f:
             self.conf.write(f)
-
 

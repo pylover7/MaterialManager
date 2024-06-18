@@ -29,7 +29,6 @@ class DutyNoteUpdate(DutyNotesPydantic):
 class DutyOverInfo(BaseModel):
     materialData: list[DutyLogCreate]
     materialNote: DutyNoteCreate
-    dutyDate: str
     dutyPerson: str
     dutyPersonDepart: str
 

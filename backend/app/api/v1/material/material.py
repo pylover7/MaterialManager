@@ -19,11 +19,15 @@ router = APIRouter()
 
 
 @router.post("/dutyOver", summary="接班")
-async def duty_over(data: DutyOverInfo):
+async def duty_over(
+        data: DutyOverInfo,
+        area: str = Query("glb", description="区域"),
+        metaType: str = Query("", description="物资类型")
+):
     note = await dutyNotesController.create(data.materialNote)
     await dutyLogController.create_all(data.materialData, note)
     onDutyInfo = OnDutyInfo()
-    await onDutyInfo.setGlbDutyInfo(data.dutyPerson, data.dutyPersonDepart, data.dutyDate)
+    onDutyInfo.setDutyInfo(area, metaType, data.dutyPerson, data.dutyPersonDepart)
 
     result = {
         "dutyPerson": data.dutyPerson,
@@ -86,10 +90,13 @@ async def delete_meta(data: dict[str, list[int]]):
     return Success(msg="删除成功")
 
 
-@router.get("/glb_duty_info", summary="获取隔离办值班信息")
-async def get_glb_duty_info():
+@router.get("/duty_info", summary="获取隔离办值班信息")
+async def get_duty_info(
+        area: str = Query("glb", description="物资区域"),
+        metaType: str = Query("", description="物资类型"),
+):
     info = OnDutyInfo()
-    data = await info.getGlbDutyInfo()
+    data = info.getDutyInfo(area, metaType)
     return Success(data=data)
 
 
@@ -101,9 +108,12 @@ async def get_glb_attention():
     return Success(msg="隔离办注意事项", data=data)
 
 
-@router.get("/glb_latest_note", summary="获取隔离办最近一条备注")
-async def get_glb_latest_note():
-    q = Q(area__contains="glb")
+@router.get("/latest_note", summary="获取最近一条备注")
+async def get_latest_note(
+        area: str = Query("glb", description="物资区域"),
+        metaType: str = Query("tool", description="物资类型")
+):
+    q = Q(Q(area__contains=area), Q(type__contains=metaType))
     data = await dutyNotesController.latest(search=q)
     if data:
         data = await data.to_dict()

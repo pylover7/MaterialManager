@@ -2,9 +2,9 @@
 import { ref, reactive, computed, onMounted } from "vue";
 import {
   getMaterialMeta,
-  getGlbDutyInfo,
   dutyOver,
-  getLatestNote
+  getLatestNote,
+  getDutyInfo
 } from "@/api/material";
 import { useUserStoreHook } from "@/store/modules/user";
 import { successNotification, errorNotification } from "@/utils/notification";
@@ -79,10 +79,10 @@ const initGlb = () => {
     attention.length = 0;
     attention.push(...res.data);
   });
-  getLatestNote().then(res => {
+  getLatestNote("glb", "tool").then(res => {
     lastRemark.value = res.data.note;
   });
-  getGlbDutyInfo().then(res => {
+  getDutyInfo("glb", "tool").then(res => {
     dutyPerson.value = res.data.dutyPerson;
     dutyPersonDepart.value = res.data.dutyPersonDepart;
   });
@@ -187,12 +187,11 @@ const handover = () => {
       depart: "glb",
       dutyDate: date
     },
-    dutyDate: date,
     dutyPerson: useUserStoreHook()?.username,
     dutyPersonDepart: useUserStoreHook()?.depart
   };
   handleOverBtnLoading.value = true;
-  dutyOver(data)
+  dutyOver("glb", "tool", data)
     .then(res => {
       initGlb();
       handleOverBtnLoading.value = false;
@@ -207,8 +206,8 @@ const handover = () => {
 </script>
 
 <template>
-  <div>
-    <el-affix :offset="105">
+  <div class="main">
+    <el-affix :offset="105" target=".main">
       <el-card class="operationCar" shadow="never" body-style="padding: 0px;">
         <el-row :gutter="20" justify="space-between">
           <el-col class="rowFlex" :span="5">
