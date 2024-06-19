@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import dayjs from "dayjs";
-import {ref, reactive, computed} from "vue";
+import { ref, reactive, computed } from "vue";
 import { ElMessageBox, FormInstance } from "element-plus";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { getPickerShortcuts, usePublicHooks } from "./utils";

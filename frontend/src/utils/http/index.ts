@@ -13,7 +13,7 @@ import { stringify } from "qs";
 import NProgress from "../progress";
 import { getToken, formatToken, removeToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
-import {baseUrlApi, staticUrl} from "@/api/utils";
+import { baseUrlApi, staticUrl } from "@/api/utils";
 import { router, resetRouter } from "@/router";
 import { message } from "@/utils/message";
 import { errorNotification } from "@/utils/notification";
@@ -21,7 +21,7 @@ import { errorNotification } from "@/utils/notification";
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
   // 请求超时时间
-  timeout: 10000,
+  timeout: 20000,
   headers: {
     Accept: "application/json, text/plain, */*",
     "Content-Type": "application/json",

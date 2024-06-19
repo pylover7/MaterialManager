@@ -9,6 +9,7 @@ import { createBorrowed } from "@/api/home";
 import type { borrowInfo } from "./types";
 import type { MaterialItem } from "@/types/base";
 import { successNotification } from "@/utils/notification";
+import { message } from "@/utils/message";
 
 defineOptions({
   name: "Welcome"
@@ -60,6 +61,10 @@ const borrowMaterial = () => {
                 store.resetActive();
               };
               const curData = options.props.borrowInfo as borrowInfo;
+              if (curData.reason == "") {
+                message("借用原因不得为空！", { type: "warning" });
+                return;
+              }
               const borrowItemList = [];
               for (const item of curData.baseData) {
                 if (item.borrowing !== undefined && item.borrowing > 0) {
@@ -129,6 +134,10 @@ const borrowKey = () => {
                 store.resetActive();
               };
               const curData = options.props.borrowInfo as borrowInfo;
+              if (curData.reason == "") {
+                message("借用原因不得为空！", { type: "warning" });
+                return;
+              }
               const borrowItemList = [];
               for (const item of curData.baseData) {
                 if (item.borrowing !== undefined && item.borrowing > 0) {

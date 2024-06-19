@@ -19,6 +19,7 @@ import attentionForm from "./utils/attentionForm.vue";
 import { SelectOpt, FormItemProps } from "./utils/types";
 import { getDutyOverList, updateDutyOverList } from "@/api/admin";
 import Search from "@iconify-icons/ep/search";
+import { message } from "@/utils/message";
 
 defineOptions({
   name: "MaterialMeta"
@@ -98,11 +99,14 @@ const pagination = reactive<PaginationProps>({
   total: 1,
   pageSize: 10,
   currentPage: 1,
-  background: true,
-  hideOnSinglePage: true
+  background: true
 });
 // 表格页面大小改变回调
 const pageSizeChange = (size: number) => {
+  if (searchDisable.value) {
+    message("请选择类型和区域", { type: "warning" });
+    return;
+  }
   pagination.pageSize = size;
   onSearch();
 };
