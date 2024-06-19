@@ -162,6 +162,7 @@ async def get_user_menu():
 
             parent_menu_dict["children"].sort(key=lambda x: x["rank"])
             if len(parent_menu_dict["children"]) == 0:
+                del parent_menu_dict["children"]
                 return parent_menu_dict
             for i, v in enumerate(parent_menu_dict["children"]):
                 parent_menu_dict["children"][i] = await menuTree(v)
