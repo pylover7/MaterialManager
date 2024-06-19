@@ -13,10 +13,10 @@ router = APIRouter()
 
 @router.get("/tree", summary="查看菜单树")
 async def menu_tree():
-    parent_menus = await menu_controller.model.filter(parent_id=0).order_by("order")
+    parent_menus = await menu_controller.model.filter(parent_id=0).order_by("rank")
     res_menu = []
     for menu in parent_menus:
-        child_menu = await menu_controller.model.filter(parent_id=menu.id).order_by("order")
+        child_menu = await menu_controller.model.filter(parent_id=menu.id).order_by("rank")
         menu_dict = await menu.to_dict()
         menu_dict["children"] = [await obj.to_dict() for obj in child_menu]
         res_menu.append(menu_dict)

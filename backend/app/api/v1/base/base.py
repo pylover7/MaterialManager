@@ -132,31 +132,42 @@ async def get_user_menu():
         parent_menu_dict["meta"]["showLink"] = parent_menu_dict["showLink"]
         parent_menu_dict["meta"]["rank"] = parent_menu_dict["rank"]
 
-        for menu in menus:
-            if menu.parentId == parent_menu.id:
-                # roles = await menu.roles.all().values_list("code", flat=True)
-                children_menu = await menu.to_dict()
-                children_menu["meta"] = {}
-                children_menu["meta"]["title"] = children_menu["title"]
-                children_menu["meta"]["icon"] = children_menu["icon"]
-                children_menu["meta"]["extraIcon"] = children_menu["extraIcon"]
-                children_menu["meta"]["showLink"] = children_menu["showLink"]
-                children_menu["meta"]["showParent"] = children_menu["showParent"]
-                # children_menu["meta"]["roles"] = roles
-                children_menu["meta"]["auths"] = children_menu["auths"]
-                children_menu["meta"]["keepAlive"] = children_menu["keepAlive"]
-                children_menu["meta"]["frameSrc"] = children_menu["frameSrc"]
-                children_menu["meta"]["frameLoading"] = children_menu["frameLoading"]
-                children_menu["meta"]["frameLoading"] = children_menu["frameLoading"]
-                children_menu["meta"]["hiddenTag"] = children_menu["hiddenTag"]
-                children_menu["meta"]["dynamicLevel"] = children_menu["dynamicLevel"]
-                children_menu["meta"]["activePath"] = children_menu["activePath"]
-                children_menu["meta"]["transition"] = {}
-                children_menu["meta"]["transition"]["name"] = children_menu["transitionName"]
-                children_menu["meta"]["transition"]["enterTransition"] = children_menu["enterTransition"]
-                children_menu["meta"]["transition"]["leaveTransition"] = children_menu["leaveTransition"]
+        async def menuTree(parent_menu_dict: dict) -> dict:
+            for menu in menus:
+                if menu.parentId == parent_menu_dict["id"]:
+                    # roles = await menu.roles.all().values_list("code", flat=True)
+                    children_menu = await menu.to_dict()
+                    children_menu["children"] = []
+                    children_menu["meta"] = {}
+                    children_menu["meta"]["title"] = children_menu["title"]
+                    children_menu["meta"]["icon"] = children_menu["icon"]
+                    children_menu["meta"]["extraIcon"] = children_menu["extraIcon"]
+                    children_menu["meta"]["showLink"] = children_menu["showLink"]
+                    children_menu["meta"]["showParent"] = children_menu["showParent"]
+                    # children_menu["meta"]["roles"] = roles
+                    children_menu["meta"]["auths"] = children_menu["auths"]
+                    children_menu["meta"]["keepAlive"] = children_menu["keepAlive"]
+                    children_menu["meta"]["frameSrc"] = children_menu["frameSrc"]
+                    children_menu["meta"]["frameLoading"] = children_menu["frameLoading"]
+                    children_menu["meta"]["frameLoading"] = children_menu["frameLoading"]
+                    children_menu["meta"]["hiddenTag"] = children_menu["hiddenTag"]
+                    children_menu["meta"]["dynamicLevel"] = children_menu["dynamicLevel"]
+                    children_menu["meta"]["activePath"] = children_menu["activePath"]
+                    children_menu["meta"]["transition"] = {}
+                    children_menu["meta"]["transition"]["name"] = children_menu["transitionName"]
+                    children_menu["meta"]["transition"]["enterTransition"] = children_menu["enterTransition"]
+                    children_menu["meta"]["transition"]["leaveTransition"] = children_menu["leaveTransition"]
 
-                parent_menu_dict["children"].append(children_menu)
+                    parent_menu_dict["children"].append(children_menu)
+
+            parent_menu_dict["children"].sort(key=lambda x: x["rank"])
+            if len(parent_menu_dict["children"]) == 0:
+                return parent_menu_dict
+            for i, v in enumerate(parent_menu_dict["children"]):
+                parent_menu_dict["children"][i] = await menuTree(v)
+            return parent_menu_dict
+
+        parent_menu_dict = await menuTree(parent_menu_dict)
         res.append(parent_menu_dict)
     return Success(data=res)
 
