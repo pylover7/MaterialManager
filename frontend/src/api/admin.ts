@@ -35,7 +35,8 @@ export const deleteDutyOverList = (id: string) => {
 };
 
 export const searchDutyLogs = (
-  depart: string,
+  area: string,
+  metaType: string,
   page: number,
   pageSize: number,
   data?: object
@@ -46,7 +47,8 @@ export const searchDutyLogs = (
     {
       data,
       params: {
-        depart,
+        area,
+        metaType,
         page,
         pageSize
       }

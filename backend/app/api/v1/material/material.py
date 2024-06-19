@@ -56,7 +56,7 @@ async def get_meta(
 @router.get("/all_meta", summary="获取所有物资源数据")
 async def get_all_meta(
         area: str = Query("glb", description="物资区域"),
-        metaType: str = Query("", description="物资类型")
+        metaType: str = Query("tool", description="物资类型")
 ):
     q = Q(Q(area__contains=area), Q(type__contains=metaType))
     material_objs = await materialController.all(search=q)

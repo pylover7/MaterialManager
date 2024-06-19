@@ -29,7 +29,7 @@ class DutyLog(BaseModel):
         table = "dutyLogs"
 
     class PydanticMeta:
-        exclude = ("id",)
+        exclude = ("id", "dutyDate")
 
 
 class DutyNotes(BaseModel):
@@ -44,6 +44,6 @@ class DutyNotes(BaseModel):
         table = "dutyNotes"
 
     class PydanticMeta:
-        exclude = ("id",)
+        exclude = ("id", "dutyDate")
 
 

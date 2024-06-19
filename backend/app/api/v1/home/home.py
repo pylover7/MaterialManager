@@ -31,7 +31,7 @@ async def get_home_list(
     else:
         q = Q(Q(material__area=area), Q(borrowApproveWhether=borrowWhether), Q(returnApproveStatus=returnStatus))
     total, objs = await borrowedController.list(page=page, page_size=pageSize, search=q)
-    data = [await obj.to_dict(m2m=True) for obj in objs]
+    data = [await obj.to_dict(m2m=True, exclude_fields=["password"]) for obj in objs]
     return SuccessExtra(data=data, total=total, currentPage=page, pageSize=pageSize)
 
 

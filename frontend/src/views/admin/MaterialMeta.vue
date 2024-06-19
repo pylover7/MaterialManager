@@ -372,7 +372,7 @@ function openDialog(area: string) {
         <el-button
           type="primary"
           :disabled="searchDisable"
-          @click="openDialog(addForm.area)"
+          @click="openDialog(area)"
           >查看注意事项</el-button
         >
       </el-form-item>

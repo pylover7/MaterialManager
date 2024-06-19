@@ -2,8 +2,12 @@
 import PureTable from "@pureadmin/table";
 import { computed, onMounted, reactive, ref } from "vue";
 import type { MaterialItem } from "@/types/base";
-import { getDutyInfo, getLatestNote } from "@/api/material";
+import { dutyOver, getDutyInfo, getLatestNote } from "@/api/material";
 import { listBorrowed } from "@/api/home";
+import { usePublicHooks } from "@/views/hooks";
+import { useUserStoreHook } from "@/store/modules/user";
+import { errorNotification, successNotification } from "@/utils/notification";
+import { BorrowedInfo } from "@/types/admin";
 
 defineOptions({
   name: "GlbKey"
@@ -23,6 +27,8 @@ enum StepStatus {
 interface tableData extends Array<MaterialItem> {}
 
 const dialogVisible = ref(false);
+/** 标签风格 */
+const { tagStyle } = usePublicHooks();
 
 const popDisabled = computed(() => {
   return true;
@@ -36,39 +42,107 @@ const handoverConfirm = () => {
 
 const dutyPerson = ref("");
 const dutyPersonDepart = ref("");
-const confirmedData: tableData = reactive([]);
+const tableDataList = reactive([]);
 const loading = ref(false);
 
 const remark = ref("");
 const lastRemark = ref("");
-const step1Init = ref(true);
-const step2Init = ref(true);
-const step1Status = computed(() => {
-  return confirmedData.every(
-    item => item.nowNumber === item.number - item.borrowed - item.checking
-  )
-    ? StepStatus.Success
-    : StepStatus.Error;
-});
-const step2Status = computed(() => {
-  return remark.value.length > 0 ? StepStatus.Success : StepStatus.Error;
-});
-const burlHandle = () => {
-  step2Init.value = false;
-};
+
 const copyLastRemark = () => {
   remark.value = lastRemark.value;
-  step2Init.value = false;
 };
 
 const columns: TableColumnList = [
-  { label: "序号", type: "index", width: "60" },
-  { label: "位置", prop: "position" },
-  { label: "名称", prop: "name" },
-  { label: "型号", prop: "model", width: "200" },
-  { label: "当前数量", prop: "number", width: "100" },
-  { label: "外借数量", prop: "borrowed", width: "100" },
-  { label: "借用人", prop: "checking", width: "100" }
+  {
+    label: "序号",
+    type: "index",
+    width: 60
+  },
+  {
+    label: "借用物资信息",
+    prop: "material",
+    cellRenderer: ({ row }) => (
+      <el-popover
+        placement="right"
+        width="200"
+        trigger="click"
+        v-slots={{
+          reference: () => <el-button link>{row.material[0].name}</el-button>,
+          default: () => (
+            <ul>
+              <li>名称：{row.material[0].name}</li>
+              <li>型号：{row.material[0].model}</li>
+              <li>位置：{row.material[0].position}</li>
+            </ul>
+          )
+        }}
+      ></el-popover>
+    )
+  },
+  {
+    label: "借用人信息",
+    prop: "username",
+    cellRenderer: ({ row }) => (
+      <el-popover
+        placement="right"
+        width="200"
+        trigger="click"
+        v-slots={{
+          reference: () => <el-button link>{row.username}</el-button>,
+          default: () => (
+            <ul>
+              <li>姓名：{row.username}</li>
+              <li>电话：{row.phone}</li>
+              <li>部门：{row.userDepart}</li>
+            </ul>
+          )
+        }}
+      ></el-popover>
+    )
+  },
+  {
+    label: "借用人电话",
+    prop: "phone"
+  },
+  {
+    label: "数量",
+    prop: "borrowing"
+  },
+  {
+    label: "借用理由",
+    prop: "reason",
+    cellRenderer: ({ row }) => (
+      <el-popover
+        placement="right"
+        width="300"
+        trigger="hover"
+        v-slots={{
+          reference: () => (
+            <el-text truncated style="width: 100px">
+              {row.reason}
+            </el-text>
+          ),
+          default: () => <p>{row.reason}</p>
+        }}
+      ></el-popover>
+    )
+  },
+  {
+    label: "借用时间",
+    prop: "borrowTime"
+  },
+  {
+    label: "状态",
+    prop: "borrowApproveStatus",
+    cellRenderer: ({ row, props }) => (
+      <el-tag
+        size={props.size}
+        style={tagStyle.value(row.borrowApproveStatus ? 1 : 0)}
+      >
+        {row.borrowApproveStatus ? "待归还" : "待审批"}
+      </el-tag>
+    )
+  }
 ];
 
 const handleOverBtnLoading = ref(false);
@@ -79,20 +153,59 @@ onMounted(() => {
 
 const initInfo = () => {
   loading.value = true;
+  tableDataList.length = 0;
   getDutyInfo(area, metaType).then(res => {
     dutyPerson.value = res.data.dutyPerson;
     dutyPersonDepart.value = res.data.dutyPersonDepart;
   });
   listBorrowed(area, 1, 100, false).then(res => {
-    console.log(res.data);
+    tableDataList.push(...res.data);
   });
   listBorrowed(area, 1, 100, true, true, false).then(res => {
-    console.log(res.data);
+    tableDataList.push(...res.data);
+    console.log(tableDataList);
   });
   getLatestNote(area, metaType).then(res => {
     lastRemark.value = res.data.note;
   });
   loading.value = false;
+};
+
+const handover = () => {
+  let data = {
+    materialData: tableDataList.map((data: BorrowedInfo) => {
+      return {
+        name: data.material[0].name,
+        model: data.material[0].model,
+        position: data.material[0].position,
+        number: data.material[0].number,
+        nowNumber: data.material[0].number - data.material[0].borrowed,
+        dutyPerson: useUserStoreHook()?.username,
+        dutyPersonDepart: useUserStoreHook()?.depart,
+        area: area,
+        type: metaType
+      };
+    }),
+    materialNote: {
+      note: remark.value,
+      area: area,
+      type: metaType
+    },
+    dutyPerson: useUserStoreHook()?.username,
+    dutyPersonDepart: useUserStoreHook()?.depart
+  };
+  handleOverBtnLoading.value = true;
+  dutyOver(area, metaType, data)
+    .then(res => {
+      initInfo();
+      handleOverBtnLoading.value = false;
+      successNotification("交班成功");
+    })
+    .catch(err => {
+      errorNotification(err.message);
+      handleOverBtnLoading.value = false;
+    });
+  dialogVisible.value = false;
 };
 </script>
 
@@ -137,15 +250,12 @@ const initInfo = () => {
     <el-card shadow="never">
       <div class="flex">
         <el-steps direction="vertical">
-          <el-step
-            title="核对物资数量"
-            :status="step1Init ? 'process' : step1Status"
-          >
+          <el-step title="核对钥匙借用情况">
             <template #description>
               <el-space direction="vertical" alignment="flex-start">
                 <pure-table
                   :columns="columns"
-                  :data="confirmedData"
+                  :data="tableDataList"
                   :border="true"
                   stripe
                   :loading="loading"
@@ -157,10 +267,7 @@ const initInfo = () => {
               </el-space>
             </template>
           </el-step>
-          <el-step
-            title="备注异常信息"
-            :status="step2Init ? 'process' : step2Status"
-          >
+          <el-step title="备注异常信息">
             <template #description>
               <el-space alignment="flex-start">
                 <el-space direction="vertical" alignment="flex-start">
@@ -173,7 +280,6 @@ const initInfo = () => {
                     maxlength="510"
                     :show-word-limit="true"
                     style="width: 35vw"
-                    @blur="burlHandle"
                   />
                   <el-button type="warning" plain @click="copyLastRemark"
                     >复制上个班</el-button
@@ -202,7 +308,11 @@ const initInfo = () => {
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" :loading="handleOverBtnLoading">
+          <el-button
+            type="primary"
+            :loading="handleOverBtnLoading"
+            @click="handover"
+          >
             确定
           </el-button>
         </div>

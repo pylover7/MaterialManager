@@ -18,3 +18,21 @@ export type MaterialItem = {
   created_at?: string;
   updated_at?: string;
 };
+
+export type User = {
+  id: number;
+  uuid: string;
+  username: string;
+  nickname: string;
+  email: string;
+  phone: string;
+  avatar?: string;
+  depart_id: number;
+  is_superuser: boolean;
+  remark: string;
+  sex: number;
+  status: number;
+  created_at: string;
+  updated_at: string;
+  last_login: string;
+};

@@ -8,7 +8,6 @@ import {
 } from "@/api/material";
 import { useUserStoreHook } from "@/store/modules/user";
 import { successNotification, errorNotification } from "@/utils/notification";
-import formatCurrentTime from "@/utils/formatDatetime";
 import { getDutyOverList } from "@/api/admin";
 import PureTable from "@pureadmin/table";
 import type { MaterialItem } from "@/types/base";
@@ -167,7 +166,6 @@ const handoverConfirm = () => {
 };
 
 const handover = () => {
-  const date = formatCurrentTime();
   let data = {
     materialData: confirmedData.map((data: MaterialItem) => {
       return {
@@ -178,14 +176,14 @@ const handover = () => {
         nowNumber: data.nowNumber,
         dutyPerson: useUserStoreHook()?.username,
         dutyPersonDepart: useUserStoreHook()?.depart,
-        depart: "glb",
-        dutyDate: date
+        area: "glb",
+        type: "tool"
       };
     }),
     materialNote: {
       note: remark.value,
-      depart: "glb",
-      dutyDate: date
+      area: "glb",
+      type: "tool"
     },
     dutyPerson: useUserStoreHook()?.username,
     dutyPersonDepart: useUserStoreHook()?.depart

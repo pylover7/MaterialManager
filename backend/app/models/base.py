@@ -33,6 +33,7 @@ class BaseModel(models.Model):
                             if isinstance(v, datetime)
                         )
                         value.update((k, str(v)) for k, v in value.items() if isinstance(v, UUID))
+                        value.pop("password", "xxx")  # 删除用户模型中的密码字段
                     d[field] = values
         return d
 
