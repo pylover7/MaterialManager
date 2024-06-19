@@ -42,11 +42,12 @@ async def set_db_conn(data: DbInfo, request: Request):
 @router.post("/dutyLogs/search", summary="查询操作日志")
 async def search_operation_logs(
         data: dict,
-        depart: str = Query("glb", description="部门"),
+        area: str = Query("glb", description="区域"),
+        metaType: str = Query("tool", description="工具类型"),
         page: int = Query(1, description="页码"),
         pageSize: int = Query(10, description="每页数量"),
 ):
-    q = Q(depart__contains=depart)
+    q = Q(Q(area__contains=area), Q(type__contains=metaType))
     status = data.get("status")
     operatingTime: list = data.get("operatingTime")
     if status:

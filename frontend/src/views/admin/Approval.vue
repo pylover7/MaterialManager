@@ -113,8 +113,27 @@ const columns: TableColumnList = [
     prop: "phone"
   },
   {
-    label: "借用数量",
+    label: "数量",
     prop: "borrowing"
+  },
+  {
+    label: "借用理由",
+    prop: "reason",
+    cellRenderer: ({ row }) => (
+      <el-popover
+        placement="right"
+        width="300"
+        trigger="hover"
+        v-slots={{
+          reference: () => (
+            <el-text truncated style="width: 100px">
+              {row.reason}
+            </el-text>
+          ),
+          default: () => <p>{row.reason}</p>
+        }}
+      ></el-popover>
+    )
   },
   {
     label: "借用时间",
@@ -316,6 +335,25 @@ const returnFormColumns: TableColumnList = [
   {
     label: "借用数量",
     prop: "borrowing"
+  },
+  {
+    label: "借用理由",
+    prop: "reason",
+    cellRenderer: ({ row }) => (
+      <el-popover
+        placement="right"
+        width="300"
+        trigger="hover"
+        v-slots={{
+          reference: () => (
+            <el-text truncated style="width: 100px">
+              {row.reason}
+            </el-text>
+          ),
+          default: () => <p>{row.reason}</p>
+        }}
+      ></el-popover>
+    )
   },
   {
     label: "借用时间",

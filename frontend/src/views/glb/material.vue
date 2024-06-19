@@ -2,15 +2,15 @@
 import { ref, reactive, computed, onMounted } from "vue";
 import {
   getMaterialMeta,
-  getGlbAttentionList,
-  getGlbDutyInfo,
   dutyOver,
-  getLatestNote
+  getLatestNote,
+  getDutyInfo
 } from "@/api/material";
 import { useUserStoreHook } from "@/store/modules/user";
 import { successNotification, errorNotification } from "@/utils/notification";
-import formatCurrentTime from "@/utils/formatDatetime";
 import { getDutyOverList } from "@/api/admin";
+import PureTable from "@pureadmin/table";
+import type { MaterialItem } from "@/types/base";
 
 defineOptions({
   name: "GlbMaterial"
@@ -24,22 +24,8 @@ enum StepStatus {
   Warning = "warning",
   Error = "error"
 }
-interface tableDataRow {
-  id?: number;
-  uuid?: string;
-  name: string;
-  model: string;
-  position: string;
-  number: string;
-  nowNumber?: number;
-  created_at?: string;
-  updated_at?: string;
-  dutyPerson?: string;
-  dutyPersonDepart?: string;
-  depart?: string;
-  dutyDate?: string;
-}
-interface tableData extends Array<tableDataRow> {}
+
+interface tableData extends Array<MaterialItem> {}
 
 const columns: TableColumnList = [
   { label: "序号", type: "index", width: "60" },
@@ -47,18 +33,14 @@ const columns: TableColumnList = [
   { label: "名称", prop: "name" },
   { label: "型号", prop: "model", width: "200" },
   { label: "数量", prop: "number", width: "100" },
+  { label: "外借数量", prop: "borrowed", width: "100" },
+  { label: "送检数量", prop: "checking", width: "100" },
   {
     label: "当前数量",
     width: "150",
     prop: "nowNumber",
     cellRenderer: ({ row }) => (
-      <>
-        <el-input-number
-          v-model={row.nowNumber}
-          controls={false}
-          size="small"
-        />
-      </>
+      <el-input-number v-model={row.nowNumber} controls={false} size="small" />
     )
   },
   {
@@ -66,16 +48,14 @@ const columns: TableColumnList = [
     prop: "confirm",
     width: "100",
     cellRenderer: ({ row }) => (
-      <>
-        <el-button
-          size="small"
-          type={row.nowNumber === Number(row.number) ? "success" : "warning"}
-          onClick={() => handleConfirm(row)}
-          plain
-        >
-          确认
-        </el-button>
-      </>
+      <el-button
+        size="small"
+        type={confirmBtnStatus(row)}
+        onClick={() => handleConfirm(row)}
+        plain
+      >
+        确认
+      </el-button>
     )
   }
 ];
@@ -86,7 +66,7 @@ onMounted(() => {
 
 const initGlb = () => {
   loading.value = true;
-  getMaterialMeta("glb")
+  getMaterialMeta("glb", "tool")
     .then(res => {
       confirmedData.length = 0;
       confirmedData.push(...res.data);
@@ -98,10 +78,10 @@ const initGlb = () => {
     attention.length = 0;
     attention.push(...res.data);
   });
-  getLatestNote().then(res => {
+  getLatestNote("glb", "tool").then(res => {
     lastRemark.value = res.data.note;
   });
-  getGlbDutyInfo().then(res => {
+  getDutyInfo("glb", "tool").then(res => {
     dutyPerson.value = res.data.dutyPerson;
     dutyPersonDepart.value = res.data.dutyPersonDepart;
   });
@@ -117,19 +97,26 @@ const confirmedData: tableData = reactive([]);
 const step1Init = ref(true);
 
 const step1Status = computed(() => {
-  return confirmedData.every(item => item.nowNumber === Number(item.number))
+  return confirmedData.every(
+    item => item.nowNumber === item.number - item.borrowed - item.checking
+  )
     ? StepStatus.Success
     : StepStatus.Error;
 });
 
 const handleConfirm = row => {
-  row.nowNumber = Number(row.number);
+  row.nowNumber = Number(row.number) - row.borrowed - row.checking;
   step1Init.value = false;
+};
+const confirmBtnStatus = (row): "success" | "warning" => {
+  return row.nowNumber == row.number - row.borrowed - row.checking
+    ? "success"
+    : "warning";
 };
 const handleConfirmAll = () => {
   // 确认所有
   confirmedData.forEach(row => {
-    row.nowNumber = Number(row.number);
+    row.nowNumber = row.number - row.borrowed - row.checking;
     step1Init.value = false;
   });
 };
@@ -179,9 +166,8 @@ const handoverConfirm = () => {
 };
 
 const handover = () => {
-  const date = formatCurrentTime();
   let data = {
-    materialData: confirmedData.map((data: tableDataRow) => {
+    materialData: confirmedData.map((data: MaterialItem) => {
       return {
         name: data.name,
         model: data.model,
@@ -190,21 +176,20 @@ const handover = () => {
         nowNumber: data.nowNumber,
         dutyPerson: useUserStoreHook()?.username,
         dutyPersonDepart: useUserStoreHook()?.depart,
-        depart: "glb",
-        dutyDate: date
+        area: "glb",
+        type: "tool"
       };
     }),
     materialNote: {
       note: remark.value,
-      depart: "glb",
-      dutyDate: date
+      area: "glb",
+      type: "tool"
     },
-    dutyDate: date,
     dutyPerson: useUserStoreHook()?.username,
     dutyPersonDepart: useUserStoreHook()?.depart
   };
   handleOverBtnLoading.value = true;
-  dutyOver(data)
+  dutyOver("glb", "tool", data)
     .then(res => {
       initGlb();
       handleOverBtnLoading.value = false;
@@ -219,8 +204,8 @@ const handover = () => {
 </script>
 
 <template>
-  <div>
-    <el-affix :offset="105">
+  <div class="main">
+    <el-affix :offset="105" target=".main">
       <el-card class="operationCar" shadow="never" body-style="padding: 0px;">
         <el-row :gutter="20" justify="space-between">
           <el-col class="rowFlex" :span="5">

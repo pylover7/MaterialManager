@@ -13,6 +13,7 @@ class Borrowed(BaseModel, UUIDModel):
     uuid = fields.UUIDField(pk=False, description="借用人uuid")
     phone = fields.CharField(max_length=20, description="借用人手机号")
     userDepart = fields.CharField(max_length=20, description="借用人部门")
+    reason = fields.CharField(max_length=200, description="借用原因")
     borrowTime = fields.DatetimeField(auto_now_add=True, description="借用时间")
     borrowApproveStatus = fields.BooleanField(default=False, description="借用审批状态，False为未审批，True未已审批")
     borrowApproveWhether = fields.BooleanField(null=True, description="借用通过状态，False为驳回，True为通过")

@@ -2,6 +2,7 @@ from tortoise import fields
 
 from .base import BaseModel, TimestampMixin, UUIDModel
 from .enums import MethodType
+from .borrowed import Borrowed
 
 
 class User(BaseModel, TimestampMixin, UUIDModel):
@@ -23,6 +24,7 @@ class User(BaseModel, TimestampMixin, UUIDModel):
         related_name="user_depart",
         null=True
     )
+    borrowed: fields.ManyToManyRelation["Borrowed"]
 
     class Meta:
         table = "user"

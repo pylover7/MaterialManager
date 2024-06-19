@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import dayjs from "dayjs";
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import { ElMessageBox, FormInstance } from "element-plus";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { getPickerShortcuts, usePublicHooks } from "./utils";
@@ -13,15 +13,43 @@ import Search from "@iconify-icons/ep/search";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
 import { deleteDutyLogs, getDutyNote, searchDutyLogs } from "@/api/admin";
+import type { SelectOpt } from "@/views/admin/utils/types";
 
 defineOptions({
   name: "OperationLogs"
 });
+// 区域配置
+const areaOpt: SelectOpt = [
+  {
+    label: "隔离办",
+    value: "glb"
+  },
+  {
+    label: "辅控",
+    value: "fk"
+  },
+  {
+    label: "网控",
+    value: "wk"
+  }
+];
+// 类型配置
+const typeOpt: SelectOpt = [
+  {
+    label: "工具",
+    value: "tool"
+  },
+  {
+    label: "钥匙",
+    value: "key"
+  }
+];
 // 操作栏表单
 const operationBarRef = ref<FormInstance>();
 // 操作栏表单数据
 const operationForm = reactive({
   area: "",
+  type: "",
   status: "",
   operatingTime: Array<any>("")
 });
@@ -33,6 +61,10 @@ const resetForm = formEl => {
 };
 // 加载状态
 const loading = ref(false);
+// 搜索按钮可用
+const searchDisable = computed(() => {
+  return operationForm.type === "" || operationForm.area == "";
+});
 // 搜索
 const onSearch = () => {
   // 将operationForm中的operatingTime转换为时间格式为 2021-09-01 00:00:00
@@ -43,6 +75,7 @@ const onSearch = () => {
   }
   searchDutyLogs(
     operationForm.area,
+    operationForm.type,
     pagination.currentPage,
     pagination.pageSize,
     operationForm
@@ -117,7 +150,7 @@ const columns: TableColumnList = [
         size={props.size}
         style={tagStyle.value(row.number == row.nowNumber ? 1 : 0)}
       >
-        {row.number === row.nowNumber ? "正确" : "错误"}
+        {row.number === row.nowNumber ? "正常" : "异常"}
       </el-tag>
     )
   },
@@ -218,17 +251,23 @@ function handleSelectionChange(val) {
       :model="operationForm"
       class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px] overflow-auto"
     >
+      <el-form-item label="选择类型" prop="area">
+        <el-select-v2
+          v-model="operationForm.type"
+          :options="typeOpt"
+          placeholder="请选择类型"
+          clearable
+          class="!w-[150px]"
+        />
+      </el-form-item>
       <el-form-item label="选择区域" prop="area">
-        <el-select
+        <el-select-v2
           v-model="operationForm.area"
+          :options="areaOpt"
           placeholder="请选择区域"
           clearable
           class="!w-[150px]"
-        >
-          <el-option label="隔离办" value="glb" />
-          <el-option label="辅控" value="fk" />
-          <el-option label="网控" value="wk" />
-        </el-select>
+        />
       </el-form-item>
       <el-form-item label="操作状态" prop="status">
         <el-select
@@ -237,8 +276,8 @@ function handleSelectionChange(val) {
           clearable
           class="!w-[150px]"
         >
-          <el-option label="正确" value="1" />
-          <el-option label="错误" value="0" />
+          <el-option label="正常" value="1" />
+          <el-option label="异常" value="0" />
         </el-select>
       </el-form-item>
       <el-form-item label="操作时间" prop="operatingTime">
@@ -256,6 +295,7 @@ function handleSelectionChange(val) {
           type="primary"
           :icon="useRenderIcon(Search)"
           :loading="loading"
+          :disabled="searchDisable"
           @click="onSearch"
         >
           搜索

@@ -27,11 +27,11 @@ async def get_home_list(
         returnStatus: Union[bool, None] = Query(None, description="归还批准状态")
 ):
     if returnStatus is None:
-        q = Q(Q(material__depart=area), Q(borrowApproveStatus=borrowedStatus))
+        q = Q(Q(material__area=area), Q(borrowApproveStatus=borrowedStatus))
     else:
-        q = Q(Q(material__depart=area), Q(borrowApproveWhether=borrowWhether), Q(returnApproveStatus=returnStatus))
+        q = Q(Q(material__area=area), Q(borrowApproveWhether=borrowWhether), Q(returnApproveStatus=returnStatus))
     total, objs = await borrowedController.list(page=page, page_size=pageSize, search=q)
-    data = [await obj.to_dict(m2m=True) for obj in objs]
+    data = [await obj.to_dict(m2m=True, exclude_fields=["password"]) for obj in objs]
     return SuccessExtra(data=data, total=total, currentPage=page, pageSize=pageSize)
 
 
@@ -45,6 +45,7 @@ async def create_borrowed(data: CreateBorrowedInfo):
         item["phone"] = data.phone
         item["userDepart"] = data.depart
         item["uuid"] = data.uuid
+        item["reason"] = data.reason
         obj: Borrowed = await borrowedController.create(obj_in=item)
         material.borrowed += obj.borrowing
         await material.save()
