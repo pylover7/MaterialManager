@@ -2,7 +2,7 @@
 import { OptionsType } from "@/components/ReSegmented";
 import { reactive, ref } from "vue";
 import { deleteBorrowed, listBorrowed } from "@/api/home";
-import { PaginationProps } from "@pureadmin/table";
+import { PaginationProps, PureTable } from "@pureadmin/table";
 import { usePublicHooks } from "@/views/hooks";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Search from "@iconify-icons/ep/search";

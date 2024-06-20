@@ -2,15 +2,22 @@
 # @FileName  :users.py
 # @Time      :2024/4/16 下午9:31
 # @Author    :dayezi
+from typing import Union
+
 from fastapi import APIRouter, Request, Query
 from tortoise.expressions import Q, F
 
+from app.controllers import user_controller
+from app.controllers.checked import checkedController
 from app.controllers.dutyLog import dutyLogController, dutyNotesController
+from app.models import Checked
+from app.schemas.checked import ReturnChecked, CheckedCreate
 from app.settings import settings
 from app.core.init_db import test_db, set_db
 from app.log import logger
 from app.schemas import Success, Fail, SuccessExtra
 from app.schemas.admin import DbInfo
+from app.utils import now
 
 router = APIRouter()
 
@@ -76,3 +83,45 @@ async def get_duty_note(id: int = Query(..., description="值班备注id")):
     data = await dutyNotesController.get(id)
     data = await data.to_dict()
     return Success(data=data)
+
+
+@router.get("/getChecked", summary="获取物资送检信息")
+async def get_checked(
+        area: str = Query("glb", description="区域"),
+        metaType: str = Query("tool", description="工具类型"),
+        returnStatus: Union[bool, None] = Query(None, description="归还状态"),
+        page: int = Query(1, description="页码"),
+        pageSize: int = Query(10, description="每页数量"),
+):
+    q = Q(Q(area__contains=area), Q(type__contains=metaType))
+    if returnStatus is not None:
+        q &= Q(returnStatus=returnStatus)
+    total, checked_objs = await checkedController.list(page=page, page_size=pageSize, search=q)
+    data = [await obj.to_dict(m2m=True) for obj in checked_objs]
+    return SuccessExtra(data=data, total=total, currentPage=page, pageSize=pageSize)
+
+
+@router.post("/updateChecked", summary="更新物资送检信息")
+async def update_checked(data: ReturnChecked):
+    user = await user_controller.get(data.returnUserId)
+    obj: Checked = await checkedController.get(id=id)
+    obj.returnStatus = data.returnStatus
+    obj.toReturnUser = user
+    obj.returnTime = now(False)
+    await obj.save()
+    return Success(msg="更新成功！")
+
+
+@router.post("/createChecked", summary="创建物资送检信息")
+async def create_checked(data: dict):
+    user = await user_controller.get(data.get("toCheckUserId"))
+    data["toCheckUser"] = user
+    obj: Checked = await checkedController.create(obj_in=data)
+    return Success(data=obj.to_dict())
+
+
+@router.get("/deleteChecked", summary="删除物资送检信息")
+async def delete_checked(data: list[int]):
+    for id in data:
+        await checkedController.remove(id)
+    return Success(msg="删除成功！")
