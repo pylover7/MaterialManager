@@ -34,9 +34,27 @@ const segmentedOptions: Array<OptionsType> = [
   <div class="main">
     <Segmented v-model="tabIndex" :options="segmentedOptions" size="large" />
     <el-tabs v-model="tabIndex" type="card" class="myTabs">
-      <Borrowing :segmentedOptions="segmentedOptions" :userId="userId" />
-      <Returning :segmentedOptions="segmentedOptions" :userId="userId" />
-      <Returned :segmentedOptions="segmentedOptions" :userId="userId" />
+      <Transition>
+        <Borrowing
+          v-show="segmentedOptions[0].value == tabIndex"
+          :segmentedOptions="segmentedOptions"
+          :userId="userId"
+        />
+      </Transition>
+      <Transition>
+        <Returning
+          v-show="segmentedOptions[1].value == tabIndex"
+          :segmentedOptions="segmentedOptions"
+          :userId="userId"
+        />
+      </Transition>
+      <Transition>
+        <Returned
+          v-show="segmentedOptions[2].value == tabIndex"
+          :segmentedOptions="segmentedOptions"
+          :userId="userId"
+        />
+      </Transition>
     </el-tabs>
   </div>
 </template>
@@ -63,5 +81,15 @@ const segmentedOptions: Array<OptionsType> = [
 
 .main-content {
   margin: 24px 24px 0 !important;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 1s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

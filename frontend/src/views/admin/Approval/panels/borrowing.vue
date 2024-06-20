@@ -275,7 +275,11 @@ function handleCurrentChange(val: number) {
             @confirm="onBatch(true)"
           >
             <template #reference>
-              <el-button type="success" :icon="useRenderIcon(Approve)">
+              <el-button
+                type="success"
+                :disabled="selectedNum < 1"
+                :icon="useRenderIcon(Approve)"
+              >
                 批量批准
               </el-button>
             </template>
@@ -285,7 +289,11 @@ function handleCurrentChange(val: number) {
             @confirm="onBatch(false)"
           >
             <template #reference>
-              <el-button type="danger" :icon="useRenderIcon(Reject)">
+              <el-button
+                type="danger"
+                :disabled="selectedNum < 1"
+                :icon="useRenderIcon(Reject)"
+              >
                 批量驳回
               </el-button>
             </template>
