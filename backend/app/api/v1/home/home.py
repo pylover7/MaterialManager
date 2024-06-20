@@ -22,16 +22,17 @@ async def get_home_list(
         area: str = Query("glb", description="区域"),
         page: int = Query(1, description="页码"),
         pageSize: int = Query(10, description="每页数量"),
-        borrowedStatus: bool = Query(False, description="借用批准状态"),
+        borrowedStatus: Union[bool, None] = Query(None, description="借用批准状态"),
         borrowWhether: Union[bool, None] = Query(None, description="借用通过状态"),
         returnStatus: Union[bool, None] = Query(None, description="归还批准状态")
 ):
-    if returnStatus is None:
-        q = Q(Q(material__area=area), Q(borrowApproveStatus=borrowedStatus))
-    else:
-        q = Q(Q(material__area=area), Q(borrowApproveWhether=borrowWhether), Q(returnApproveStatus=returnStatus))
+    q = Q(material__area=area)
+    if borrowedStatus is not None:
+        q &= Q(borrowApproveStatus=borrowedStatus)
+    if borrowWhether is not None:
+        q &= Q(Q(borrowApproveWhether=borrowWhether), Q(returnApproveStatus=returnStatus))
     total, objs = await borrowedController.list(page=page, page_size=pageSize, search=q)
-    data = [await obj.to_dict(m2m=True, exclude_fields=["password"]) for obj in objs]
+    data = [await obj.to_dict(m2m=True) for obj in objs]
     return SuccessExtra(data=data, total=total, currentPage=page, pageSize=pageSize)
 
 
