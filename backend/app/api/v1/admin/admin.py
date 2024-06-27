@@ -121,15 +121,17 @@ async def get_checked(
 
 @router.post("/updateChecked", summary="归还送检物资")
 async def update_checked(data: ReturnChecked):
-    obj: Checked = await checkedController.get(id=data.id)
-    material = await obj.material.all()
-    material.checking -= obj.number
     user = await user_controller.get_by_uuid(data.toReturnUserUUID)
-    obj.toReturnUser = user
-    obj.returnStatus = True
-    obj.note = data.note
-    obj.returnDate = now()
-    await obj.save()
+    for id in data.idList:
+        obj: Checked = await checkedController.get(id=id)
+        material = await obj.material.all()
+        material.checking -= obj.number
+        await material.save()
+        obj.toReturnUser = user
+        obj.returnStatus = True
+        obj.note = data.note
+        obj.returnDate = now()
+        await obj.save()
     return Success(msg="更新成功！")
 
 

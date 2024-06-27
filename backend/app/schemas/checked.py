@@ -23,6 +23,6 @@ class CheckedUpdate(CheckedPydantic):
 
 
 class ReturnChecked(BaseModel):
-    id: int
+    idList: list[int]
     note: str
     toReturnUserUUID: str

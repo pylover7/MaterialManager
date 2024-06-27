@@ -171,7 +171,10 @@ const columns: TableColumnList = [
                 };
                 createCheckMaterial(data).then(res => {
                   done();
-                  successNotification(res.msg);
+                  successNotification(
+                    `物资【${row.name}】送检数量【${toCheckNumber.value}】`
+                  );
+                  toCheckNumber.value = 1;
                   onSearch();
                 });
               },
