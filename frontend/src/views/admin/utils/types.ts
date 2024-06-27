@@ -12,5 +12,5 @@ export interface FormProps {
 
 export type SelectOpt = Array<{
   label: string;
-  value: string;
+  value: string | boolean | number;
 }>;

@@ -17,12 +17,20 @@ import { MaterialItem } from "@/types/base";
 import { addDialog } from "@/components/ReDialog";
 import attentionForm from "./utils/attentionForm.vue";
 import { SelectOpt, FormItemProps } from "./utils/types";
-import { getDutyOverList, updateDutyOverList } from "@/api/admin";
+import {
+  createCheckMaterial,
+  getDutyOverList,
+  updateDutyOverList
+} from "@/api/admin";
 import Search from "@iconify-icons/ep/search";
 import { message } from "@/utils/message";
+import { useUserStoreHook } from "@/store/modules/user";
 
 defineOptions({
   name: "MaterialMeta"
+});
+const userUUId = computed(() => {
+  return useUserStoreHook()?.uuid;
 });
 // 表格ref
 const tableRef = ref();
@@ -141,11 +149,42 @@ const columns: TableColumnList = [
           type="primary"
           plain
           onClick={() => {
-            toCheck(row);
+            addDialog({
+              title: "送检数量",
+              width: "15%",
+              contentRenderer: () => (
+                <div style="text-align: center; margin-bottom: 10px ">
+                  <el-input-number
+                    v-model={toCheckNumber.value}
+                    min={1}
+                    max={row.number - row.borrowed - row.checking}
+                  />
+                </div>
+              ),
+              beforeSure(done, { options, index }) {
+                const data = {
+                  area: row.area,
+                  type: row.type,
+                  material_id: row.id,
+                  number: toCheckNumber.value,
+                  toCheckUserUUID: userUUId.value
+                };
+                createCheckMaterial(data).then(res => {
+                  done();
+                  successNotification(res.msg);
+                  onSearch();
+                });
+              },
+              beforeCancel(done, { options, index }) {
+                done();
+                toCheckNumber.value = 1;
+              }
+            });
           }}
         >
           送检
         </el-button>
+
         <el-button
           size="small"
           type="warning"
@@ -182,10 +221,7 @@ const deleteById = (id: number) => {
       errorNotification(err.msg);
     });
 };
-// 表格操作列送检按钮函数
-const toCheck = (row: MaterialItem) => {
-  console.log(row);
-};
+const toCheckNumber = ref(1);
 
 // 表格数据
 const dataList = reactive([]);

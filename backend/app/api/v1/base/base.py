@@ -97,7 +97,20 @@ async def refresh_token(refreshToken: refreshTokenSchema):
     return Success(data=data.model_dump())
 
 
-@router.get("/userinfo", summary="查看用户信息", dependencies=[DependAuth])
+@router.post("/userinfo", summary="获取用户UUID")
+async def get_user_id(credentials: CredentialsSchema):
+    user: User = await user_controller.authenticate(credentials)
+    depart = await departController.get_all_name(user)
+    data = {
+        "uuid": user.uuid.__str__(),
+        "username": user.username,
+        "phone": user.phone,
+        "depart": depart
+    }
+    return Success(data=data)
+
+
+@router.get("/userinfos", summary="查看用户信息", dependencies=[DependAuth])
 async def get_userinfo():
     user_id = CTX_USER_ID.get()
     user_obj = await user_controller.get(id=user_id)

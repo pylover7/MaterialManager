@@ -16,6 +16,7 @@ class Checked(BaseModel, TimestampMixin):
     returnStatus = fields.BooleanField(default=False, description="归还状态")
     returnDate = fields.DatetimeField(null=True, description="归还时间")
     toReturnUser = fields.ForeignKeyField('models.User', related_name='return_user', null=True)
+    note = fields.CharField(max_length=200, null=True, description="备注")
 
     class Meta:
         table = "checked"

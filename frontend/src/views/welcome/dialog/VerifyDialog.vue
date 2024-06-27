@@ -15,7 +15,9 @@ function getInfoRef() {
 defineExpose({ getAccountRef, getInfoRef });
 
 type userType = {
-  userInfo: userInfo;
+  userInfo: userInfo & {
+    disable: boolean;
+  };
 };
 
 const props = withDefaults(defineProps<userType>(), {
@@ -24,7 +26,8 @@ const props = withDefaults(defineProps<userType>(), {
     password: "",
     name: "",
     phone: "",
-    depart: ""
+    depart: "",
+    disable: false
   })
 });
 
@@ -42,7 +45,8 @@ const segmentedOptions: Array<OptionsType> = [
   },
   {
     label: "手动输入",
-    value: 1
+    value: 1,
+    disabled: userInfo.disable
   }
 ];
 type accountType = {
@@ -123,7 +127,7 @@ const formSize: Ref<"" | "default" | "small" | "large"> = ref("default");
             <el-form-item label="部门" prop="depart">
               <el-input
                 v-model="userInfo.depart"
-                placeholder="请输入部门信息，如xx公司xx处xx科/值xx班"
+                placeholder="xx公司xx处xx科/值xx班"
               />
             </el-form-item>
           </el-form>

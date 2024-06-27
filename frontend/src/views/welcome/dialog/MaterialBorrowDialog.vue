@@ -10,7 +10,7 @@ import { useUserStoreHook } from "@/store/modules/user";
 import { addDialog } from "@/components/ReDialog/index";
 import verifyDialog from "./VerifyDialog.vue";
 import type { userInfo } from "../types";
-import { getLogin } from "@/api/user";
+import { getUserInfo } from "@/api/user";
 import type { borrowInfo } from "../types";
 
 type materialItemList = {
@@ -108,7 +108,7 @@ const openVerifyDialog = () => {
       if (curData.account !== "" || curData.password !== "") {
         accountFormRef.validate(valid => {
           if (valid) {
-            getLogin({
+            getUserInfo({
               username: curData.account,
               password: curData.password
             }).then(res => {

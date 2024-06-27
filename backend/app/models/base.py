@@ -15,6 +15,8 @@ class BaseModel(models.Model):
 
         d = {}
         for field in self._meta.db_fields:
+            if field == "password":
+                continue
             if field not in exclude_fields:
                 value = getattr(self, field)
                 if isinstance(value, datetime):

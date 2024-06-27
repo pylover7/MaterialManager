@@ -24,5 +24,5 @@ class CheckedUpdate(CheckedPydantic):
 
 class ReturnChecked(BaseModel):
     id: int
-    returnStatus: bool
-    returnUserId: int
+    note: str
+    toReturnUserUUID: str
