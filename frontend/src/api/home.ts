@@ -37,3 +37,9 @@ export const updateBorrowedInfo = (
     data: { borrowStatus, uuid, idList, borrowWhether, returnStatus }
   });
 };
+
+export const deleteBorrowed = (idList: number[]) => {
+  return http.request<Result>("post", baseUrlApi("/home/delete"), {
+    data: { idList }
+  });
+};

@@ -69,3 +69,33 @@ export const getDutyNote = (id: number) => {
     }
   });
 };
+
+export const createCheckMaterial = (data: object) => {
+  return http.request<Result>("post", baseUrlApi("/admin/createChecked"), {
+    data
+  });
+};
+
+export const getCheckedMaterial = (
+  area: string,
+  metaType: string,
+  returnStatus: boolean,
+  page: number,
+  pageSize: number
+) => {
+  return http.request<ResultTable>("get", baseUrlApi("/admin/getChecked"), {
+    params: {
+      area,
+      metaType,
+      returnStatus,
+      page,
+      pageSize
+    }
+  });
+};
+
+export const updateCheckedMaterial = (data: object) => {
+  return http.request<Result>("post", baseUrlApi("/admin/updateChecked"), {
+    data
+  });
+};

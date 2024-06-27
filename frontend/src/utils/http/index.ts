@@ -167,17 +167,14 @@ class PureHttp {
           } else {
             errorNotification("服务器异常，请刷新~");
           }
-        }
-        if (error.response.status == 403) {
+        } else if (error.response.status == 403) {
           resetRouter();
           router.push("/403").then(() => {
             errorNotification(error.response.data.msg);
           });
-        }
-        if (error.response.status == 406) {
+        } else if (error.response.status == 406) {
           errorNotification(error.response.data.msg);
-        }
-        if (error.response.status == 401) {
+        } else if (error.response.status == 401) {
           removeToken();
           resetRouter();
           router.push("/login").then(() => {

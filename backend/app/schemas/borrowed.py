@@ -2,9 +2,7 @@
 # @FileName  :borrowed.py
 # @Time      :2024/5/31 上午12:49
 # @Author    :dayezi
-from typing import Union
-
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from tortoise.contrib.pydantic import pydantic_model_creator
 from app.models.borrowed import Borrowed
 from app.schemas.material import MaterialCreate
