@@ -83,6 +83,8 @@ const onSearch = () => {
     .then(res => {
       dataList.value = res.data;
       pagination.total = res.total;
+      pagination.pageSize = res.pageSize;
+      pagination.currentPage = res.currentPage;
     })
     .catch(() => {
       dataList.value = [];
@@ -228,10 +230,12 @@ const pagination = reactive<PaginationProps>({
 });
 
 function handleSizeChange(val: number) {
+  onSearch();
   console.log(`${val} items per page`);
 }
 
 function handleCurrentChange(val: number) {
+  onSearch();
   console.log(`current page: ${val}`);
 }
 

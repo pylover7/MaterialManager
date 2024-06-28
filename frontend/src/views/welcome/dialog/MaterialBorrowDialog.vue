@@ -114,6 +114,7 @@ const openVerifyDialog = () => {
             }).then(res => {
               borrowInfo.value.username = res.data.username;
               borrowInfo.value.depart = res.data.depart;
+              borrowInfo.value.phone = res.data.phone;
               borrowInfo.value.uuid = res.data.uuid;
             });
             done();

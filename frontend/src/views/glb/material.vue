@@ -156,7 +156,7 @@ const dutyPersonDepart = ref("");
 const dialogVisible = ref(false);
 const handleOverBtnLoading = ref(false);
 const popDisabled = computed(() => {
-  return !(step2Init.value || step2Init.value || step3Init.value);
+  return !(step1Init.value || step2Init.value || step3Init.value);
 });
 const handoverConfirm = () => {
   // 交班
@@ -262,7 +262,7 @@ const handover = () => {
                   style="width: 70vw"
                 />
                 <el-button
-                  type="success"
+                  type="primary"
                   plain
                   size="large"
                   @click="handleConfirmAll"
