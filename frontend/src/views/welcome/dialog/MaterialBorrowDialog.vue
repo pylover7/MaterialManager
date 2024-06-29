@@ -153,47 +153,49 @@ const openVerifyDialog = () => {
           />
           <el-card style="width: 80%" shadow="never">
             <el-scrollbar height="400" noresize>
-              <p
-                v-for="(item, index) in borrowInfo.baseData"
-                v-show="itemSearch(item)"
-                :key="index"
-                class="resultItem"
-              >
-                <el-row>
-                  <el-col :span="20" style="text-align: left">{{
-                    item.name
-                  }}</el-col>
-                  <el-col
-                    :span="4"
-                    style="text-align: right; padding-right: 8px"
-                  >
-                    <el-button
-                      v-show="btnInputShow(item)"
-                      :icon="useRenderIcon(Subtract)"
-                      type="primary"
-                      circle
-                      plain
-                      @click="item.borrowing -= 1"
-                    />
-                    <el-input-number
-                      v-show="btnInputShow(item)"
-                      v-model="item.borrowing"
-                      :min="0"
-                      :max="maxNumber(item)"
-                      :controls="false"
-                      style="width: 60px"
-                    />
-                    <el-button
-                      :disabled="item.borrowing >= maxNumber(item)"
-                      :icon="useRenderIcon(Add)"
-                      type="primary"
-                      circle
-                      plain
-                      @click="borrowAdd(item)"
-                    />
-                  </el-col>
-                </el-row>
-              </p>
+              <TransitionGroup name="list" tag="ul">
+                <li
+                  v-for="(item, index) in borrowInfo.baseData"
+                  v-show="itemSearch(item)"
+                  :key="index"
+                  class="resultItem"
+                >
+                  <el-row>
+                    <el-col :span="20" style="text-align: left">{{
+                      item.name
+                    }}</el-col>
+                    <el-col
+                      :span="4"
+                      style="text-align: right; padding-right: 8px"
+                    >
+                      <el-button
+                        v-show="btnInputShow(item)"
+                        :icon="useRenderIcon(Subtract)"
+                        type="primary"
+                        circle
+                        plain
+                        @click="item.borrowing -= 1"
+                      />
+                      <el-input-number
+                        v-show="btnInputShow(item)"
+                        v-model="item.borrowing"
+                        :min="0"
+                        :max="maxNumber(item)"
+                        :controls="false"
+                        style="width: 60px"
+                      />
+                      <el-button
+                        :disabled="item.borrowing >= maxNumber(item)"
+                        :icon="useRenderIcon(Add)"
+                        type="primary"
+                        circle
+                        plain
+                        @click="borrowAdd(item)"
+                      />
+                    </el-col>
+                  </el-row>
+                </li>
+              </TransitionGroup>
             </el-scrollbar>
           </el-card>
         </el-space>
@@ -316,5 +318,23 @@ const openVerifyDialog = () => {
   .el-card__header {
     padding: 10px 8px;
   }
+}
+
+.list-move, /* 对移动中的元素应用的过渡 */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* 确保将离开的元素从布局流中删除
+  以便能够正确地计算移动的动画。 */
+.list-leave-active {
+  position: absolute;
 }
 </style>
