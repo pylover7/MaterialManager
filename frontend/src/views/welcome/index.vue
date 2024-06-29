@@ -16,8 +16,11 @@ defineOptions({
 });
 const store = useDialogStore();
 const bMForm = ref();
+const toolBtnLoading = ref(false);
+const keyBtnLoading = ref(false);
 // 借用物资弹窗
 const borrowMaterial = () => {
+  toolBtnLoading.value = true;
   getAllMaterialMeta("glb", "tool").then(res => {
     addDialog({
       title: "物资借用",
@@ -77,6 +80,7 @@ const borrowMaterial = () => {
               curData.baseData = borrowItemList as [MaterialItem];
               createBorrowed(curData).then(() => {
                 successNotification("物资借用流程发起成功！");
+                toolBtnLoading.value = false;
                 done();
               });
             }}
@@ -84,13 +88,18 @@ const borrowMaterial = () => {
             完成
           </el-button>
         </>
-      )
+      ),
+      beforeClose(done) {
+        toolBtnLoading.value = false;
+        done();
+      }
     });
   });
 };
 
 // 借用钥匙弹窗
 const borrowKey = () => {
+  keyBtnLoading.value = true;
   getAllMaterialMeta("glb", "key").then(res => {
     addDialog({
       title: "钥匙借用",
@@ -150,6 +159,7 @@ const borrowKey = () => {
               curData.baseData = borrowItemList as [MaterialItem];
               createBorrowed(curData).then(() => {
                 successNotification("钥匙借用流程发起成功！");
+                toolBtnLoading.value = false;
                 done();
               });
             }}
@@ -157,7 +167,11 @@ const borrowKey = () => {
             完成
           </el-button>
         </>
-      )
+      ),
+      beforeClose(done) {
+        toolBtnLoading.value = false;
+        done();
+      }
     });
   });
 };
@@ -166,10 +180,20 @@ const borrowKey = () => {
 <template>
   <div class="main">
     <el-space alignment="center">
-      <el-button class="largeBtn" type="primary" plain @click="borrowMaterial"
+      <el-button
+        class="largeBtn"
+        type="primary"
+        :loading="toolBtnLoading"
+        plain
+        @click="borrowMaterial"
         >物资借用</el-button
       >
-      <el-button class="largeBtn" type="primary" plain @click="borrowKey"
+      <el-button
+        class="largeBtn"
+        type="primary"
+        :loading="keyBtnLoading"
+        plain
+        @click="borrowKey"
         >钥匙借用</el-button
       >
     </el-space>

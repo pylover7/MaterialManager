@@ -208,7 +208,7 @@ const openVerifyDialog = () => {
             style="width: 80%"
             shadow="never"
           >
-            <el-scrollbar height="300" noresize>
+            <el-scrollbar height="250" noresize>
               <p
                 v-for="(item, index) in borrowInfo.baseData"
                 v-show="item.borrowing > 0"
