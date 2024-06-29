@@ -64,10 +64,6 @@ const borrowMaterial = () => {
                 store.resetActive();
               };
               const curData = options.props.borrowInfo as borrowInfo;
-              if (curData.reason == "") {
-                message("借用原因不得为空！", { type: "warning" });
-                return;
-              }
               const borrowItemList = [];
               for (const item of curData.baseData) {
                 if (item.borrowing !== undefined && item.borrowing > 0) {
@@ -76,6 +72,10 @@ const borrowMaterial = () => {
                   delete item.id;
                   borrowItemList.push(item);
                 }
+              }
+              if (curData.reason == "" || borrowItemList.length == 0) {
+                message("借用信息或借用原因不得为空！", { type: "warning" });
+                return;
               }
               curData.baseData = borrowItemList as [MaterialItem];
               createBorrowed(curData).then(() => {
@@ -143,10 +143,6 @@ const borrowKey = () => {
                 store.resetActive();
               };
               const curData = options.props.borrowInfo as borrowInfo;
-              if (curData.reason == "") {
-                message("借用原因不得为空！", { type: "warning" });
-                return;
-              }
               const borrowItemList = [];
               for (const item of curData.baseData) {
                 if (item.borrowing !== undefined && item.borrowing > 0) {
@@ -155,6 +151,10 @@ const borrowKey = () => {
                   delete item.id;
                   borrowItemList.push(item);
                 }
+              }
+              if (curData.reason == "" || borrowItemList.length == 0) {
+                message("借用信息或借用原因不得为空！", { type: "warning" });
+                return;
               }
               curData.baseData = borrowItemList as [MaterialItem];
               createBorrowed(curData).then(() => {
