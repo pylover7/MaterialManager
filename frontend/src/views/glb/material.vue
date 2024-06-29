@@ -1,16 +1,19 @@
 <script setup lang="tsx">
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted, h } from "vue";
 import {
   getMaterialMeta,
   dutyOver,
   getLatestNote,
   getDutyInfo
 } from "@/api/material";
-import { useUserStoreHook } from "@/store/modules/user";
 import { successNotification, errorNotification } from "@/utils/notification";
 import { getDutyOverList } from "@/api/admin";
 import PureTable from "@pureadmin/table";
 import type { MaterialItem } from "@/types/base";
+import { addDialog } from "@/components/ReDialog/index";
+import verifyDialog from "@/views/welcome/dialog/VerifyDialog.vue";
+import type { userInfo } from "@/views/welcome/types";
+import { getUserInfo } from "@/api/user";
 
 defineOptions({
   name: "GlbMaterial"
@@ -33,7 +36,6 @@ const columns: TableColumnList = [
   { label: "名称", prop: "name" },
   { label: "型号", prop: "model", width: "200" },
   { label: "数量", prop: "number", width: "100" },
-  { label: "外借数量", prop: "borrowed", width: "100" },
   { label: "送检数量", prop: "checking", width: "100" },
   {
     label: "当前数量",
@@ -153,6 +155,12 @@ const readAttention = () => {
 
 const dutyPerson = ref("");
 const dutyPersonDepart = ref("");
+const dutyOverInfo = reactive({
+  username: "",
+  depart: "",
+  phone: "",
+  uuid: ""
+});
 const dialogVisible = ref(false);
 const handleOverBtnLoading = ref(false);
 const popDisabled = computed(() => {
@@ -174,8 +182,8 @@ const handover = () => {
         position: data.position,
         number: data.number,
         nowNumber: data.nowNumber,
-        dutyPerson: useUserStoreHook()?.username,
-        dutyPersonDepart: useUserStoreHook()?.depart,
+        dutyPerson: dutyOverInfo.username,
+        dutyPersonDepart: dutyOverInfo.depart,
         area: "glb",
         type: "tool"
       };
@@ -185,12 +193,12 @@ const handover = () => {
       area: "glb",
       type: "tool"
     },
-    dutyPerson: useUserStoreHook()?.username,
-    dutyPersonDepart: useUserStoreHook()?.depart
+    dutyPerson: dutyOverInfo.username,
+    dutyPersonDepart: dutyOverInfo.depart
   };
   handleOverBtnLoading.value = true;
   dutyOver("glb", "tool", data)
-    .then(res => {
+    .then(() => {
       initGlb();
       handleOverBtnLoading.value = false;
       successNotification("交班成功");
@@ -200,6 +208,48 @@ const handover = () => {
       handleOverBtnLoading.value = false;
     });
   dialogVisible.value = false;
+};
+
+const verifyForm = ref();
+
+const openVerifyDialog = () => {
+  addDialog({
+    title: "接班人员验证",
+    width: "25%",
+    props: {
+      userInfo: {
+        account: "",
+        password: "",
+        name: "",
+        phone: "",
+        depart: "",
+        disable: true
+      }
+    },
+    contentRenderer: () => h(verifyDialog, { ref: verifyForm }),
+    beforeSure(done, { options }) {
+      const accountFormRef = verifyForm.value.getAccountRef();
+      const curData = options.props.userInfo as userInfo;
+      accountFormRef.validate(valid => {
+        if (valid) {
+          getUserInfo({
+            username: curData.account,
+            password: curData.password
+          })
+            .then(res => {
+              dutyOverInfo.username = res.data.username;
+              dutyOverInfo.depart = res.data.depart;
+              dutyOverInfo.phone = res.data.phone;
+              dutyOverInfo.uuid = res.data.uuid;
+              done();
+            })
+            .catch(() => {
+              errorNotification("账号或密码错误");
+            });
+        }
+      });
+    }
+  });
 };
 </script>
 
@@ -334,14 +384,26 @@ const handover = () => {
         </el-steps>
       </div>
     </el-card>
-    <el-dialog v-model="dialogVisible" title="交班确认" width="500">
-      <span>确认从 {{ dutyPerson }} 接班</span>
+    <el-dialog v-model="dialogVisible" title="交班确认" width="400">
+      <el-space
+        direction="vertical"
+        style="align-items: start; padding-left: 10px"
+      >
+        <span
+          >确认从
+          <span style="font-size: large; color: red">{{ dutyPerson }}</span>
+          接班</span
+        >
+        <span>接班人员：{{ dutyOverInfo.username }}</span>
+        <el-button type="primary" @click="openVerifyDialog">验证</el-button>
+      </el-space>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
           <el-button
             type="primary"
             :loading="handleOverBtnLoading"
+            :disabled="dutyOverInfo.username.length === 0"
             @click="handover"
           >
             确定

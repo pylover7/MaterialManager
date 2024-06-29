@@ -3,6 +3,7 @@ from datetime import timedelta
 from fastapi import APIRouter
 from jwt.exceptions import ExpiredSignatureError
 
+from app.log import logger
 from app.controllers.depart import departController
 from app.controllers.user import user_controller
 from app.core.ctx import CTX_USER_ID
@@ -65,6 +66,7 @@ async def login_access_token(credentials: CredentialsSchema):
 async def refresh_token(refreshToken: refreshTokenSchema):
     try:
         payload = decode_access_token(refreshToken.refreshToken)
+        logger.info(f"refreshToken有效截至时间：{payload.exp.strftime('%Y-%m-%d %H:%M:%S')}， 当前时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         if payload.exp.timestamp() < datetime.now().timestamp():
             raise ExpiredSignatureError
     except ExpiredSignatureError:
