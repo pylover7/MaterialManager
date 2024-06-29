@@ -92,6 +92,7 @@ const borrowMaterial = () => {
       beforeClose(done) {
         toolBtnLoading.value = false;
         done();
+        store.resetActive();
       }
     });
   });
@@ -159,7 +160,7 @@ const borrowKey = () => {
               curData.baseData = borrowItemList as [MaterialItem];
               createBorrowed(curData).then(() => {
                 successNotification("钥匙借用流程发起成功！");
-                toolBtnLoading.value = false;
+                keyBtnLoading.value = false;
                 done();
               });
             }}
@@ -169,8 +170,9 @@ const borrowKey = () => {
         </>
       ),
       beforeClose(done) {
-        toolBtnLoading.value = false;
+        keyBtnLoading.value = false;
         done();
+        store.resetActive();
       }
     });
   });
