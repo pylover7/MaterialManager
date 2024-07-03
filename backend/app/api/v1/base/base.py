@@ -66,7 +66,8 @@ async def login_access_token(credentials: CredentialsSchema):
 async def refresh_token(refreshToken: refreshTokenSchema):
     try:
         payload = decode_access_token(refreshToken.refreshToken)
-        logger.info(f"refreshToken有效截至时间：{payload.exp.strftime('%Y-%m-%d %H:%M:%S')}， 当前时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        logger.info(f"refreshToken有效截至时间：{payload.exp.strftime('%Y-%m-%d %H:%M:%S')}（{payload.exp.timestamp()}）， "
+                    f"当前时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}（{datetime.now().timestamp()}）")
         if payload.exp.timestamp() < datetime.now().timestamp():
             raise ExpiredSignatureError
     except ExpiredSignatureError:

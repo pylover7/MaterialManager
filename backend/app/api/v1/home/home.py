@@ -32,7 +32,12 @@ async def get_home_list(
     if borrowWhether is not None:
         q &= Q(Q(borrowApproveWhether=borrowWhether), Q(returnApproveStatus=returnStatus))
     total, objs = await borrowedController.list(page=page, page_size=pageSize, search=q)
-    data = [await obj.to_dict(m2m=True) for obj in objs]
+    data = []
+    for obj in objs:
+        material = await obj.material.all().values("name", "model", "position")
+        obj_dict = await obj.to_dict()
+        obj_dict["material"] = material
+        data.append(obj_dict)
     return SuccessExtra(data=data, total=total, currentPage=page, pageSize=pageSize)
 
 
@@ -47,10 +52,10 @@ async def create_borrowed(data: CreateBorrowedInfo):
         item["userDepart"] = data.depart
         item["uuid"] = data.uuid
         item["reason"] = data.reason
+        item["material_id"] = material.id
         obj: Borrowed = await borrowedController.create(obj_in=item)
         material.borrowed += obj.borrowing
         await material.save()
-        await obj.material.add(material)
     return Success()
 
 
@@ -62,17 +67,17 @@ async def update_borrowed(data: UpdateBorrowedInfo):
     for id in data.idList:
         obj = await borrowedController.get(id=id)
         if data.borrowStatus:
-            await obj.borrowApproveUser.add(user)
+            obj.borrowApproveUser_id = user.id
             obj.borrowApproveStatus = data.borrowStatus
             obj.borrowApproveWhether = data.borrowWhether
             obj.borrowApproveTime = now(False)
         elif data.returnStatus:
-            await obj.returnApproveUser.add(user)
+            obj.returnApproveUser_id = user.id
             obj.returnApproveStatus = data.returnStatus
             obj.returnApproveTime = now(False)
         if not data.borrowWhether or data.returnStatus:
-            material_id = await obj.material.all().values_list("id", flat=True)
-            material = await materialController.get(id=material_id[0])
+            material_id = await obj.material_id
+            material = await materialController.get(id=material_id)
             material.borrowed -= obj.borrowing
             await material.save()
 

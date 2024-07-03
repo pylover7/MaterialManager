@@ -21,9 +21,9 @@ class Borrowed(BaseModel, UUIDModel):
     returnApproveStatus = fields.BooleanField(default=False, description="归还批准状态")
     returnApproveTime = fields.DatetimeField(null=True, description="归还批准时间")
 
-    material = fields.ManyToManyField('models.Material', related_name='borrowed_material')
-    borrowApproveUser = fields.ManyToManyField('models.User', related_name='borrowed_approve_user')
-    returnApproveUser = fields.ManyToManyField('models.User', related_name='return_approve_user')
+    material = fields.ForeignKeyField('models.Material', related_name='borrowed_material')
+    borrowApproveUser = fields.ForeignKeyField('models.User', related_name='borrowed_approve_user', null=True)
+    returnApproveUser = fields.ForeignKeyField('models.User', related_name='return_approve_user', null=True)
 
     class Meta:
         table = "borrowed"
