@@ -29,15 +29,20 @@ const loading = ref(false);
 // 表格数据
 const dataList = ref([]);
 const onSearch = () => {
+  loading.value = true;
   listBorrowed(
     borrowedOptBar.area,
     pagination.currentPage,
     pagination.pageSize,
     false
-  ).then(res => {
-    dataList.value = res.data;
-    pagination.total = res.total;
-  });
+  )
+    .then(res => {
+      dataList.value = res.data;
+      pagination.total = res.total;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 // 分页设置
 const pagination = reactive<PaginationProps>({

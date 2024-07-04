@@ -30,6 +30,7 @@ const loading = ref(false);
 const { tagStyle } = usePublicHooks();
 
 const onSearchReturn = () => {
+  loading.value = true;
   listBorrowed(
     returnedOptBar.area,
     pagination2.currentPage,
@@ -37,10 +38,14 @@ const onSearchReturn = () => {
     true,
     true,
     false
-  ).then(res => {
-    returnDataList.value = res.data;
-    pagination2.total = res.total;
-  });
+  )
+    .then(res => {
+      returnDataList.value = res.data;
+      pagination2.total = res.total;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 
 const selectedNum = ref(0);

@@ -26,14 +26,22 @@ const loading = ref(false);
 // 表格数据
 const dataList = ref([]);
 const onSearch = () => {
+  loading.value = true;
   listBorrowed(
     borrowedOptBar.area,
     pagination.currentPage,
-    pagination.pageSize
-  ).then(res => {
-    dataList.value = res.data;
-    pagination.total = res.total;
-  });
+    pagination.pageSize,
+    true,
+    true,
+    true
+  )
+    .then(res => {
+      dataList.value = res.data;
+      pagination.total = res.total;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 // 分页设置
 const pagination = reactive<PaginationProps>({
@@ -200,6 +208,7 @@ const columns: TableColumnList = [
             <ul>
               <li>姓名：{row.borrowApproveUser?.username}</li>
               <li>电话：{row.borrowApproveUser?.phone}</li>
+              <li>部门：{row.borrowApproveUser?.depart}</li>
             </ul>
           )
         }}
@@ -238,6 +247,7 @@ const columns: TableColumnList = [
             <ul>
               <li>姓名：{row.returnApproveUser?.username}</li>
               <li>电话：{row.returnApproveUser?.phone}</li>
+              <li>部门：{row.returnApproveUser?.depart}</li>
             </ul>
           )
         }}

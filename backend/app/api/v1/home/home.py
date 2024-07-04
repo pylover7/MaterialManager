@@ -8,6 +8,7 @@ from typing import Union
 
 from app.controllers import user_controller
 from app.controllers.borrowed import borrowedController
+from app.controllers.depart import departController
 from app.controllers.material import materialController
 from app.models import Borrowed
 from app.schemas import Success, SuccessExtra
@@ -36,6 +37,18 @@ async def get_home_list(
     for obj in objs:
         material = await obj.material.all().values("name", "model", "position")
         obj_dict = await obj.to_dict()
+        if obj.borrowApproveStatus:
+            borrowApproveUser = await obj.borrowApproveUser.all().values("id", "username", "phone", "depart_id")
+            user = await user_controller.get(borrowApproveUser["id"])
+            depart = await departController.get_all_name(user)
+            borrowApproveUser["depart"] = depart
+            obj_dict["borrowApproveUser"] = borrowApproveUser
+        if obj.returnApproveStatus:
+            returnApproveUser = await obj.returnApproveUser.all().values("id", "username", "phone", "depart_id")
+            user = await user_controller.get(returnApproveUser["id"])
+            depart = await departController.get_all_name(user)
+            returnApproveUser["depart"] = depart
+            obj_dict["returnApproveUser"] = returnApproveUser
         obj_dict["material"] = material
         data.append(obj_dict)
     return SuccessExtra(data=data, total=total, currentPage=page, pageSize=pageSize)
@@ -76,7 +89,7 @@ async def update_borrowed(data: UpdateBorrowedInfo):
             obj.returnApproveStatus = data.returnStatus
             obj.returnApproveTime = now(False)
         if not data.borrowWhether or data.returnStatus:
-            material_id = await obj.material_id
+            material_id = obj.material_id
             material = await materialController.get(id=material_id)
             material.borrowed -= obj.borrowing
             await material.save()
