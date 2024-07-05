@@ -35,7 +35,7 @@ async def get_home_list(
     total, objs = await borrowedController.list(page=page, page_size=pageSize, search=q)
     data = []
     for obj in objs:
-        material = await obj.material.all().values("name", "model", "position")
+        material = await obj.material.all().values("name", "model", "position", "number", "borrowed")
         obj_dict = await obj.to_dict()
         if obj.borrowApproveStatus:
             borrowApproveUser = await obj.borrowApproveUser.all().values("id", "username", "phone", "depart_id")

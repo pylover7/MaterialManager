@@ -17,7 +17,7 @@ export type BorrowedInfo = {
   userDepart: string;
   phone: string;
   reason: string;
-  material: [MaterialItem];
+  material: MaterialItem;
   borrowing: number;
   borrowTime: string;
   borrowApproveStatus: boolean;

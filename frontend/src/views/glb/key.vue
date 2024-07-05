@@ -74,12 +74,12 @@ const columns: TableColumnList = [
         width="200"
         trigger="click"
         v-slots={{
-          reference: () => <el-button link>{row.material[0].name}</el-button>,
+          reference: () => <el-button link>{row.material.name}</el-button>,
           default: () => (
             <ul>
-              <li>名称：{row.material[0].name}</li>
-              <li>型号：{row.material[0].model}</li>
-              <li>位置：{row.material[0].position}</li>
+              <li>名称：{row.material.name}</li>
+              <li>型号：{row.material.model}</li>
+              <li>位置：{row.material.position}</li>
             </ul>
           )
         }}
@@ -175,6 +175,7 @@ const initInfo = () => {
   getLatestNote(area, metaType).then(res => {
     lastRemark.value = res.data.note;
   });
+  remark.value = "";
   loading.value = false;
 };
 
@@ -182,11 +183,11 @@ const handover = () => {
   let data = {
     materialData: tableDataList.map((data: BorrowedInfo) => {
       return {
-        name: data.material[0].name,
-        model: data.material[0].model,
-        position: data.material[0].position,
-        number: data.material[0].number,
-        nowNumber: data.material[0].number - data.material[0].borrowed,
+        name: data.material.name,
+        model: data.material.model,
+        position: data.material.position,
+        number: data.material.number,
+        nowNumber: data.material.number - data.material.borrowed,
         dutyPerson: dutyOverInfo.username,
         dutyPersonDepart: dutyOverInfo.depart,
         area: area,
@@ -205,14 +206,15 @@ const handover = () => {
   dutyOver(area, metaType, data)
     .then(() => {
       initInfo();
-      handleOverBtnLoading.value = false;
       successNotification("交班成功");
+      dialogVisible.value = false;
     })
     .catch(err => {
       errorNotification(err.message);
+    })
+    .finally(() => {
       handleOverBtnLoading.value = false;
     });
-  dialogVisible.value = false;
 };
 
 const verifyForm = ref();
