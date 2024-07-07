@@ -3,7 +3,6 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Search from "@iconify-icons/ep/search";
 import Approve from "@iconify-icons/fluent/approvals-app-16-filled";
 import { reactive, ref } from "vue";
-import { listBorrowed, updateBorrowedInfo } from "@/api/home";
 import { message } from "@/utils/message";
 import { PaginationProps } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
@@ -11,6 +10,7 @@ import { successNotification } from "@/utils/notification";
 import { usePublicHooks } from "@/views/hooks";
 import PureTableBar from "@/components/RePureTableBar/src/bar";
 import { OptionsType } from "@/components/ReSegmented";
+import { listBorrowed, updateBorrowedInfo } from "@/api/material";
 
 const props = defineProps({
   segmentedOptions: {

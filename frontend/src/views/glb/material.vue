@@ -1,19 +1,19 @@
 <script setup lang="tsx">
 import { ref, reactive, computed, onMounted, h } from "vue";
-import {
-  getMaterialMeta,
-  dutyOver,
-  getLatestNote,
-  getDutyInfo
-} from "@/api/material";
+import { getMaterialMeta } from "@/api/material";
 import { successNotification, errorNotification } from "@/utils/notification";
-import { getDutyOverList } from "@/api/admin";
 import PureTable from "@pureadmin/table";
-import type { MaterialItem } from "@/types/base";
 import { addDialog } from "@/components/ReDialog/index";
 import verifyDialog from "@/views/welcome/dialog/VerifyDialog.vue";
 import type { userInfo } from "@/views/welcome/types";
-import { getUserInfo } from "@/api/user";
+import {
+  dutyOver,
+  getDutyPerson,
+  getDutyOverList,
+  getLatestNote
+} from "@/api/duty";
+import { auth } from "@/api/base";
+import { MaterialItem } from "@/types/material";
 
 defineOptions({
   name: "GlbMaterial"
@@ -83,7 +83,7 @@ const initGlb = () => {
   getLatestNote("glb", "tool").then(res => {
     lastRemark.value = res.data.note;
   });
-  getDutyInfo("glb", "tool").then(res => {
+  getDutyPerson("glb", "tool").then(res => {
     dutyPerson.value = res.data.dutyPerson;
     dutyPersonDepart.value = res.data.dutyPersonDepart;
   });
@@ -232,7 +232,7 @@ const openVerifyDialog = () => {
       const curData = options.props.userInfo as userInfo;
       accountFormRef.validate(valid => {
         if (valid) {
-          getUserInfo({
+          auth({
             username: curData.account,
             password: curData.password
           })

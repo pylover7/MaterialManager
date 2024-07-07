@@ -4,10 +4,10 @@ import type { userType } from "./types";
 import { routerArrays } from "@/layout/types";
 import { router, resetRouter } from "@/router";
 import { storageLocal } from "@pureadmin/utils";
-import { getLogin, refreshTokenApi } from "@/api/user";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { type DataInfo, setToken, removeToken, userKey } from "@/utils/auth";
 import type { RefreshTokenResult, LoginResult } from "@/types/user";
+import { getLogin, refreshTokenApi } from "@/api/base";
 
 export const useUserStore = defineStore({
   id: "pure-user",

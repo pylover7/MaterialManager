@@ -1,4 +1,8 @@
 # coding=utf-8
+# @FileName  :borrowed.py
+# @Time      :2024/7/6 下午7:37
+# @Author    :dayezi
+# coding=utf-8
 # @FileName  :home.py
 # @Time      :2024/5/31 上午7:15
 # @Author    :dayezi
@@ -15,10 +19,36 @@ from app.schemas import Success, SuccessExtra
 from app.schemas.borrowed import CreateBorrowedInfo, UpdateBorrowedInfo
 from app.utils import now
 
-router = APIRouter()
+borrowedRouter = APIRouter()
 
 
-@router.get("/list", summary="获取借用信息")
+@borrowedRouter.post("/add", summary="创建借用信息")
+async def create_borrowed(data: CreateBorrowedInfo):
+    for item in data.baseData:
+        # 前端发送的uuid为物资的uuid，这里在查询完毕后，使用用户的uuid将其代替
+        material = await materialController.get_by_uuid(uuid=item.uuid)
+        item = item.model_dump()
+        item["username"] = data.username
+        item["phone"] = data.phone
+        item["userDepart"] = data.depart
+        item["uuid"] = data.uuid
+        item["reason"] = data.reason
+        item["material_id"] = material.id
+        obj: Borrowed = await borrowedController.create(obj_in=item)
+        material.borrowed += obj.borrowing
+        await material.save()
+    return Success()
+
+
+@borrowedRouter.delete("/delete", summary="删除借用信息")
+async def delete_borrowed(data: list[int]):
+    for id in data:
+        obj = await borrowedController.get(id=id)
+        await obj.delete()
+    return Success()
+
+
+@borrowedRouter.get("/list", summary="获取借用信息")
 async def get_home_list(
         area: str = Query("glb", description="区域"),
         page: int = Query(1, description="页码"),
@@ -54,25 +84,7 @@ async def get_home_list(
     return SuccessExtra(data=data, total=total, currentPage=page, pageSize=pageSize)
 
 
-@router.post("/create", summary="创建借用信息")
-async def create_borrowed(data: CreateBorrowedInfo):
-    for item in data.baseData:
-        # 前端发送的uuid为物资的uuid，这里在查询完毕后，使用用户的uuid将其代替
-        material = await materialController.get_by_uuid(uuid=item.uuid)
-        item = item.model_dump()
-        item["username"] = data.username
-        item["phone"] = data.phone
-        item["userDepart"] = data.depart
-        item["uuid"] = data.uuid
-        item["reason"] = data.reason
-        item["material_id"] = material.id
-        obj: Borrowed = await borrowedController.create(obj_in=item)
-        material.borrowed += obj.borrowing
-        await material.save()
-    return Success()
-
-
-@router.post("/update", summary="更新借用信息")
+@borrowedRouter.post("/update", summary="更新借用信息")
 async def update_borrowed(data: UpdateBorrowedInfo):
     uuid = data.uuid
     user = await user_controller.get_by_uuid(uuid)
@@ -97,10 +109,3 @@ async def update_borrowed(data: UpdateBorrowedInfo):
         await obj.save()
     return Success()
 
-
-@router.delete("/delete", summary="删除借用信息")
-async def delete_borrowed(data: list[int]):
-    for id in data:
-        obj = await borrowedController.get(id=id)
-        await obj.delete()
-    return Success()

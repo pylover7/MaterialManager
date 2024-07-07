@@ -4,15 +4,14 @@ import Search from "@iconify-icons/ep/search";
 import Approve from "@iconify-icons/fluent/approvals-app-16-filled";
 import Reject from "@iconify-icons/fluent/text-change-reject-24-filled";
 import { reactive, ref } from "vue";
-import { listBorrowed } from "@/api/home";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { usePublicHooks } from "@/views/hooks";
 import { message } from "@/utils/message";
-import { updateBorrowedInfo } from "@/api/home";
 import PureTableBar from "@/components/RePureTableBar/src/bar";
 import { successNotification } from "@/utils/notification";
 import { getKeyList } from "@pureadmin/utils";
 import { OptionsType } from "@/components/ReSegmented";
+import { listBorrowed, updateBorrowedInfo } from "@/api/material";
 
 const props = defineProps({
   segmentedOptions: {

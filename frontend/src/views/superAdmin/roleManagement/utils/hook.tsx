@@ -9,6 +9,9 @@ import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "../utils/types";
 import type { PaginationProps } from "@pureadmin/table";
 import { getKeyList, deviceDetection } from "@pureadmin/utils";
+import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
+import type { OptionsType } from "@/components/ReSegmented";
+import { successNotification } from "@/utils/notification";
 import {
   addRole,
   deleteRole,
@@ -18,10 +21,7 @@ import {
   getRoleList,
   updateRole,
   updateRoleAuth
-} from "@/api/system";
-import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
-import type { OptionsType } from "@/components/ReSegmented";
-import { successNotification } from "@/utils/notification";
+} from "@/api/admin";
 
 export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
   const form = reactive({

@@ -7,13 +7,13 @@ import Search from "@iconify-icons/ep/search";
 import Approve from "@iconify-icons/fluent/approvals-app-16-filled";
 import PureTableBar from "@/components/RePureTableBar/src/bar";
 import { SelectOpt } from "@/views/admin/utils/types";
-import { getCheckedMaterial, updateCheckedMaterial } from "@/api/admin";
 import { addDialog } from "@/components/ReDialog/index";
 import verifyDialog from "@/views/welcome/dialog/VerifyDialog.vue";
 import type { userInfo } from "@/views/welcome/types";
-import { getUserInfo } from "@/api/user";
 import { successNotification, warningNotification } from "@/utils/notification";
 import { deviceDetection, getKeyList } from "@pureadmin/utils";
+import { getCheckedMaterial, updateCheckedMaterial } from "@/api/material";
+import { auth } from "@/api/base";
 
 defineOptions({
   name: "MaterialChecked"
@@ -303,7 +303,7 @@ const openReturnDialog = (rowList, idList?: [number]) => {
                       const curData = options.props.userInfo as userInfo;
                       accountFormRef.validate(valid => {
                         if (valid) {
-                          getUserInfo({
+                          auth({
                             username: curData.account,
                             password: curData.password
                           }).then(res => {

@@ -12,8 +12,8 @@ import Delete from "@iconify-icons/ep/delete";
 import Search from "@iconify-icons/ep/search";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
-import { deleteDutyLogs, getDutyNote, searchDutyLogs } from "@/api/admin";
 import type { SelectOpt } from "@/views/admin/utils/types";
+import { deleteDutyLogs, getDutyNote, getDutyLogList } from "@/api/duty";
 
 defineOptions({
   name: "OperationLogs"
@@ -73,7 +73,7 @@ const onSearch = () => {
       dayjs(time).format("YYYY-MM-DD HH:mm:ss")
     );
   }
-  searchDutyLogs(
+  getDutyLogList(
     operationForm.area,
     operationForm.type,
     pagination.currentPage,

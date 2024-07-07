@@ -1,16 +1,16 @@
 <script setup lang="tsx">
 import PureTable from "@pureadmin/table";
 import { computed, h, onMounted, reactive, ref } from "vue";
-import type { MaterialItem } from "@/types/base";
-import { dutyOver, getDutyInfo, getLatestNote } from "@/api/material";
-import { listBorrowed } from "@/api/home";
 import { usePublicHooks } from "@/views/hooks";
 import { errorNotification, successNotification } from "@/utils/notification";
 import { BorrowedInfo } from "@/types/admin";
 import { addDialog } from "@/components/ReDialog/index";
 import verifyDialog from "@/views/welcome/dialog/VerifyDialog.vue";
 import type { userInfo } from "@/views/welcome/types";
-import { getUserInfo } from "@/api/user";
+
+import { auth } from "@/api/base";
+import { dutyOver, getDutyPerson, getLatestNote } from "@/api/duty";
+import { listBorrowed } from "@/api/material";
 
 defineOptions({
   name: "GlbKey"
@@ -18,14 +18,6 @@ defineOptions({
 
 const area = "glb";
 const metaType = "key";
-enum StepStatus {
-  Wait = "wait",
-  Process = "process",
-  Finish = "finish",
-  Success = "success",
-  Warning = "warning",
-  Error = "error"
-}
 
 const dialogVisible = ref(false);
 /** 标签风格 */
@@ -161,7 +153,7 @@ onMounted(() => {
 const initInfo = () => {
   loading.value = true;
   tableDataList.length = 0;
-  getDutyInfo(area, metaType).then(res => {
+  getDutyPerson(area, metaType).then(res => {
     dutyPerson.value = res.data.dutyPerson;
     dutyPersonDepart.value = res.data.dutyPersonDepart;
   });
@@ -239,7 +231,7 @@ const openVerifyDialog = () => {
       const curData = options.props.userInfo as userInfo;
       accountFormRef.validate(valid => {
         if (valid) {
-          getUserInfo({
+          auth({
             username: curData.account,
             password: curData.password
           })

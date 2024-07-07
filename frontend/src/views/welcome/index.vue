@@ -4,12 +4,11 @@ import { deviceDetection } from "@pureadmin/utils";
 import { h, ref } from "vue";
 import MaterialBorrowDialog from "./dialog/MaterialBorrowDialog.vue";
 import useDialogStore from "./store";
-import { getAllMaterialMeta } from "@/api/material";
-import { createBorrowed } from "@/api/home";
+import { addBorrowed, getAllMaterialMeta } from "@/api/material";
 import type { borrowInfo } from "./types";
-import type { MaterialItem } from "@/types/base";
 import { successNotification } from "@/utils/notification";
 import { message } from "@/utils/message";
+import type { MaterialItem } from "@/types/material";
 
 defineOptions({
   name: "Welcome"
@@ -78,7 +77,7 @@ const borrowMaterial = () => {
                 return;
               }
               curData.baseData = borrowItemList as [MaterialItem];
-              createBorrowed(curData).then(() => {
+              addBorrowed(curData).then(() => {
                 successNotification("物资借用流程发起成功！");
                 toolBtnLoading.value = false;
                 done();
@@ -158,7 +157,7 @@ const borrowKey = () => {
                 return;
               }
               curData.baseData = borrowItemList as [MaterialItem];
-              createBorrowed(curData).then(() => {
+              addBorrowed(curData).then(() => {
                 successNotification("钥匙借用流程发起成功！");
                 keyBtnLoading.value = false;
                 done();

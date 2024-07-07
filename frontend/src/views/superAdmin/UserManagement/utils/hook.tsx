@@ -21,19 +21,6 @@ import {
 } from "@pureadmin/utils";
 
 import {
-  getDeptList,
-  getUserList,
-  addUser,
-  updateUser,
-  updateUserStatus,
-  deleteUser,
-  getUserAvatar,
-  updateUserAvatar,
-  resetUserPwd,
-  getRoleList,
-  updateUserRole
-} from "@/api/system";
-import {
   ElForm,
   ElInput,
   ElFormItem,
@@ -52,6 +39,19 @@ import {
 } from "vue";
 import { successNotification, warningNotification } from "@/utils/notification";
 import { generatePassword } from "../utils/util";
+import {
+  addUser,
+  deleteUser,
+  getDeptList,
+  getRoleList,
+  getUserAvatar,
+  getUserList,
+  resetUserPwd,
+  updateUser,
+  updateUserAvatar,
+  updateUserRole,
+  updateUserStatus
+} from "@/api/admin";
 
 export function useUser(tableRef: Ref, treeRef: Ref) {
   const form = reactive({

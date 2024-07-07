@@ -1,13 +1,23 @@
 import { http } from "@/utils/http";
 import { baseUrlApi } from "./utils";
-import type { BaseResult } from "@/types/base";
-import type {
-  AttentionResult,
-  DutyInfoResult,
-  LatestNote
-} from "@/types/material";
+import type { BaseResult, ResultTable } from "@/types/base";
 import type { addResult, MaterialResult } from "@/types/admin";
 
+/** 添加或修改物资源数据 */
+export const addMaterialMeta = async (data: object) => {
+  return http.request<addResult>("post", baseUrlApi("/material/addMeta"), {
+    data
+  });
+};
+/** 删除物资源数据 */
+export const deleteMaterialMeta = async (idList: Array<number>) => {
+  return http.request<BaseResult>("delete", baseUrlApi("/material/delete"), {
+    data: {
+      idList
+    }
+  });
+};
+/** 获取物资源数据 */
 export const getMaterialMeta = async (
   area: string,
   metaType: string,
@@ -23,9 +33,9 @@ export const getMaterialMeta = async (
     }
   });
 };
-
+/** 获取所有物资源数据 */
 export const getAllMaterialMeta = async (area: string, metaType: string) => {
-  return http.request<MaterialResult>("get", baseUrlApi("/material/all_meta"), {
+  return http.request<MaterialResult>("get", baseUrlApi("/material/allMeta"), {
     params: {
       area,
       metaType
@@ -33,54 +43,108 @@ export const getAllMaterialMeta = async (area: string, metaType: string) => {
   });
 };
 
-export const addMaterialMeta = async (data: object) => {
-  return http.request<addResult>("post", baseUrlApi("/material/add_meta"), {
+/** 新增物资送检信息 */
+export const addCheckMaterial = (data: object) => {
+  return http.request<BaseResult>("post", baseUrlApi("/material/checked/add"), {
     data
   });
 };
-
-export const deleteMaterialMeta = async (idList: Array<number>) => {
-  return http.request<BaseResult>("delete", baseUrlApi("/material/delete"), {
-    data: {
-      idList
+/** 删除物资送检信息 */
+export const deleteCheckedMaterial = (idList: Array<number>) => {
+  return http.request<BaseResult>(
+    "delete",
+    baseUrlApi("/material/checked/delete"),
+    {
+      data: {
+        idList
+      }
     }
-  });
-};
-
-export const getGlbAttentionList = () => {
-  return http.request<AttentionResult>(
-    "get",
-    baseUrlApi("/material/glb_attention")
   );
 };
-
-export const getDutyInfo = (area: string, metaType: string) => {
-  return http.request<DutyInfoResult>(
-    "get",
-    baseUrlApi("/material/duty_info"),
-    { params: { area, metaType } }
-  );
-};
-
-export const getLatestNote = (area: string, metaType: string) => {
-  return http.request<LatestNote>("get", baseUrlApi("/material/latest_note"), {
+/** 获取物资送检信息 */
+export const getCheckedMaterial = (
+  area: string,
+  metaType: string,
+  returnStatus: boolean,
+  page: number,
+  pageSize: number
+) => {
+  return http.request<ResultTable>("get", baseUrlApi("/material/checked/get"), {
     params: {
       area,
-      metaType
+      metaType,
+      returnStatus,
+      page,
+      pageSize
     }
   });
 };
-
-export const dutyOver = (area: string, metaType: string, data?: object) => {
-  return http.request<DutyInfoResult>(
+/** 归还送检物资 */
+export const updateCheckedMaterial = (data: object) => {
+  return http.request<BaseResult>(
     "post",
-    baseUrlApi("/material/dutyOver"),
+    baseUrlApi("/material/checked/update"),
     {
-      data,
+      data
+    }
+  );
+};
+
+/** 创建借用信息 */
+export const addBorrowed = (data: object) => {
+  return http.request<BaseResult>(
+    "post",
+    baseUrlApi("/material/borrowed/add"),
+    { data }
+  );
+};
+/** 删除借用信息 */
+export const deleteBorrowed = (idList: number[]) => {
+  return http.request<BaseResult>(
+    "post",
+    baseUrlApi("/material/borrowed/delete"),
+    {
+      data: { idList }
+    }
+  );
+};
+/** 获取借用信息 */
+export const listBorrowed = (
+  area: string,
+  page: number,
+  pageSize: number,
+  borrowedStatus?: boolean,
+  borrowWhether?: boolean,
+  returnStatus?: boolean
+) => {
+  return http.request<ResultTable>(
+    "get",
+    baseUrlApi("/material/borrowed/list"),
+    {
       params: {
         area,
-        metaType
+        page,
+        pageSize,
+        borrowedStatus,
+        borrowWhether,
+        returnStatus
       }
+    }
+  );
+};
+/** 更新借用信息 */
+export const updateBorrowedInfo = (
+  idList: number[],
+  uuid: string,
+  borrowStatus?: boolean,
+  borrowWhether?: boolean,
+  returnStatus?: boolean
+) => {
+  return http.request<BaseResult>(
+    "post",
+    baseUrlApi("/material/borrowed/update"),
+    {
+      data: { borrowStatus, uuid, idList, borrowWhether, returnStatus }
     }
   );
 };

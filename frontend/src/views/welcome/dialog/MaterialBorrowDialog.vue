@@ -5,13 +5,13 @@ import Search from "@iconify-icons/ep/search";
 import Add from "@iconify-icons/fluent/add-12-filled";
 import Subtract from "@iconify-icons/fluent/subtract-12-filled";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { MaterialItem } from "@/types/base";
 import { useUserStoreHook } from "@/store/modules/user";
 import { addDialog } from "@/components/ReDialog/index";
 import verifyDialog from "./VerifyDialog.vue";
 import type { userInfo } from "../types";
-import { getUserInfo } from "@/api/user";
 import type { borrowInfo } from "../types";
+import { auth } from "@/api/base";
+import { MaterialItem } from "@/types/material";
 
 type materialItemList = {
   borrowInfo: borrowInfo;
@@ -108,7 +108,7 @@ const openVerifyDialog = () => {
       if (curData.account !== "" || curData.password !== "") {
         accountFormRef.validate(valid => {
           if (valid) {
-            getUserInfo({
+            auth({
               username: curData.account,
               password: curData.password
             }).then(res => {

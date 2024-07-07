@@ -1,7 +1,6 @@
 <script setup lang="tsx">
 import { OptionsType } from "@/components/ReSegmented";
 import { reactive, ref } from "vue";
-import { deleteBorrowed, listBorrowed } from "@/api/home";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { usePublicHooks } from "@/views/hooks";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
@@ -10,6 +9,7 @@ import Reject from "@iconify-icons/fluent/text-change-reject-24-filled";
 import PureTableBar from "@/components/RePureTableBar/src/bar";
 import { getKeyList } from "@pureadmin/utils";
 import { errorNotification, successNotification } from "@/utils/notification";
+import { deleteBorrowed, listBorrowed } from "@/api/material";
 
 const props = defineProps({
   segmentedOptions: {
