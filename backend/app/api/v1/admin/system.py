@@ -4,7 +4,7 @@
 # @Author    :dayezi
 from fastapi import APIRouter, Request
 
-from app import settings
+from app.settings import settings
 from app.core.init_db import test_db, set_db
 from app.schemas import Success, Fail
 from app.schemas.admin import DbInfo
