@@ -1,157 +1,40 @@
 <script setup lang="tsx">
-import { ref, reactive, computed, onMounted, h } from "vue";
-import { getMaterialMeta } from "@/api/material";
-import { successNotification, errorNotification } from "@/utils/notification";
 import PureTable from "@pureadmin/table";
+import { computed, h, onMounted, reactive, ref } from "vue";
+import { usePublicHooks } from "@/views/hooks";
+import { errorNotification, successNotification } from "@/utils/notification";
+import { BorrowedInfo } from "@/types/admin";
 import { addDialog } from "@/components/ReDialog/index";
 import verifyDialog from "@/views/welcome/dialog/VerifyDialog.vue";
 import type { userInfo } from "@/views/welcome/types";
-import {
-  dutyOver,
-  getDutyPerson,
-  getDutyOverList,
-  getLatestNote
-} from "@/api/duty";
+
 import { auth } from "@/api/base";
-import { MaterialItem } from "@/types/material";
+import { dutyOver, getDutyPerson, getLatestNote } from "@/api/duty";
+import { listBorrowed } from "@/api/material";
 
-defineOptions({
-  name: "GlbMaterial"
-});
-
-onMounted(() => {
-  init();
-});
-
-const init = () => {
-  loading.value = true;
-  getMaterialMeta("glb", "tool")
-    .then(res => {
-      confirmedData.length = 0;
-      confirmedData.push(...res.data);
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-  getDutyOverList("glb").then(res => {
-    attention.length = 0;
-    attention.push(...res.data);
-  });
-  getLatestNote("glb", "tool").then(res => {
-    lastRemark.value = res.data.note;
-  });
-  getDutyPerson("glb", "tool").then(res => {
-    dutyPerson.value = res.data.dutyPerson;
-    dutyPersonDepart.value = res.data.dutyPersonDepart;
-  });
-  remark.value = "";
-  step1Init.value = true;
-  step2Init.value = true;
-  step3Init.value = true;
-
-  handleOverBtnLoading.value = false;
-};
-
-enum StepStatus {
-  Wait = "wait",
-  Process = "process",
-  Finish = "finish",
-  Success = "success",
-  Warning = "warning",
-  Error = "error"
-}
-
-interface tableData extends Array<MaterialItem> {}
-
-const columns: TableColumnList = [
-  { label: "序号", type: "index", width: "60" },
-  { label: "位置", prop: "position" },
-  { label: "名称", prop: "name" },
-  { label: "型号", prop: "model", width: "200" },
-  { label: "数量", prop: "number", width: "100" },
-  { label: "送检数量", prop: "checking", width: "100" },
-  {
-    label: "当前数量",
-    width: "150",
-    prop: "nowNumber",
-    cellRenderer: ({ row }) => (
-      <el-input-number v-model={row.nowNumber} controls={false} size="small" />
-    )
+const props = defineProps({
+  area: {
+    type: String,
+    required: true
   },
-  {
-    label: "确认",
-    prop: "confirm",
-    width: "100",
-    cellRenderer: ({ row }) => (
-      <el-button
-        size="small"
-        type={confirmBtnStatus(row)}
-        onClick={() => handleConfirm(row)}
-        plain
-      >
-        确认
-      </el-button>
-    )
+  metaType: {
+    type: String,
+    required: true
   }
-];
-const loading = ref(false);
-
-const confirmedData: tableData = reactive([]);
-const step1Init = ref(true);
-
-const step1Status = computed(() => {
-  return confirmedData.every(
-    item => item.nowNumber === item.number - item.borrowed - item.checking
-  )
-    ? StepStatus.Success
-    : StepStatus.Error;
 });
 
-const handleConfirm = row => {
-  row.nowNumber = Number(row.number) - row.borrowed - row.checking;
-  step1Init.value = false;
-};
-const confirmBtnStatus = (row): "success" | "warning" => {
-  return row.nowNumber == row.number - row.borrowed - row.checking
-    ? "success"
-    : "warning";
-};
-const handleConfirmAll = () => {
-  // 确认所有
-  confirmedData.forEach(row => {
-    row.nowNumber = row.number - row.borrowed - row.checking;
-    step1Init.value = false;
-  });
-};
+const dialogVisible = ref(false);
+/** 标签风格 */
+const { tagStyle } = usePublicHooks();
 
-const remark = ref("");
-const lastRemark = ref("");
-const step2Init = ref(true);
-
-const step2Status = computed(() => {
-  return remark.value.length > 0 ? StepStatus.Success : StepStatus.Error;
+const popDisabled = computed(() => {
+  return true;
 });
-
-const copyLastRemark = () => {
-  remark.value = lastRemark.value;
-  step2Init.value = false;
-};
-
-const burlHandle = () => {
-  step2Init.value = false;
-};
-
-const attention = reactive([]);
-
-const step3Init = ref(true);
-const attentionStatus = computed(() => {
-  return step3Init.value ? StepStatus.Process : StepStatus.Success;
-});
-const attentionBtn = computed(() => {
-  return step3Init.value ? StepStatus.Warning : StepStatus.Success;
-});
-const readAttention = () => {
-  step3Init.value = false;
+const handoverConfirm = () => {
+  // 交班
+  if (popDisabled.value) {
+    dialogVisible.value = true;
+  }
 };
 
 const dutyPerson = ref("");
@@ -162,53 +45,172 @@ const dutyOverInfo = reactive({
   phone: "",
   uuid: ""
 });
-const dialogVisible = ref(false);
-const handleOverBtnLoading = ref(false);
-const popDisabled = computed(() => {
-  return !(step1Init.value || step2Init.value || step3Init.value);
-});
-const handoverConfirm = () => {
-  // 交班
-  if (popDisabled.value) {
-    dialogVisible.value = true;
+const tableDataList = reactive([]);
+const loading = ref(false);
+
+const remark = ref("");
+const lastRemark = ref("");
+
+const copyLastRemark = () => {
+  remark.value = lastRemark.value;
+};
+
+const columns: TableColumnList = [
+  {
+    label: "序号",
+    type: "index",
+    width: 60
+  },
+  {
+    label: "借用物资信息",
+    prop: "material",
+    cellRenderer: ({ row }) => (
+      <el-popover
+        placement="right"
+        width="200"
+        trigger="click"
+        v-slots={{
+          reference: () => <el-button link>{row.material.name}</el-button>,
+          default: () => (
+            <ul>
+              <li>名称：{row.material.name}</li>
+              <li>型号：{row.material.model}</li>
+              <li>位置：{row.material.position}</li>
+            </ul>
+          )
+        }}
+      ></el-popover>
+    )
+  },
+  {
+    label: "借用人信息",
+    prop: "username",
+    cellRenderer: ({ row }) => (
+      <el-popover
+        placement="right"
+        width="200"
+        trigger="click"
+        v-slots={{
+          reference: () => <el-button link>{row.username}</el-button>,
+          default: () => (
+            <ul>
+              <li>姓名：{row.username}</li>
+              <li>电话：{row.phone}</li>
+              <li>部门：{row.userDepart}</li>
+            </ul>
+          )
+        }}
+      ></el-popover>
+    )
+  },
+  {
+    label: "借用人电话",
+    prop: "phone"
+  },
+  {
+    label: "数量",
+    prop: "borrowing"
+  },
+  {
+    label: "借用理由",
+    prop: "reason",
+    cellRenderer: ({ row }) => (
+      <el-popover
+        placement="right"
+        width="300"
+        trigger="hover"
+        v-slots={{
+          reference: () => (
+            <el-text truncated style="width: 100px">
+              {row.reason}
+            </el-text>
+          ),
+          default: () => <p>{row.reason}</p>
+        }}
+      ></el-popover>
+    )
+  },
+  {
+    label: "借用时间",
+    prop: "borrowTime"
+  },
+  {
+    label: "状态",
+    prop: "borrowApproveStatus",
+    cellRenderer: ({ row, props }) => (
+      <el-tag
+        size={props.size}
+        style={tagStyle.value(row.borrowApproveStatus ? 1 : 0)}
+      >
+        {row.borrowApproveStatus ? "待归还" : "待审批"}
+      </el-tag>
+    )
   }
+];
+
+const handleOverBtnLoading = ref(false);
+
+onMounted(() => {
+  init();
+});
+
+const init = () => {
+  loading.value = true;
+  tableDataList.length = 0;
+  getDutyPerson(props.area, props.metaType).then(res => {
+    dutyPerson.value = res.data.dutyPerson;
+    dutyPersonDepart.value = res.data.dutyPersonDepart;
+  });
+  listBorrowed(props.area, 1, 100, false).then(res => {
+    tableDataList.push(...res.data);
+  });
+  listBorrowed(props.area, 1, 100, true, true, false).then(res => {
+    tableDataList.push(...res.data);
+    console.log(tableDataList);
+  });
+  getLatestNote(props.area, props.metaType).then(res => {
+    lastRemark.value = res.data.note;
+  });
+  remark.value = "";
+  loading.value = false;
 };
 
 const handover = () => {
   let data = {
-    materialData: confirmedData.map((data: MaterialItem) => {
+    materialData: tableDataList.map((data: BorrowedInfo) => {
       return {
-        name: data.name,
-        model: data.model,
-        position: data.position,
-        number: data.number,
-        nowNumber: data.nowNumber,
+        name: data.material.name,
+        model: data.material.model,
+        position: data.material.position,
+        number: data.material.number,
+        nowNumber: data.material.number - data.material.borrowed,
         dutyPerson: dutyOverInfo.username,
         dutyPersonDepart: dutyOverInfo.depart,
-        area: "glb",
-        type: "tool"
+        area: props.area,
+        type: props.metaType
       };
     }),
     materialNote: {
       note: remark.value,
-      area: "glb",
-      type: "tool"
+      area: props.area,
+      type: props.metaType
     },
     dutyPerson: dutyOverInfo.username,
     dutyPersonDepart: dutyOverInfo.depart
   };
   handleOverBtnLoading.value = true;
-  dutyOver("glb", "tool", data)
+  dutyOver(props.area, props.metaType, data)
     .then(() => {
       init();
-      handleOverBtnLoading.value = false;
       successNotification("交班成功");
+      dialogVisible.value = false;
     })
     .catch(err => {
       errorNotification(err.message);
+    })
+    .finally(() => {
       handleOverBtnLoading.value = false;
     });
-  dialogVisible.value = false;
 };
 
 const verifyForm = ref();
@@ -295,15 +297,12 @@ const openVerifyDialog = () => {
     <el-card shadow="never">
       <div class="flex">
         <el-steps direction="vertical">
-          <el-step
-            title="核对物资数量"
-            :status="step1Init ? 'process' : step1Status"
-          >
+          <el-step title="核对钥匙借用情况">
             <template #description>
               <el-space direction="vertical" alignment="flex-start">
                 <pure-table
                   :columns="columns"
-                  :data="confirmedData"
+                  :data="tableDataList"
                   :border="true"
                   stripe
                   :loading="loading"
@@ -312,20 +311,10 @@ const openVerifyDialog = () => {
                   :cell-style="{ textAlign: 'center' }"
                   style="width: 70vw"
                 />
-                <el-button
-                  type="primary"
-                  plain
-                  size="large"
-                  @click="handleConfirmAll"
-                  >确认所有</el-button
-                >
               </el-space>
             </template>
           </el-step>
-          <el-step
-            title="备注异常信息"
-            :status="step2Init ? 'process' : step2Status"
-          >
+          <el-step title="备注异常信息">
             <template #description>
               <el-space alignment="flex-start">
                 <el-space direction="vertical" alignment="flex-start">
@@ -338,7 +327,6 @@ const openVerifyDialog = () => {
                     maxlength="510"
                     :show-word-limit="true"
                     style="width: 35vw"
-                    @blur="burlHandle"
                   />
                   <el-button type="warning" plain @click="copyLastRemark"
                     >复制上个班</el-button
@@ -356,29 +344,6 @@ const openVerifyDialog = () => {
                     readonly
                   />
                 </el-space>
-              </el-space>
-            </template>
-          </el-step>
-          <el-step title="查看注意事项" :status="attentionStatus">
-            <template #description>
-              <el-space direction="vertical" alignment="flex-start">
-                <el-alert
-                  title="注意事项"
-                  :type="attentionBtn"
-                  show-icon
-                  :closable="false"
-                >
-                  <template #default>
-                    <ol>
-                      <li v-for="(item, index) in attention" :key="index">
-                        {{ item.content }}
-                      </li>
-                    </ol>
-                  </template>
-                </el-alert>
-                <el-button :type="attentionBtn" plain @click="readAttention"
-                  >确认阅读
-                </el-button>
               </el-space>
             </template>
           </el-step>

@@ -15,8 +15,15 @@ import {
 import { auth } from "@/api/base";
 import { MaterialItem } from "@/types/material";
 
-defineOptions({
-  name: "GlbMaterial"
+const props = defineProps({
+  area: {
+    type: String,
+    required: true
+  },
+  metaType: {
+    type: String,
+    required: true
+  }
 });
 
 onMounted(() => {
@@ -25,7 +32,7 @@ onMounted(() => {
 
 const init = () => {
   loading.value = true;
-  getMaterialMeta("glb", "tool")
+  getMaterialMeta(props.area, props.metaType)
     .then(res => {
       confirmedData.length = 0;
       confirmedData.push(...res.data);
@@ -33,14 +40,14 @@ const init = () => {
     .finally(() => {
       loading.value = false;
     });
-  getDutyOverList("glb").then(res => {
+  getDutyOverList(props.area).then(res => {
     attention.length = 0;
     attention.push(...res.data);
   });
-  getLatestNote("glb", "tool").then(res => {
+  getLatestNote(props.area, props.metaType).then(res => {
     lastRemark.value = res.data.note;
   });
-  getDutyPerson("glb", "tool").then(res => {
+  getDutyPerson(props.area, props.metaType).then(res => {
     dutyPerson.value = res.data.dutyPerson;
     dutyPersonDepart.value = res.data.dutyPersonDepart;
   });
@@ -185,20 +192,20 @@ const handover = () => {
         nowNumber: data.nowNumber,
         dutyPerson: dutyOverInfo.username,
         dutyPersonDepart: dutyOverInfo.depart,
-        area: "glb",
-        type: "tool"
+        area: props.area,
+        type: props.metaType
       };
     }),
     materialNote: {
       note: remark.value,
-      area: "glb",
-      type: "tool"
+      area: props.area,
+      type: props.metaType
     },
     dutyPerson: dutyOverInfo.username,
     dutyPersonDepart: dutyOverInfo.depart
   };
   handleOverBtnLoading.value = true;
-  dutyOver("glb", "tool", data)
+  dutyOver(props.area, props.metaType, data)
     .then(() => {
       init();
       handleOverBtnLoading.value = false;
