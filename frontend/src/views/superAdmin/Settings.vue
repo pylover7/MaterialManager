@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, Ref } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { setDB, testDB, getDB } from "@/api/superAdmin";
 import { successNotification, warningNotification } from "@/utils/notification";
 import { dbInfoType } from "@/types/superAdmin";
 import { removeToken } from "@/utils/auth";
 import { resetRouter, router } from "@/router";
 import { message } from "@/utils/message";
 import Segmented, { OptionsType } from "@/components/ReSegmented";
+import { getDB, setDB, testDB } from "@/api/admin";
 
 defineOptions({
   name: "Settings"

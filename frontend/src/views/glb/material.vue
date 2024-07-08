@@ -1,20 +1,56 @@
 <script setup lang="tsx">
-import { ref, reactive, computed, onMounted } from "vue";
-import {
-  getMaterialMeta,
-  dutyOver,
-  getLatestNote,
-  getDutyInfo
-} from "@/api/material";
-import { useUserStoreHook } from "@/store/modules/user";
+import { ref, reactive, computed, onMounted, h } from "vue";
+import { getMaterialMeta } from "@/api/material";
 import { successNotification, errorNotification } from "@/utils/notification";
-import { getDutyOverList } from "@/api/admin";
 import PureTable from "@pureadmin/table";
-import type { MaterialItem } from "@/types/base";
+import { addDialog } from "@/components/ReDialog/index";
+import verifyDialog from "@/views/welcome/dialog/VerifyDialog.vue";
+import type { userInfo } from "@/views/welcome/types";
+import {
+  dutyOver,
+  getDutyPerson,
+  getDutyOverList,
+  getLatestNote
+} from "@/api/duty";
+import { auth } from "@/api/base";
+import { MaterialItem } from "@/types/material";
 
 defineOptions({
   name: "GlbMaterial"
 });
+
+onMounted(() => {
+  init();
+});
+
+const init = () => {
+  loading.value = true;
+  getMaterialMeta("glb", "tool")
+    .then(res => {
+      confirmedData.length = 0;
+      confirmedData.push(...res.data);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+  getDutyOverList("glb").then(res => {
+    attention.length = 0;
+    attention.push(...res.data);
+  });
+  getLatestNote("glb", "tool").then(res => {
+    lastRemark.value = res.data.note;
+  });
+  getDutyPerson("glb", "tool").then(res => {
+    dutyPerson.value = res.data.dutyPerson;
+    dutyPersonDepart.value = res.data.dutyPersonDepart;
+  });
+  remark.value = "";
+  step1Init.value = true;
+  step2Init.value = true;
+  step3Init.value = true;
+
+  handleOverBtnLoading.value = false;
+};
 
 enum StepStatus {
   Wait = "wait",
@@ -33,7 +69,6 @@ const columns: TableColumnList = [
   { label: "名称", prop: "name" },
   { label: "型号", prop: "model", width: "200" },
   { label: "数量", prop: "number", width: "100" },
-  { label: "外借数量", prop: "borrowed", width: "100" },
   { label: "送检数量", prop: "checking", width: "100" },
   {
     label: "当前数量",
@@ -60,38 +95,6 @@ const columns: TableColumnList = [
   }
 ];
 const loading = ref(false);
-onMounted(() => {
-  initGlb();
-});
-
-const initGlb = () => {
-  loading.value = true;
-  getMaterialMeta("glb", "tool")
-    .then(res => {
-      confirmedData.length = 0;
-      confirmedData.push(...res.data);
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-  getDutyOverList("glb").then(res => {
-    attention.length = 0;
-    attention.push(...res.data);
-  });
-  getLatestNote("glb", "tool").then(res => {
-    lastRemark.value = res.data.note;
-  });
-  getDutyInfo("glb", "tool").then(res => {
-    dutyPerson.value = res.data.dutyPerson;
-    dutyPersonDepart.value = res.data.dutyPersonDepart;
-  });
-  remark.value = "";
-  step1Init.value = true;
-  step2Init.value = true;
-  step3Init.value = true;
-
-  handleOverBtnLoading.value = false;
-};
 
 const confirmedData: tableData = reactive([]);
 const step1Init = ref(true);
@@ -153,10 +156,16 @@ const readAttention = () => {
 
 const dutyPerson = ref("");
 const dutyPersonDepart = ref("");
+const dutyOverInfo = reactive({
+  username: "",
+  depart: "",
+  phone: "",
+  uuid: ""
+});
 const dialogVisible = ref(false);
 const handleOverBtnLoading = ref(false);
 const popDisabled = computed(() => {
-  return !(step2Init.value || step2Init.value || step3Init.value);
+  return !(step1Init.value || step2Init.value || step3Init.value);
 });
 const handoverConfirm = () => {
   // 交班
@@ -174,8 +183,8 @@ const handover = () => {
         position: data.position,
         number: data.number,
         nowNumber: data.nowNumber,
-        dutyPerson: useUserStoreHook()?.username,
-        dutyPersonDepart: useUserStoreHook()?.depart,
+        dutyPerson: dutyOverInfo.username,
+        dutyPersonDepart: dutyOverInfo.depart,
         area: "glb",
         type: "tool"
       };
@@ -185,13 +194,13 @@ const handover = () => {
       area: "glb",
       type: "tool"
     },
-    dutyPerson: useUserStoreHook()?.username,
-    dutyPersonDepart: useUserStoreHook()?.depart
+    dutyPerson: dutyOverInfo.username,
+    dutyPersonDepart: dutyOverInfo.depart
   };
   handleOverBtnLoading.value = true;
   dutyOver("glb", "tool", data)
-    .then(res => {
-      initGlb();
+    .then(() => {
+      init();
       handleOverBtnLoading.value = false;
       successNotification("交班成功");
     })
@@ -200,6 +209,48 @@ const handover = () => {
       handleOverBtnLoading.value = false;
     });
   dialogVisible.value = false;
+};
+
+const verifyForm = ref();
+
+const openVerifyDialog = () => {
+  addDialog({
+    title: "接班人员验证",
+    width: "25%",
+    props: {
+      userInfo: {
+        account: "",
+        password: "",
+        name: "",
+        phone: "",
+        depart: "",
+        disable: true
+      }
+    },
+    contentRenderer: () => h(verifyDialog, { ref: verifyForm }),
+    beforeSure(done, { options }) {
+      const accountFormRef = verifyForm.value.getAccountRef();
+      const curData = options.props.userInfo as userInfo;
+      accountFormRef.validate(valid => {
+        if (valid) {
+          auth({
+            username: curData.account,
+            password: curData.password
+          })
+            .then(res => {
+              dutyOverInfo.username = res.data.username;
+              dutyOverInfo.depart = res.data.depart;
+              dutyOverInfo.phone = res.data.phone;
+              dutyOverInfo.uuid = res.data.uuid;
+              done();
+            })
+            .catch(() => {
+              errorNotification("账号或密码错误");
+            });
+        }
+      });
+    }
+  });
 };
 </script>
 
@@ -262,7 +313,7 @@ const handover = () => {
                   style="width: 70vw"
                 />
                 <el-button
-                  type="success"
+                  type="primary"
                   plain
                   size="large"
                   @click="handleConfirmAll"
@@ -334,14 +385,26 @@ const handover = () => {
         </el-steps>
       </div>
     </el-card>
-    <el-dialog v-model="dialogVisible" title="交班确认" width="500">
-      <span>确认从 {{ dutyPerson }} 接班</span>
+    <el-dialog v-model="dialogVisible" title="交班确认" width="400">
+      <el-space
+        direction="vertical"
+        style="align-items: start; padding-left: 10px"
+      >
+        <span
+          >确认从
+          <span style="font-size: large; color: red">{{ dutyPerson }}</span>
+          接班</span
+        >
+        <span>接班人员：{{ dutyOverInfo.username }}</span>
+        <el-button type="primary" @click="openVerifyDialog">验证</el-button>
+      </el-space>
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
           <el-button
             type="primary"
             :loading="handleOverBtnLoading"
+            :disabled="dutyOverInfo.username.length === 0"
             @click="handover"
           >
             确定

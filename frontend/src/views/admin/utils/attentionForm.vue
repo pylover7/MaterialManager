@@ -4,8 +4,8 @@ import { FormItemProps, FormProps } from "./types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Minus from "@iconify-icons/ep/semi-select";
 import Add from "@iconify-icons/fluent/add-12-filled";
-import { deleteDutyOverList } from "@/api/admin";
 import { successNotification } from "@/utils/notification";
+import { deleteDutyOverList } from "@/api/duty";
 
 const attentionFormRef = ref();
 function getRef() {

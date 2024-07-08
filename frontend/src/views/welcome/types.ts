@@ -1,4 +1,4 @@
-import type { MaterialItem } from "@/types/base";
+import type { MaterialItem } from "@/types/material";
 
 export type userInfo = {
   account: string;

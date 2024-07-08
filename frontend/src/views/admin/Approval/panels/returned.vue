@@ -1,7 +1,6 @@
 <script setup lang="tsx">
 import { OptionsType } from "@/components/ReSegmented";
 import { reactive, ref } from "vue";
-import { deleteBorrowed, listBorrowed } from "@/api/home";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { usePublicHooks } from "@/views/hooks";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
@@ -10,6 +9,7 @@ import Reject from "@iconify-icons/fluent/text-change-reject-24-filled";
 import PureTableBar from "@/components/RePureTableBar/src/bar";
 import { getKeyList } from "@pureadmin/utils";
 import { errorNotification, successNotification } from "@/utils/notification";
+import { deleteBorrowed, listBorrowed } from "@/api/material";
 
 const props = defineProps({
   segmentedOptions: {
@@ -26,14 +26,22 @@ const loading = ref(false);
 // 表格数据
 const dataList = ref([]);
 const onSearch = () => {
+  loading.value = true;
   listBorrowed(
     borrowedOptBar.area,
     pagination.currentPage,
-    pagination.pageSize
-  ).then(res => {
-    dataList.value = res.data;
-    pagination.total = res.total;
-  });
+    pagination.pageSize,
+    true,
+    true,
+    true
+  )
+    .then(res => {
+      dataList.value = res.data;
+      pagination.total = res.total;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 // 分页设置
 const pagination = reactive<PaginationProps>({
@@ -112,12 +120,12 @@ const columns: TableColumnList = [
         width="200"
         trigger="click"
         v-slots={{
-          reference: () => <el-button link>{row.material[0].name}</el-button>,
+          reference: () => <el-button link>{row.material.name}</el-button>,
           default: () => (
             <ul>
-              <li>名称：{row.material[0].name}</li>
-              <li>型号：{row.material[0].model}</li>
-              <li>位置：{row.material[0].position}</li>
+              <li>名称：{row.material.name}</li>
+              <li>型号：{row.material.model}</li>
+              <li>位置：{row.material.position}</li>
             </ul>
           )
         }}
@@ -194,12 +202,13 @@ const columns: TableColumnList = [
         trigger="click"
         v-slots={{
           reference: () => (
-            <el-button link>{row.borrowApproveUser[0].username}</el-button>
+            <el-button link>{row.borrowApproveUser?.username}</el-button>
           ),
           default: () => (
             <ul>
-              <li>姓名：{row.borrowApproveUser[0].username}</li>
-              <li>电话：{row.borrowApproveUser[0].phone}</li>
+              <li>姓名：{row.borrowApproveUser?.username}</li>
+              <li>电话：{row.borrowApproveUser?.phone}</li>
+              <li>部门：{row.borrowApproveUser?.depart}</li>
             </ul>
           )
         }}
@@ -232,12 +241,13 @@ const columns: TableColumnList = [
         trigger="click"
         v-slots={{
           reference: () => (
-            <el-button link>{row.returnApproveUser[0].username}</el-button>
+            <el-button link>{row.returnApproveUser?.username}</el-button>
           ),
           default: () => (
             <ul>
-              <li>姓名：{row.returnApproveUser[0].username}</li>
-              <li>电话：{row.returnApproveUser[0].phone}</li>
+              <li>姓名：{row.returnApproveUser?.username}</li>
+              <li>电话：{row.returnApproveUser?.phone}</li>
+              <li>部门：{row.returnApproveUser?.depart}</li>
             </ul>
           )
         }}

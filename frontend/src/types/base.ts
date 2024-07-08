@@ -1,38 +1,27 @@
 export type BaseResult = {
   code: number;
   msg: string;
-};
-export type MaterialItem = {
-  id?: number;
-  uuid?: string;
-  name: string;
-  model: string;
-  type: string;
-  area: string;
-  position: string;
-  number: number;
-  nowNumber?: number;
-  checking?: number;
-  borrowing?: number;
-  borrowed?: number;
-  created_at?: string;
-  updated_at?: string;
+  data?: object;
 };
 
-export type User = {
-  id: number;
-  uuid: string;
-  username: string;
-  nickname: string;
-  email: string;
-  phone: string;
-  avatar?: string;
-  depart_id: number;
-  is_superuser: boolean;
-  remark: string;
-  sex: number;
-  status: number;
-  created_at: string;
-  updated_at: string;
-  last_login: string;
+export type ResultList = {
+  code: number;
+  msg: string;
+  data?: Array<any>;
+};
+export type ResultRoleAuth = BaseResult & {
+  data: {
+    menus: Array<number>;
+    apis: Array<number>;
+  };
+};
+export type ResultTable = {
+  success: boolean;
+  data?: Array<any>;
+  /** 总条目数 */
+  total?: number;
+  /** 每页显示条目个数 */
+  pageSize?: number;
+  /** 当前页数 */
+  currentPage?: number;
 };

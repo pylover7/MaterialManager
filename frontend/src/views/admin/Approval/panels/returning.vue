@@ -3,7 +3,6 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Search from "@iconify-icons/ep/search";
 import Approve from "@iconify-icons/fluent/approvals-app-16-filled";
 import { reactive, ref } from "vue";
-import { listBorrowed, updateBorrowedInfo } from "@/api/home";
 import { message } from "@/utils/message";
 import { PaginationProps } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
@@ -11,6 +10,7 @@ import { successNotification } from "@/utils/notification";
 import { usePublicHooks } from "@/views/hooks";
 import PureTableBar from "@/components/RePureTableBar/src/bar";
 import { OptionsType } from "@/components/ReSegmented";
+import { listBorrowed, updateBorrowedInfo } from "@/api/material";
 
 const props = defineProps({
   segmentedOptions: {
@@ -30,6 +30,7 @@ const loading = ref(false);
 const { tagStyle } = usePublicHooks();
 
 const onSearchReturn = () => {
+  loading.value = true;
   listBorrowed(
     returnedOptBar.area,
     pagination2.currentPage,
@@ -37,10 +38,14 @@ const onSearchReturn = () => {
     true,
     true,
     false
-  ).then(res => {
-    returnDataList.value = res.data;
-    pagination2.total = res.total;
-  });
+  )
+    .then(res => {
+      returnDataList.value = res.data;
+      pagination2.total = res.total;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 
 const selectedNum = ref(0);
@@ -68,12 +73,12 @@ const returnFormColumns: TableColumnList = [
         width="200"
         trigger="click"
         v-slots={{
-          reference: () => <el-button link>{row.material[0].name}</el-button>,
+          reference: () => <el-button link>{row.material.name}</el-button>,
           default: () => (
             <ul>
-              <li>名称：{row.material[0].name}</li>
-              <li>型号：{row.material[0].model}</li>
-              <li>位置：{row.material[0].position}</li>
+              <li>名称：{row.material.name}</li>
+              <li>型号：{row.material.model}</li>
+              <li>位置：{row.material.position}</li>
             </ul>
           )
         }}

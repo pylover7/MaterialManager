@@ -12,12 +12,16 @@ import { auth } from "@/api/base";
 import { dutyOver, getDutyPerson, getLatestNote } from "@/api/duty";
 import { listBorrowed } from "@/api/material";
 
-defineOptions({
-  name: "GlbKey"
+const props = defineProps({
+  area: {
+    type: String,
+    required: true
+  },
+  metaType: {
+    type: String,
+    required: true
+  }
 });
-
-const area = "glb";
-const metaType = "key";
 
 const dialogVisible = ref(false);
 /** 标签风格 */
@@ -147,24 +151,24 @@ const columns: TableColumnList = [
 const handleOverBtnLoading = ref(false);
 
 onMounted(() => {
-  initInfo();
+  init();
 });
 
-const initInfo = () => {
+const init = () => {
   loading.value = true;
   tableDataList.length = 0;
-  getDutyPerson(area, metaType).then(res => {
+  getDutyPerson(props.area, props.metaType).then(res => {
     dutyPerson.value = res.data.dutyPerson;
     dutyPersonDepart.value = res.data.dutyPersonDepart;
   });
-  listBorrowed(area, 1, 100, false).then(res => {
+  listBorrowed(props.area, 1, 100, false).then(res => {
     tableDataList.push(...res.data);
   });
-  listBorrowed(area, 1, 100, true, true, false).then(res => {
+  listBorrowed(props.area, 1, 100, true, true, false).then(res => {
     tableDataList.push(...res.data);
     console.log(tableDataList);
   });
-  getLatestNote(area, metaType).then(res => {
+  getLatestNote(props.area, props.metaType).then(res => {
     lastRemark.value = res.data.note;
   });
   remark.value = "";
@@ -182,22 +186,22 @@ const handover = () => {
         nowNumber: data.material.number - data.material.borrowed,
         dutyPerson: dutyOverInfo.username,
         dutyPersonDepart: dutyOverInfo.depart,
-        area: area,
-        type: metaType
+        area: props.area,
+        type: props.metaType
       };
     }),
     materialNote: {
       note: remark.value,
-      area: area,
-      type: metaType
+      area: props.area,
+      type: props.metaType
     },
     dutyPerson: dutyOverInfo.username,
     dutyPersonDepart: dutyOverInfo.depart
   };
   handleOverBtnLoading.value = true;
-  dutyOver(area, metaType, data)
+  dutyOver(props.area, props.metaType, data)
     .then(() => {
-      initInfo();
+      init();
       successNotification("交班成功");
       dialogVisible.value = false;
     })

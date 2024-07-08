@@ -9,22 +9,19 @@ import { deviceDetection, getKeyList } from "@pureadmin/utils";
 import {
   getMaterialMeta,
   addMaterialMeta,
-  deleteMaterialMeta
+  deleteMaterialMeta,
+  addCheckMaterial
 } from "@/api/material";
 import type { FormInstance, FormRules } from "element-plus";
 import { errorNotification, successNotification } from "@/utils/notification";
-import { MaterialItem } from "@/types/base";
 import { addDialog } from "@/components/ReDialog";
 import attentionForm from "./utils/attentionForm.vue";
 import { SelectOpt, FormItemProps } from "./utils/types";
-import {
-  createCheckMaterial,
-  getDutyOverList,
-  updateDutyOverList
-} from "@/api/admin";
 import Search from "@iconify-icons/ep/search";
 import { message } from "@/utils/message";
 import { useUserStoreHook } from "@/store/modules/user";
+import { getDutyOverList, updateDutyOverList } from "@/api/duty";
+import { MaterialItem } from "@/types/material";
 
 defineOptions({
   name: "MaterialMeta"
@@ -169,9 +166,12 @@ const columns: TableColumnList = [
                   number: toCheckNumber.value,
                   toCheckUserUUID: userUUId.value
                 };
-                createCheckMaterial(data).then(res => {
+                addCheckMaterial(data).then(res => {
                   done();
-                  successNotification(res.msg);
+                  successNotification(
+                    `物资【${row.name}】送检数量【${toCheckNumber.value}】`
+                  );
+                  toCheckNumber.value = 1;
                   onSearch();
                 });
               },

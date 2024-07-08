@@ -8,10 +8,35 @@ from app.models.users import Api
 from app.schemas import Success, SuccessExtra
 from app.schemas.apis import *
 
-router = APIRouter()
+apiRouter = APIRouter()
 
 
-@router.get("/list", summary="查看API列表")
+@apiRouter.post("/add", summary="创建API")
+async def create_api(
+    api_in: ApiCreate,
+):
+    await api_controller.create(obj_in=api_in)
+    return Success(msg="Created Successfully")
+
+
+@apiRouter.delete("/delete", summary="删除API")
+async def delete_api(
+    api_id: int = Query(..., description="ApiID"),
+):
+    await api_controller.remove(id=api_id)
+    return Success(msg="Deleted Success")
+
+
+@apiRouter.get("/get", summary="查看API")
+async def get_api(
+    id: int = Query(..., description="Api"),
+):
+    api_obj = await api_controller.get(id=id)
+    data = await api_obj.to_dict()
+    return Success(data=data)
+
+
+@apiRouter.get("/list", summary="获取API列表")
 async def list_api(
     page: int = Query(1, description="页码"),
     page_size: int = Query(1000, description="每页数量"),
@@ -31,24 +56,7 @@ async def list_api(
     return SuccessExtra(data=data, total=total, currentPage=page, pageSize=page_size)
 
 
-@router.get("/get", summary="查看Api")
-async def get_api(
-    id: int = Query(..., description="Api"),
-):
-    api_obj = await api_controller.get(id=id)
-    data = await api_obj.to_dict()
-    return Success(data=data)
-
-
-@router.post("/create", summary="创建Api")
-async def create_api(
-    api_in: ApiCreate,
-):
-    await api_controller.create(obj_in=api_in)
-    return Success(msg="Created Successfully")
-
-
-@router.post("/update", summary="更新Api")
+@apiRouter.post("/update", summary="更新API")
 async def update_api(
     api_in: ApiUpdate,
 ):
@@ -56,15 +64,7 @@ async def update_api(
     return Success(msg="Update Successfully")
 
 
-@router.delete("/delete", summary="删除Api")
-async def delete_api(
-    api_id: int = Query(..., description="ApiID"),
-):
-    await api_controller.remove(id=api_id)
-    return Success(msg="Deleted Success")
-
-
-@router.post("/refresh", summary="刷新API列表")
+@apiRouter.post("/refresh", summary="刷新API列表")
 async def refresh_api():
     from app import app
 

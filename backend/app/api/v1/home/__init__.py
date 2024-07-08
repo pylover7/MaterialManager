@@ -4,9 +4,6 @@
 # @Author    :dayezi
 from fastapi import APIRouter
 
-from .home import router
+homeRouter = APIRouter()
 
-home_router = APIRouter()
-home_router.include_router(router, tags=["主页模块"])
-
-__all__ = ["home_router"]
+__all__ = ["homeRouter"]

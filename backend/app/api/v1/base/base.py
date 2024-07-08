@@ -3,6 +3,7 @@ from datetime import timedelta
 from fastapi import APIRouter
 from jwt.exceptions import ExpiredSignatureError
 
+from app.log import logger
 from app.controllers.depart import departController
 from app.controllers.user import user_controller
 from app.core.ctx import CTX_USER_ID
@@ -65,6 +66,8 @@ async def login_access_token(credentials: CredentialsSchema):
 async def refresh_token(refreshToken: refreshTokenSchema):
     try:
         payload = decode_access_token(refreshToken.refreshToken)
+        logger.info(f"refreshToken有效截至时间：{payload.exp.strftime('%Y-%m-%d %H:%M:%S')}（{payload.exp.timestamp()}）， "
+                    f"当前时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}（{datetime.now().timestamp()}）")
         if payload.exp.timestamp() < datetime.now().timestamp():
             raise ExpiredSignatureError
     except ExpiredSignatureError:
@@ -97,8 +100,8 @@ async def refresh_token(refreshToken: refreshTokenSchema):
     return Success(data=data.model_dump())
 
 
-@router.post("/userinfo", summary="获取用户UUID")
-async def get_user_id(credentials: CredentialsSchema):
+@router.post("/auth", summary="用户验证")
+async def auth(credentials: CredentialsSchema):
     user: User = await user_controller.authenticate(credentials)
     depart = await departController.get_all_name(user)
     data = {
@@ -110,7 +113,7 @@ async def get_user_id(credentials: CredentialsSchema):
     return Success(data=data)
 
 
-@router.get("/userinfos", summary="查看用户信息", dependencies=[DependAuth])
+@router.get("/userInfos", summary="查看本人信息", dependencies=[DependAuth])
 async def get_userinfo():
     user_id = CTX_USER_ID.get()
     user_obj = await user_controller.get(id=user_id)
@@ -118,7 +121,7 @@ async def get_userinfo():
     return Success(data=data)
 
 
-@router.get("/userMenu", summary="查看用户菜单", dependencies=[DependAuth])
+@router.get("/userMenu", summary="获取本人菜单", dependencies=[DependAuth])
 async def get_user_menu():
     user_id = CTX_USER_ID.get()
     user_obj = await User.filter(id=user_id).first()
@@ -186,7 +189,7 @@ async def get_user_menu():
     return Success(data=res)
 
 
-@router.get("/userapi", summary="查看用户API", dependencies=[DependAuth])
+@router.get("/userApi", summary="查看本人API", dependencies=[DependAuth])
 async def get_user_api():
     user_id = CTX_USER_ID.get()
     user_obj = await User.filter(id=user_id).first()
@@ -203,12 +206,12 @@ async def get_user_api():
     return Success(data=apis)
 
 
-@router.post("/updatePwd", summary="更新用户密码", dependencies=[DependAuth])
-async def update_user_password(req_in: UpdatePassword):
-    user = await user_controller.get(req_in.id)
-    verified = verify_password(req_in.old_password, user.password)
+@router.post("/updatePwd", summary="更新本人密码", dependencies=[DependAuth])
+async def update_user_password(data: UpdatePassword):
+    user = await user_controller.get(data.id)
+    verified = verify_password(data.old_password, user.password)
     if not verified:
         return Fail(msg="旧密码验证错误！")
-    user.password = get_password_hash(req_in.new_password)
+    user.password = get_password_hash(data.new_password)
     await user.save()
     return Success(msg="修改成功")

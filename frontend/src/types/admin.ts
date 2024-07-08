@@ -1,4 +1,6 @@
-import type { BaseResult, MaterialItem, User } from "@/types/base";
+import type { BaseResult } from "@/types/base";
+import type { User } from "@/types/user";
+import type { MaterialItem } from "@/types/material";
 
 export type addResult = BaseResult & {
   data: MaterialItem;
@@ -17,7 +19,7 @@ export type BorrowedInfo = {
   userDepart: string;
   phone: string;
   reason: string;
-  material: [MaterialItem];
+  material: MaterialItem;
   borrowing: number;
   borrowTime: string;
   borrowApproveStatus: boolean;

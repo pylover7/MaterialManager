@@ -4,15 +4,14 @@ import Search from "@iconify-icons/ep/search";
 import Approve from "@iconify-icons/fluent/approvals-app-16-filled";
 import Reject from "@iconify-icons/fluent/text-change-reject-24-filled";
 import { reactive, ref } from "vue";
-import { listBorrowed } from "@/api/home";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { usePublicHooks } from "@/views/hooks";
 import { message } from "@/utils/message";
-import { updateBorrowedInfo } from "@/api/home";
 import PureTableBar from "@/components/RePureTableBar/src/bar";
 import { successNotification } from "@/utils/notification";
 import { getKeyList } from "@pureadmin/utils";
 import { OptionsType } from "@/components/ReSegmented";
+import { listBorrowed, updateBorrowedInfo } from "@/api/material";
 
 const props = defineProps({
   segmentedOptions: {
@@ -29,15 +28,20 @@ const loading = ref(false);
 // 表格数据
 const dataList = ref([]);
 const onSearch = () => {
+  loading.value = true;
   listBorrowed(
     borrowedOptBar.area,
     pagination.currentPage,
     pagination.pageSize,
     false
-  ).then(res => {
-    dataList.value = res.data;
-    pagination.total = res.total;
-  });
+  )
+    .then(res => {
+      dataList.value = res.data;
+      pagination.total = res.total;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 // 分页设置
 const pagination = reactive<PaginationProps>({
@@ -96,12 +100,12 @@ const columns: TableColumnList = [
         width="200"
         trigger="click"
         v-slots={{
-          reference: () => <el-button link>{row.material[0].name}</el-button>,
+          reference: () => <el-button link>{row.material.name}</el-button>,
           default: () => (
             <ul>
-              <li>名称：{row.material[0].name}</li>
-              <li>型号：{row.material[0].model}</li>
-              <li>位置：{row.material[0].position}</li>
+              <li>名称：{row.material.name}</li>
+              <li>型号：{row.material.model}</li>
+              <li>位置：{row.material.position}</li>
             </ul>
           )
         }}

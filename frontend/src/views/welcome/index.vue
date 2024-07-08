@@ -4,20 +4,22 @@ import { deviceDetection } from "@pureadmin/utils";
 import { h, ref } from "vue";
 import MaterialBorrowDialog from "./dialog/MaterialBorrowDialog.vue";
 import useDialogStore from "./store";
-import { getAllMaterialMeta } from "@/api/material";
-import { createBorrowed } from "@/api/home";
+import { addBorrowed, getAllMaterialMeta } from "@/api/material";
 import type { borrowInfo } from "./types";
-import type { MaterialItem } from "@/types/base";
 import { successNotification } from "@/utils/notification";
 import { message } from "@/utils/message";
+import type { MaterialItem } from "@/types/material";
 
 defineOptions({
   name: "Welcome"
 });
 const store = useDialogStore();
 const bMForm = ref();
+const toolBtnLoading = ref(false);
+const keyBtnLoading = ref(false);
 // 借用物资弹窗
 const borrowMaterial = () => {
+  toolBtnLoading.value = true;
   getAllMaterialMeta("glb", "tool").then(res => {
     addDialog({
       title: "物资借用",
@@ -61,10 +63,6 @@ const borrowMaterial = () => {
                 store.resetActive();
               };
               const curData = options.props.borrowInfo as borrowInfo;
-              if (curData.reason == "") {
-                message("借用原因不得为空！", { type: "warning" });
-                return;
-              }
               const borrowItemList = [];
               for (const item of curData.baseData) {
                 if (item.borrowing !== undefined && item.borrowing > 0) {
@@ -74,9 +72,14 @@ const borrowMaterial = () => {
                   borrowItemList.push(item);
                 }
               }
+              if (curData.reason == "" || borrowItemList.length == 0) {
+                message("借用信息或借用原因不得为空！", { type: "warning" });
+                return;
+              }
               curData.baseData = borrowItemList as [MaterialItem];
-              createBorrowed(curData).then(() => {
+              addBorrowed(curData).then(() => {
                 successNotification("物资借用流程发起成功！");
+                toolBtnLoading.value = false;
                 done();
               });
             }}
@@ -84,13 +87,19 @@ const borrowMaterial = () => {
             完成
           </el-button>
         </>
-      )
+      ),
+      beforeClose(done) {
+        toolBtnLoading.value = false;
+        done();
+        store.resetActive();
+      }
     });
   });
 };
 
 // 借用钥匙弹窗
 const borrowKey = () => {
+  keyBtnLoading.value = true;
   getAllMaterialMeta("glb", "key").then(res => {
     addDialog({
       title: "钥匙借用",
@@ -134,10 +143,6 @@ const borrowKey = () => {
                 store.resetActive();
               };
               const curData = options.props.borrowInfo as borrowInfo;
-              if (curData.reason == "") {
-                message("借用原因不得为空！", { type: "warning" });
-                return;
-              }
               const borrowItemList = [];
               for (const item of curData.baseData) {
                 if (item.borrowing !== undefined && item.borrowing > 0) {
@@ -147,9 +152,14 @@ const borrowKey = () => {
                   borrowItemList.push(item);
                 }
               }
+              if (curData.reason == "" || borrowItemList.length == 0) {
+                message("借用信息或借用原因不得为空！", { type: "warning" });
+                return;
+              }
               curData.baseData = borrowItemList as [MaterialItem];
-              createBorrowed(curData).then(() => {
+              addBorrowed(curData).then(() => {
                 successNotification("钥匙借用流程发起成功！");
+                keyBtnLoading.value = false;
                 done();
               });
             }}
@@ -157,7 +167,12 @@ const borrowKey = () => {
             完成
           </el-button>
         </>
-      )
+      ),
+      beforeClose(done) {
+        keyBtnLoading.value = false;
+        done();
+        store.resetActive();
+      }
     });
   });
 };
@@ -166,10 +181,20 @@ const borrowKey = () => {
 <template>
   <div class="main">
     <el-space alignment="center">
-      <el-button class="largeBtn" type="primary" plain @click="borrowMaterial"
+      <el-button
+        class="largeBtn"
+        type="primary"
+        :loading="toolBtnLoading"
+        plain
+        @click="borrowMaterial"
         >物资借用</el-button
       >
-      <el-button class="largeBtn" type="primary" plain @click="borrowKey"
+      <el-button
+        class="largeBtn"
+        type="primary"
+        :loading="keyBtnLoading"
+        plain
+        @click="borrowKey"
         >钥匙借用</el-button
       >
     </el-space>

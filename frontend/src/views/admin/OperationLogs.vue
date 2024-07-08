@@ -12,8 +12,8 @@ import Delete from "@iconify-icons/ep/delete";
 import Search from "@iconify-icons/ep/search";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
-import { deleteDutyLogs, getDutyNote, searchDutyLogs } from "@/api/admin";
 import type { SelectOpt } from "@/views/admin/utils/types";
+import { deleteDutyLogs, getDutyNote, getDutyLogList } from "@/api/duty";
 
 defineOptions({
   name: "OperationLogs"
@@ -73,7 +73,7 @@ const onSearch = () => {
       dayjs(time).format("YYYY-MM-DD HH:mm:ss")
     );
   }
-  searchDutyLogs(
+  getDutyLogList(
     operationForm.area,
     operationForm.type,
     pagination.currentPage,
@@ -83,6 +83,8 @@ const onSearch = () => {
     .then(res => {
       dataList.value = res.data;
       pagination.total = res.total;
+      pagination.pageSize = res.pageSize;
+      pagination.currentPage = res.currentPage;
     })
     .catch(() => {
       dataList.value = [];
@@ -228,10 +230,12 @@ const pagination = reactive<PaginationProps>({
 });
 
 function handleSizeChange(val: number) {
+  onSearch();
   console.log(`${val} items per page`);
 }
 
 function handleCurrentChange(val: number) {
+  onSearch();
   console.log(`current page: ${val}`);
 }
 

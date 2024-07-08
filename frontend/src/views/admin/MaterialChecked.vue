@@ -7,12 +7,13 @@ import Search from "@iconify-icons/ep/search";
 import Approve from "@iconify-icons/fluent/approvals-app-16-filled";
 import PureTableBar from "@/components/RePureTableBar/src/bar";
 import { SelectOpt } from "@/views/admin/utils/types";
-import { getCheckedMaterial, updateCheckedMaterial } from "@/api/admin";
 import { addDialog } from "@/components/ReDialog/index";
 import verifyDialog from "@/views/welcome/dialog/VerifyDialog.vue";
 import type { userInfo } from "@/views/welcome/types";
-import { getUserInfo } from "@/api/user";
-import { successNotification } from "@/utils/notification";
+import { successNotification, warningNotification } from "@/utils/notification";
+import { deviceDetection, getKeyList } from "@pureadmin/utils";
+import { getCheckedMaterial, updateCheckedMaterial } from "@/api/material";
+import { auth } from "@/api/base";
 
 defineOptions({
   name: "MaterialChecked"
@@ -221,91 +222,7 @@ const columns: TableColumnList = [
           plain
           type="primary"
           onClick={() => {
-            addDialog({
-              title: "归还确认",
-              width: "20%",
-              contentRenderer: () => (
-                <>
-                  <el-form
-                    label-position="right"
-                    label-width="auto"
-                    class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px] overflow-auto"
-                  >
-                    <el-form-item label="归还数量">{row.number}</el-form-item>
-                    <el-form-item label="备注">
-                      <el-input
-                        v-model={row.note}
-                        placeholder="这里可以填写备注信息"
-                      />
-                    </el-form-item>
-                    <el-form-item label="验证人">
-                      <el-space>
-                        <el-input
-                          v-model={row.toReturnUser}
-                          placeholder="验证人"
-                          disabled
-                        />
-                        <el-button
-                          plain
-                          type="primary"
-                          onClick={() => {
-                            const verifyForm = ref();
-                            addDialog({
-                              title: "验证人",
-                              width: "20%",
-                              props: {
-                                userInfo: {
-                                  account: "",
-                                  password: "",
-                                  name: "",
-                                  phone: "",
-                                  depart: "",
-                                  disable: true
-                                }
-                              },
-                              contentRenderer: () =>
-                                h(verifyDialog, { ref: verifyForm }),
-                              beforeSure(done, { options }) {
-                                const accountFormRef =
-                                  verifyForm.value.getAccountRef();
-                                const curData = options.props
-                                  .userInfo as userInfo;
-                                accountFormRef.validate(valid => {
-                                  if (valid) {
-                                    getUserInfo({
-                                      username: curData.account,
-                                      password: curData.password
-                                    }).then(res => {
-                                      row.toReturnUser = res.data.username;
-                                      row.toReturnUserUUID = res.data.uuid;
-                                    });
-                                    done();
-                                  }
-                                });
-                              }
-                            });
-                          }}
-                        >
-                          验证
-                        </el-button>
-                      </el-space>
-                    </el-form-item>
-                  </el-form>
-                </>
-              ),
-              beforeSure(done, { options, index }) {
-                const data = {
-                  id: row.id,
-                  note: row.note,
-                  toReturnUserUUID: row.toReturnUserUUID ?? ""
-                };
-                updateCheckedMaterial(data).then(() => {
-                  successNotification("归还成功!");
-                  done();
-                  onSearch();
-                });
-              }
-            });
+            openReturnDialog([row], [row.id]);
           }}
         >
           归还
@@ -314,6 +231,119 @@ const columns: TableColumnList = [
     )
   }
 ];
+
+const openReturnDialog = (rowList, idList?: [number]) => {
+  const data = reactive({
+    idList,
+    note: "",
+    toReturnUser: "",
+    toReturnUserUUID: ""
+  });
+  addDialog({
+    title: "归还确认",
+    width: "25%",
+    draggable: true,
+    fullscreen: deviceDetection(),
+    fullscreenIcon: true,
+    closeOnClickModal: false,
+    contentRenderer: () => (
+      <>
+        <el-form
+          label-position="right"
+          label-width="auto"
+          class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px] overflow-auto"
+        >
+          <el-form-item label="归还信息">
+            <ul>
+              {rowList.map(item => (
+                <li>
+                  <el-space wrap>
+                    <span>物资名称：{item.material.name}</span>
+                    <span>归还数量：{item.number}</span>
+                  </el-space>
+                </li>
+              ))}
+            </ul>
+          </el-form-item>
+          <el-form-item label="备注">
+            <el-input v-model={data.note} placeholder="这里可以填写备注信息" />
+          </el-form-item>
+          <el-form-item label="验证人">
+            <el-space>
+              <el-input
+                v-model={data.toReturnUser}
+                placeholder="验证人"
+                disabled
+              />
+              <el-button
+                plain
+                type="primary"
+                onClick={() => {
+                  const verifyForm = ref();
+                  addDialog({
+                    title: "验证人",
+                    width: "20%",
+                    props: {
+                      userInfo: {
+                        account: "",
+                        password: "",
+                        name: "",
+                        phone: "",
+                        depart: "",
+                        disable: true
+                      }
+                    },
+                    draggable: true,
+                    fullscreen: deviceDetection(),
+                    fullscreenIcon: true,
+                    closeOnClickModal: false,
+                    contentRenderer: () => h(verifyDialog, { ref: verifyForm }),
+                    beforeSure(done, { options }) {
+                      const accountFormRef = verifyForm.value.getAccountRef();
+                      const curData = options.props.userInfo as userInfo;
+                      accountFormRef.validate(valid => {
+                        if (valid) {
+                          auth({
+                            username: curData.account,
+                            password: curData.password
+                          }).then(res => {
+                            data.toReturnUser = res.data.username;
+                            data.toReturnUserUUID = res.data.uuid;
+                          });
+                          done();
+                        }
+                      });
+                    }
+                  });
+                }}
+              >
+                验证
+              </el-button>
+            </el-space>
+          </el-form-item>
+        </el-form>
+      </>
+    ),
+    beforeSure(done, { options, index }) {
+      if (data.toReturnUserUUID.length === 0) {
+        warningNotification("请验证人验证归还物资信息");
+        return;
+      }
+      updateCheckedMaterial(data).then(() => {
+        successNotification("归还成功!");
+        done();
+        onSelectionCancel();
+        onSearch();
+      });
+    }
+  });
+};
+
+const onBatchReturn = () => {
+  const curSelected = tableRef.value.getTableRef().getSelectionRows();
+  const idList = getKeyList(curSelected, "id");
+  openReturnDialog(curSelected, idList as [number]);
+};
 
 /** 当CheckBox选择项发生变化时会触发该事件 */
 function handleSelectionChange(val) {
@@ -391,14 +421,14 @@ function handleCurrentChange(val: number) {
           </div>
         </div>
 
-        <el-popconfirm title="确定要批准所选请求吗？">
+        <el-popconfirm title="要批量归还吗？" @confirm="onBatchReturn">
           <template #reference>
             <el-button
               type="success"
               :disabled="selectedNum < 1"
               :icon="useRenderIcon(Approve)"
             >
-              批量批准
+              批量归还
             </el-button>
           </template>
         </el-popconfirm>

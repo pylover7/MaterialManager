@@ -14,10 +14,47 @@ from app.settings import settings
 from app.utils import base_decode, generate_uuid
 from app.utils.password import get_password_hash
 
-router = APIRouter()
+userRouter = APIRouter()
 
 
-@router.get("/list", summary="查看用户列表")
+@userRouter.post("/add", summary="新增用户")
+async def create_user(
+        data: UserCreate,
+):
+    user = await user_controller.get_by_username(data.username)
+    if user or (data.username == "admin"):
+        raise HTTPException(
+            status_code=400,
+            detail="The user with this email already exists in the system.",
+        )
+    id = data.departId
+    del data.departId
+    data.uuid = generate_uuid(data.username)
+    new_user = await user_controller.create(obj_in=data)
+    await user_controller.update_depart(new_user, id)
+    return Success(msg="Created Successfully")
+
+
+@userRouter.delete("/delete", summary="删除用户")
+async def delete_user(
+        id: int = Query(..., description="用户ID"),
+        name: str = Query(..., description="用户名称"),
+):
+    await user_controller.remove(id=id)
+    logger.warning(f"用户 {name} 已被删除")
+    return Success(msg="Deleted Successfully")
+
+
+@userRouter.get("/get", summary="查看用户")
+async def get_user(
+        user_id: int = Query(..., description="用户ID"),
+):
+    user_obj = await user_controller.get(id=user_id)
+    user_dict = await user_obj.to_dict(exclude_fields=["password"])
+    return Success(data=user_dict)
+
+
+@userRouter.get("/list", summary="查看用户列表")
 async def list_user(
         currentPage: int = Query(1, description="页码"),
         pageSize: int = Query(10, description="每页数量"),
@@ -47,34 +84,7 @@ async def list_user(
     return SuccessExtra(data=data, total=total, currentPage=currentPage, pageSize=pageSize)
 
 
-@router.get("/get", summary="查看用户")
-async def get_user(
-        user_id: int = Query(..., description="用户ID"),
-):
-    user_obj = await user_controller.get(id=user_id)
-    user_dict = await user_obj.to_dict(exclude_fields=["password"])
-    return Success(data=user_dict)
-
-
-@router.post("/add", summary="新增用户")
-async def create_user(
-        data: UserCreate,
-):
-    user = await user_controller.get_by_username(data.username)
-    if user or (data.username == "admin"):
-        raise HTTPException(
-            status_code=400,
-            detail="The user with this email already exists in the system.",
-        )
-    id = data.departId
-    del data.departId
-    data.uuid = generate_uuid(data.username)
-    new_user = await user_controller.create(obj_in=data)
-    await user_controller.update_depart(new_user, id)
-    return Success(msg="Created Successfully")
-
-
-@router.post("/update", summary="更新用户")
+@userRouter.post("/update", summary="更新用户")
 async def update_user(
         data: UserUpdate,
 ):
@@ -85,7 +95,7 @@ async def update_user(
     return Success(msg="Updated Successfully")
 
 
-@router.post("/updateStatus", summary="更新用户状态")
+@userRouter.post("/updateStatus", summary="更新用户状态")
 async def update_status(
         data: UpdateStatus,
 ):
@@ -94,7 +104,7 @@ async def update_status(
     return Success(msg="Updated Successfully")
 
 
-@router.post("/updateAvatar", summary="更新用户头像")
+@userRouter.post("/updateAvatar", summary="更新用户头像")
 async def update_avatar(
         data: dict,
         id: int = Query(..., description="用户ID"),
@@ -110,7 +120,7 @@ async def update_avatar(
     return Success(msg="Updated Successfully")
 
 
-@router.post("/updateRoles", summary="更新用户角色")
+@userRouter.post("/updateRoles", summary="更新用户角色")
 async def update_roles(
         data: dict,
         id: int = Query(..., description="用户ID"),
@@ -120,7 +130,7 @@ async def update_roles(
     return Success(msg="Updated Successfully")
 
 
-@router.post("/resetPwd", summary="重置用户密码")
+@userRouter.post("/resetPwd", summary="重置用户密码")
 async def reset_pwd(
         data: dict,
 ):
@@ -129,12 +139,3 @@ async def reset_pwd(
     await user.save()
     return Success(msg="Reset Successfully")
 
-
-@router.delete("/delete", summary="删除用户")
-async def delete_user(
-        id: int = Query(..., description="用户ID"),
-        name: str = Query(..., description="用户名称"),
-):
-    await user_controller.remove(id=id)
-    logger.warning(f"用户 {name} 已被删除")
-    return Success(msg="Deleted Successfully")
