@@ -1,10 +1,17 @@
 import { http } from "@/utils/http";
-import type { LoginResult, RefreshTokenResult, UserResult } from "@/types/user";
+import type {
+  LoginResult,
+  RefreshTokenResult,
+  UserResult,
+  UserPwdData
+} from "@/types/user";
 import type { BaseResult, ResultList } from "@/types/base";
 import { baseUrlApi } from "@/api/utils";
+import { hashPwd } from "@/utils/hash";
 
 /** 登录获取token */
-export const getLogin = (data?: object) => {
+export const getLogin = (data?: UserPwdData) => {
+  data.password = hashPwd(data.password);
   return http.request<LoginResult>("post", baseUrlApi("/base/accessToken"), {
     data
   });
@@ -18,7 +25,8 @@ export const refreshTokenApi = (data?: object) => {
   );
 };
 /** 用户验证 */
-export const auth = (data?: object) => {
+export const auth = (data?: UserPwdData) => {
+  data.password = hashPwd(data.password);
   return http.request<UserResult>("post", baseUrlApi("/base/auth"), {
     data
   });

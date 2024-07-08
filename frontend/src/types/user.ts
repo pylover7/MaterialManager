@@ -15,6 +15,11 @@ export type UserResult = BaseResult & {
   data: UserInfo;
 };
 
+export type UserPwdData = {
+  username: string;
+  password: string;
+};
+
 export type LoginResult = BaseResult & {
   data: UserInfo & {
     /** 当前登陆用户的角色 */
