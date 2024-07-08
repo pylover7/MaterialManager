@@ -95,11 +95,11 @@ async def update_borrowed(data: UpdateBorrowedInfo):
             obj.borrowApproveUser_id = user.id
             obj.borrowApproveStatus = data.borrowStatus
             obj.borrowApproveWhether = data.borrowWhether
-            obj.borrowApproveTime = now(False)
+            obj.borrowApproveTime = now(0)
         elif data.returnStatus:
             obj.returnApproveUser_id = user.id
             obj.returnApproveStatus = data.returnStatus
-            obj.returnApproveTime = now(False)
+            obj.returnApproveTime = now(0)
         if not data.borrowWhether or data.returnStatus:
             material_id = obj.material_id
             material = await materialController.get(id=material_id)

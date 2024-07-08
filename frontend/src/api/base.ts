@@ -1,9 +1,9 @@
 import { http } from "@/utils/http";
-import type {
+import {
   LoginResult,
   RefreshTokenResult,
   UserResult,
-  UserPwdData
+  UserPwdData, updatePwdData
 } from "@/types/user";
 import type { BaseResult, ResultList } from "@/types/base";
 import { baseUrlApi } from "@/api/utils";
@@ -45,7 +45,9 @@ export const getApiList = () => {
   return http.request<ResultList>("get", baseUrlApi("/base/userApi"));
 };
 /** 更新本人密码 */
-export const updatePassword = (data?: object) => {
+export const updatePassword = (data?: updatePwdData) => {
+  data.oldPwd = hashPwd(data.oldPwd);
+  data.newPwd = hashPwd(data.newPwd);
   return http.request<BaseResult>("post", baseUrlApi("/base/updatePwd"), {
     data
   });

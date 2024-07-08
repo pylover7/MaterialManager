@@ -20,6 +20,11 @@ export type UserPwdData = {
   password: string;
 };
 
+export type updatePwdData = {
+  oldPwd: string;
+  newPwd: string;
+};
+
 export type LoginResult = BaseResult & {
   data: UserInfo & {
     /** 当前登陆用户的角色 */

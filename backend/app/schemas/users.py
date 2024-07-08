@@ -37,9 +37,8 @@ class UpdateStatus(BaseModel):
 
 
 class UpdatePassword(BaseModel):
-    id: int = Field(description="用户ID")
-    old_password: str = Field(description="旧密码")
-    new_password: str = Field(description="新密码")
+    oldPwd: str = Field(description="旧密码")
+    newPwd: str = Field(description="新密码")
 
 
 DepartPydantic = pydantic_model_creator(Depart)
