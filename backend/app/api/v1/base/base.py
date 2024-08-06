@@ -69,7 +69,7 @@ async def refresh_token(refreshToken: refreshTokenSchema):
         payload = decode_access_token(refreshToken.refreshToken)
         logger.info(f"refreshToken有效截至时间：{payload.exp.strftime('%Y-%m-%d %H:%M:%S')}（{payload.exp.timestamp()}）， "
                     f"当前时间：{now()}（{now(2)}）[f{payload.exp.timestamp() - now(2)}]")
-        if payload.exp.timestamp() < datetime.now().timestamp():
+        if payload.exp.timestamp() < now(2):
             raise ExpiredSignatureError
     except ExpiredSignatureError:
         return FailAuth(msg="refreshToken已过期")
