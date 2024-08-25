@@ -76,11 +76,14 @@ const borrowMaterial = (area: string) => {
                 return;
               }
               curData.baseData = borrowItemList as [MaterialItem];
-              addBorrowed(curData).then(() => {
-                successNotification("物资借用流程发起成功！");
-                btnLoading.value = false;
-                done();
-              });
+              addBorrowed(curData)
+                .then(() => {
+                  successNotification("物资借用流程发起成功！");
+                  done();
+                })
+                .finally(() => {
+                  btnLoading.value = false;
+                });
             }}
           >
             完成
@@ -156,11 +159,14 @@ const borrowKey = (area: string) => {
                 return;
               }
               curData.baseData = borrowItemList as [MaterialItem];
-              addBorrowed(curData).then(() => {
-                successNotification("钥匙借用流程发起成功！");
-                btnLoading.value = false;
-                done();
-              });
+              addBorrowed(curData)
+                .then(() => {
+                  successNotification("钥匙借用流程发起成功！");
+                  done();
+                })
+                .finally(() => {
+                  btnLoading.value = false;
+                });
             }}
           >
             完成
