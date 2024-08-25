@@ -21,15 +21,22 @@ def generate_uuid(name: str) -> uuid.UUID:
     return uuid.uuid5(uuid.NAMESPACE_DNS, name)
 
 
-def now(s: bool = True) -> str | datetime:
+def now(s: int = 1) -> str | datetime | float:
     """
-    获取当前时间，datatime格式或 xxxx-xx-xx xx:xx:xx 字符串格式
+    获取当前时间，形参取值
+        - 0: datatime格式
+        - 1: xxxx-xx-xx xx:xx:xx 字符串格式
+        - 2: 浮点类型时间戳格式
 
-    :param s: 是否返回格式化字符串
+    :param s: 数字
+
     :return: 当前日期时间
     """
     today = datetime.now()
-    if s:
-        return today.strftime("%Y-%m-%d %H:%M:%S")
-    else:
-        return today
+    match s:
+        case 0:
+            return today
+        case 1:
+            return today.strftime("%Y-%m-%d %H:%M:%S")
+        case 2:
+            return today.timestamp()

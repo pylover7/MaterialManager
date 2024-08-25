@@ -7,6 +7,7 @@ import type {
   ResultRoleAuth,
   ResultTable
 } from "@/types/base";
+import { hashPwd } from "@/utils/hash";
 
 /** 创建API */
 export const addApi = () => {
@@ -209,6 +210,7 @@ export const updateUserRole = (id: number, data?: object) => {
 };
 /** 重置用户密码 */
 export const resetUserPwd = (id: number, newPwd: string) => {
+  newPwd = hashPwd(newPwd);
   return http.request<BaseResult>("post", baseUrlApi("/admin/user/resetPwd"), {
     data: { id, newPwd }
   });

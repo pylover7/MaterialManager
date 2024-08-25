@@ -35,4 +35,4 @@ RUN rm -f /etc/nginx/sites-enabled/default \
 ENV LANG=zh_CN.UTF-8
 EXPOSE 80
 
-ENTRYPOINT [ "sh", "entrypoint.sh" ]
+ENTRYPOINT [ "bash", "entrypoint.sh" ]

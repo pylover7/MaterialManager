@@ -15,6 +15,7 @@ from app.schemas.users import UpdatePassword, UserPydantic
 from app.settings import settings
 from app.utils.jwtt import create_access_token, decode_access_token
 from app.utils.password import get_password_hash, verify_password
+from app.utils import now
 
 router = APIRouter()
 
@@ -33,8 +34,8 @@ async def login_access_token(credentials: CredentialsSchema):
         depart = await departController.get_all_name(user)
     access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
-    expire = datetime.now() + access_token_expires
-    expire_refresh = datetime.now() + refresh_token_expires
+    expire = now(0) + access_token_expires
+    expire_refresh = now(0) + refresh_token_expires
 
     data = JWTOut(
         username=user.username,
@@ -67,8 +68,8 @@ async def refresh_token(refreshToken: refreshTokenSchema):
     try:
         payload = decode_access_token(refreshToken.refreshToken)
         logger.info(f"refreshToken有效截至时间：{payload.exp.strftime('%Y-%m-%d %H:%M:%S')}（{payload.exp.timestamp()}）， "
-                    f"当前时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}（{datetime.now().timestamp()}）")
-        if payload.exp.timestamp() < datetime.now().timestamp():
+                    f"当前时间：{now()}（{now(2)}）[f{payload.exp.timestamp() - now(2)}]")
+        if payload.exp.timestamp() < now(2):
             raise ExpiredSignatureError
     except ExpiredSignatureError:
         return FailAuth(msg="refreshToken已过期")
@@ -208,10 +209,11 @@ async def get_user_api():
 
 @router.post("/updatePwd", summary="更新本人密码", dependencies=[DependAuth])
 async def update_user_password(data: UpdatePassword):
-    user = await user_controller.get(data.id)
-    verified = verify_password(data.old_password, user.password)
+    user_id = CTX_USER_ID.get()
+    user = await user_controller.get(user_id)
+    verified = verify_password(data.oldPwd, user.password)
     if not verified:
         return Fail(msg="旧密码验证错误！")
-    user.password = get_password_hash(data.new_password)
+    user.password = get_password_hash(data.newPwd)
     await user.save()
-    return Success(msg="修改成功")
+    return Success(msg="密码修改成功！")

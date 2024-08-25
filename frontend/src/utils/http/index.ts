@@ -145,7 +145,6 @@ class PureHttp {
         return response.data;
       },
       async (error: PureHttpError) => {
-        console.log(error);
         const $error = error;
         $error.isCancelRequest = Axios.isCancel($error);
         // 关闭进度条动画
@@ -180,7 +179,7 @@ class PureHttp {
             errorNotification("请重新登录！");
           });
         }
-        return Promise.reject($error);
+        return Promise.reject($error.response.data);
       }
     );
   }

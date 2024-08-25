@@ -65,9 +65,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
         })
         .catch(error => {
           loading.value = false;
-          if (error.response && error.response.data) {
-            errorNotification(`登录失败:${error.response.data.msg}!`);
-          }
+          errorNotification(`登录失败:${error.msg}!`);
         });
     } else {
       loading.value = false;

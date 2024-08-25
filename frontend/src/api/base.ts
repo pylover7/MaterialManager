@@ -1,10 +1,17 @@
 import { http } from "@/utils/http";
-import type { LoginResult, RefreshTokenResult, UserResult } from "@/types/user";
+import {
+  LoginResult,
+  RefreshTokenResult,
+  UserResult,
+  UserPwdData, updatePwdData
+} from "@/types/user";
 import type { BaseResult, ResultList } from "@/types/base";
 import { baseUrlApi } from "@/api/utils";
+import { hashPwd } from "@/utils/hash";
 
 /** 登录获取token */
-export const getLogin = (data?: object) => {
+export const getLogin = (data?: UserPwdData) => {
+  data.password = hashPwd(data.password);
   return http.request<LoginResult>("post", baseUrlApi("/base/accessToken"), {
     data
   });
@@ -18,7 +25,8 @@ export const refreshTokenApi = (data?: object) => {
   );
 };
 /** 用户验证 */
-export const auth = (data?: object) => {
+export const auth = (data?: UserPwdData) => {
+  data.password = hashPwd(data.password);
   return http.request<UserResult>("post", baseUrlApi("/base/auth"), {
     data
   });
@@ -37,7 +45,9 @@ export const getApiList = () => {
   return http.request<ResultList>("get", baseUrlApi("/base/userApi"));
 };
 /** 更新本人密码 */
-export const updatePassword = (data?: object) => {
+export const updatePassword = (data?: updatePwdData) => {
+  data.oldPwd = hashPwd(data.oldPwd);
+  data.newPwd = hashPwd(data.newPwd);
   return http.request<BaseResult>("post", baseUrlApi("/base/updatePwd"), {
     data
   });
