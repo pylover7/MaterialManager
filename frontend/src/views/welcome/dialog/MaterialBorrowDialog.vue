@@ -37,12 +37,14 @@ const props = withDefaults(defineProps<materialItemList>(), {
         type: "",
         area: "",
         name: "",
+        code: "",
         model: "",
         number: 0,
         position: "",
         borrowing: 0,
         borrowed: 0,
-        checking: 0
+        checking: 0,
+        description: ""
       }
     ]
   })
@@ -258,8 +260,29 @@ const openVerifyDialog = () => {
             maxlength="200"
             show-word-limit
             type="textarea"
-            placeholder="请填写借用理由"
+            placeholder="请填写借用理由（必填）"
           />
+          <el-space>
+            <b>常用理由：</b>
+            <el-button plain type="info" @click="borrowInfo.reason = '厂房巡检'"
+              >厂房巡检</el-button
+            >
+            <el-button plain type="info" @click="borrowInfo.reason = '厂房清洁'"
+              >厂房清洁</el-button
+            >
+            <el-button
+              plain
+              type="info"
+              @click="borrowInfo.reason = '持票作业，工作票号：'"
+              >持票作业</el-button
+            >
+            <el-button
+              plain
+              type="info"
+              @click="borrowInfo.reason = '持票作业，紧急工单，工作票号：'"
+              >紧急工单</el-button
+            >
+          </el-space>
           <el-card class="card" header="借用人信息" shadow="never">
             <el-row>
               <el-col :span="8">
