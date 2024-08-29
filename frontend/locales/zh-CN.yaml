@@ -23,7 +23,7 @@ menus:
 status:
   pureLoad: 加载中...
 login:
-  pureUsername: 账号
+  pureUsername: 工号
   purePassword: 密码
   pureLogin: 登录
   pureUsernameReg: 请输入账号
