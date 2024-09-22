@@ -1,5 +1,4 @@
 import "./reset.css";
-import dayjs from "dayjs";
 import roleForm from "../form/role.vue";
 import editForm from "../form/index.vue";
 import { zxcvbn } from "@zxcvbn-ts/core";
@@ -16,7 +15,6 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import {
   getKeyList,
   isAllEmpty,
-  hideTextAtIndex,
   deviceDetection
 } from "@pureadmin/utils";
 
@@ -89,9 +87,9 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       reserveSelection: true // 数据刷新后保留选项
     },
     {
-      label: "用户编号",
+      label: "编号",
       prop: "id",
-      width: 90
+      width: 60
     },
     {
       label: "用户头像",
@@ -109,12 +107,12 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     },
     {
       label: "用户名称",
-      prop: "username",
+      prop: "nickname",
       minWidth: 130
     },
     {
-      label: "用户昵称",
-      prop: "nickname",
+      label: "职工号",
+      prop: "username",
       minWidth: 130
     },
     {
@@ -139,8 +137,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     {
       label: "手机号码",
       prop: "phone",
-      minWidth: 90,
-      formatter: ({ phone }) => hideTextAtIndex(phone, { start: 3, end: 6 })
+      minWidth: 90
     },
     {
       label: "状态",
@@ -162,11 +159,22 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       )
     },
     {
-      label: "创建时间",
-      minWidth: 90,
-      prop: "createTime",
-      formatter: ({ createTime }) =>
-        dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
+      label: "备注",
+      minWidth: 100,
+      prop: "remark",
+      cellRenderer: ({ row }) => (
+        <el-popover
+          placement="bottom-start"
+          width="100"
+          trigger="hover"
+          v-slots={{
+            reference: () => (
+              <el-text style="width: 100px">{row.remark}</el-text>
+            ),
+            default: () => <p>{row.remark}</p>
+          }}
+        ></el-popover>
+      )
     },
     {
       label: "操作",
@@ -573,7 +581,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
 
     // 角色列表
     roleOptions.value = (
-      await getRoleList(1, 1000, { code: "", name: "", status: 1 })
+      await getRoleList(1, 100, { code: "", name: "", status: 1 })
     ).data;
   });
 
