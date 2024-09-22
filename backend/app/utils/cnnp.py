@@ -1,9 +1,11 @@
 from ldap3 import Server, Connection, ALL
 
+from app.settings import settings
+
 
 class LDAPAuthentication:
     def __init__(self):
-        self.server = Server('127.0.0.1', get_info=ALL, connect_timeout=10)
+        self.server = Server(settings.CNNP_SERVER, get_info=ALL, connect_timeout=10)
         self.conn = None
         self.basedn = 'dc=cnnp,dc=com'
 
@@ -39,7 +41,8 @@ class LDAPAuthentication:
             self.conn.unbind()
 
 
+ldap_auth = LDAPAuthentication()
+
 if __name__ == '__main__':
-    ldap_auth = LDAPAuthentication()
     print(ldap_auth.authenticate('some_uid', 'some_password'))
     ldap_auth.close_ctx()

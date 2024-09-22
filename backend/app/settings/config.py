@@ -200,6 +200,10 @@ class Settings:
     def STATIC_PATH(self) -> Path:
         return static_path
 
+    @property
+    def CNNP_SERVER(self) -> str:
+        return self.data["cnnp"]
+
 
 settings = Settings()
 

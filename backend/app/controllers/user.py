@@ -8,6 +8,8 @@ from app.models.users import User
 from app.schemas.login import CredentialsSchema
 from app.schemas.users import UserCreate, UserUpdate
 from app.utils.password import get_password_hash, verify_password
+from app.utils.cnnp import ldap_auth
+from app.log import logger
 from .depart import departController
 
 from .role import role_controller
@@ -40,9 +42,14 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         user = await self.model.filter(username=credentials.username).first()
         if not user:
             raise HTTPException(status_code=400, detail="无效的用户名")
-        verified = verify_password(credentials.password, user.password)
-        if not verified:
+        # verified = verify_password(credentials.password, user.password)
+        try:
+            verified = ldap_auth.authenticate(credentials.username, credentials.password)
+        except Exception as e:
+            logger.error(f"LDAP认证失败：{repr(e)}")
             raise HTTPException(status_code=400, detail="密码错误!")
+        finally:
+            ldap_auth.close_ctx()
         if not user.status:
             raise HTTPException(status_code=400, detail="用户已被禁用")
         return user
