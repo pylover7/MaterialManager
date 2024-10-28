@@ -45,11 +45,16 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         # verified = verify_password(credentials.password, user.password)
         try:
             verified = ldap_auth.authenticate(credentials.username, credentials.password)
+            if verified:
+                logger.info(f"LDAP认证成功：{user.username}")
+            else:
+                logger.error(f"LDAP认证失败：{user.username}")
+                raise HTTPException(status_code=400, detail="密码错误!")
         except Exception as e:
             logger.error(f"LDAP认证失败：{repr(e)}")
             raise HTTPException(status_code=400, detail="密码错误!")
         finally:
-            ldap_auth.close_ctx()
+            ldap_auth.closeCtx()
         if not user.status:
             raise HTTPException(status_code=400, detail="用户已被禁用")
         return user

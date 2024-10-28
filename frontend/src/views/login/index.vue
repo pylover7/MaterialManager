@@ -37,8 +37,8 @@ const { title } = useNav();
 const { locale } = useTranslationLang();
 
 const ruleForm = reactive({
-  username: "",
-  password: ""
+  username: "20201253",
+  password: "admin123456"
 });
 
 const onLogin = async (formEl: FormInstance | undefined) => {
@@ -63,7 +63,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
         .catch(error => {
           loading.value = false;
           errorNotification(`登录失败:${error.msg}!`);
-          ruleForm.password = "";
+          // ruleForm.password = "";
         });
     } else {
       loading.value = false;
