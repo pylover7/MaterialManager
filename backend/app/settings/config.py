@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from ruamel.yaml import YAML
 
@@ -38,7 +39,7 @@ class Settings:
 
     @property
     def HOST(self) -> str:
-        return self.data["server"]["host"]
+        return os.environ.get("HOST", self.data["server"]["host"])
 
     @property
     def PORT(self) -> int:
@@ -99,7 +100,7 @@ class Settings:
 
     @property
     def DATABASE_HOST(self):
-        return self.data["db"]["host"]
+        return os.environ.get("DB_HOST", self.data["db"]["host"])
 
     @DATABASE_HOST.setter
     def DATABASE_HOST(self, value: int):
@@ -123,7 +124,7 @@ class Settings:
         """
         数据库用户名
         """
-        return self.data["db"]["username"]
+        return os.environ.get("DB_USERNAME", self.data["db"]["username"])
 
     @DATABASE_USERNAME.setter
     def DATABASE_USERNAME(self, value: str):
@@ -135,7 +136,7 @@ class Settings:
         """
         数据库密码
         """
-        return self.data["db"]["password"]
+        return os.environ.get("DB_PASSWORD", self.data["db"]["password"])
 
     @DATABASE_PASSWORD.setter
     def DATABASE_PASSWORD(self, value: str):
@@ -147,7 +148,7 @@ class Settings:
         """
         数据库名
         """
-        return self.data["db"]["database"]
+        return os.environ.get("DB_NAME", self.data["db"]["database"])
 
     @DATABASE_NAME.setter
     def DATABASE_NAME(self, value: str):

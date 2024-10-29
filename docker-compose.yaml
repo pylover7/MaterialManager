@@ -5,7 +5,7 @@ configs:
 
 services:
   db:
-    image: shuoshuoyun-docker.pkg.coding.net/wuziguanlixitong/material_manager/mysql:8.4
+    image: mysql8:8.4
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: mysql
@@ -21,7 +21,7 @@ services:
         aliases:
           - db
   material:
-    image: shuoshuoyun-docker.pkg.coding.net/wuziguanlixitong/material_manager/material-manager
+    image: material:0.0.4
     environment:
       - DB_DRIVER=org.mysql.jdbc.Driver
       - DB_URL=jdbc:mysql://db:3306/material?serverTimezone=Asia/Shanghai
@@ -29,6 +29,8 @@ services:
       - DB_PASSWORD=mysql
     ports:
       - '8000:80'
+    volumes:
+      - ./material-data:/app/backend:Z
     depends_on:
       - db
     networks:
