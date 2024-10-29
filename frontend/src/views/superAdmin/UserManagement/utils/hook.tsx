@@ -71,7 +71,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     total: 0,
     pageSize: 10,
     currentPage: 1,
-    background: true
+    background: true,
+    pageSizes: [10, 20, 50, 100]
   });
   const avatar = (avatar: string | null) =>
     avatar ? getUserAvatar(avatar) : userAvatar;

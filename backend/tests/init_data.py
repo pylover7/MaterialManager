@@ -24,18 +24,15 @@ async def create_data():
 
     for _, row in df.iterrows():
         company, depart, nickname, phone, username = row
-        departP = await departController.get_by_name(depart)
+        print(company, depart, nickname, phone, username)
+        company = str(company)
+        depart = str(depart)
+        departP = await departController.get_by_name(company.strip())
         if departP is None:
-            try:
-                departP = await departController.create(DepartCreate(name=company))
-            except Exception as e:
-                continue
-        departC = await departController.get_by_name(depart)
+            departP = await departController.create(DepartCreate(name=company.strip()))
+        departC = await departController.get_by_name(depart.strip())
         if departC is None:
-            try:
-                departC = await departController.create(DepartCreate(name=depart, parentId=departP.id))
-            except Exception as e:
-                continue
+            departC = await departController.create(DepartCreate(name=depart.strip(), parentId=departP.id))
         password = md5_encrypt("1")
         role = await role_controller.get(2)
         user_id = generate_uuid(username)
