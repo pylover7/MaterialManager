@@ -12,11 +12,7 @@ import ReCropperPreview from "@/components/ReCropperPreview";
 import type { FormItemProps, RoleFormItemProps } from "../utils/types";
 import Refresh from "@iconify-icons/ep/refresh";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import {
-  getKeyList,
-  isAllEmpty,
-  deviceDetection
-} from "@pureadmin/utils";
+import { getKeyList, isAllEmpty, deviceDetection } from "@pureadmin/utils";
 
 import {
   ElForm,
@@ -263,11 +259,13 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   function handleSizeChange(val: number) {
-    console.log(`${val} items per page`);
+    pagination.pageSize = val;
+    onSearch();
   }
 
   function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`);
+    pagination.currentPage = val;
+    onSearch();
   }
 
   /** 当CheckBox选择项发生变化时会触发该事件 */
