@@ -17,7 +17,7 @@ def base_decode(data: str) -> bytes:
 
 
 def generate_uuid(name: str) -> uuid.UUID:
-    name = name + str(time.time_ns())
+    name = str(name) + str(time.time_ns())
     return uuid.uuid5(uuid.NAMESPACE_DNS, name)
 
 

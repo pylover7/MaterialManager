@@ -1,3 +1,5 @@
+import hashlib
+
 from passlib import pwd
 from passlib.context import CryptContext
 
@@ -14,3 +16,12 @@ def get_password_hash(password: str) -> str:
 
 def generate_password() -> str:
     return pwd.genword()
+
+def md5_encrypt(input_string) -> str:
+    # 创建md5对象
+    md5_hash = hashlib.md5()
+    # 更新哈希值
+    md5_hash.update(input_string.encode('utf-8'))
+    # 获取加密后的十六进制表示
+    encrypted_string = md5_hash.hexdigest()
+    return encrypted_string

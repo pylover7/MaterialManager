@@ -29,6 +29,10 @@ python-multipart = "^0.0.9"
 aiomysql = "^0.2.0"
 ldap3 = "^2.9.1"
 
+[tool.poetry.group.dev.dependencies]
+pandas = "^2.2.3"
+openpyxl = "^3.1.5"
+
 [tool.black]
 line-length = 120
 target-version = ["py310", "py311"]
