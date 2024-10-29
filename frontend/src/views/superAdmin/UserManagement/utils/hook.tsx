@@ -50,9 +50,9 @@ import {
 export function useUser(tableRef: Ref, treeRef: Ref) {
   const form = reactive({
     // 左侧部门树的id
+    nickname: "",
     departId: "",
     username: "",
-    phone: "",
     status: ""
   });
   const formRef = ref();
@@ -301,7 +301,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       pagination.currentPage,
       pagination.pageSize,
       toRaw(form).username,
-      toRaw(form).phone,
+      toRaw(form).nickname,
       toRaw(form).departId
     );
     dataList.value = data;

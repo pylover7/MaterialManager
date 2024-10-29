@@ -58,16 +58,16 @@ async def get_user(
 async def list_user(
         currentPage: int = Query(1, description="页码"),
         pageSize: int = Query(10, description="每页数量"),
-        username: str = Query("", description="用户名称，用于搜索"),
-        phone: str = Query("", description="手机号码，用于搜索"),
+        username: str = Query("", description="工号，用于搜索"),
+        nickname: str = Query("", description="用户名称，用于搜索"),
         departId: str = Query("", description="部门ID，用于搜索")
 ):
     q = Q()
     departId = int(departId) if departId else 0
     if username:
         q &= Q(username__contains=username)
-    if phone:
-        q &= Q(phone__contains=phone)
+    if nickname:
+        q &= Q(nickname__contains=nickname)
     if departId:
         childrenList = await departController.children_ids(departId)
         q &= Q(depart_id__in=childrenList)
