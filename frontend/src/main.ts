@@ -23,6 +23,9 @@ import "element-plus/dist/index.css";
 import "./assets/iconfont/iconfont.js";
 import "./assets/iconfont/iconfont.css";
 
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+
 const app = createApp(App);
 
 // 自定义指令
