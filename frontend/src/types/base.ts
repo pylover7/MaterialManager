@@ -2,6 +2,7 @@ export type BaseResult = {
   code: number;
   msg: string;
   data?: object;
+  resetPwd?: boolean;
 };
 
 export type ResultList = {

@@ -52,3 +52,10 @@ export const updatePassword = (data?: updatePwdData) => {
     data
   });
 };
+/** 初始化密码 */
+export const initPassword = (newPwd: string) => {
+  newPwd = hashPwd(newPwd);
+  return http.request<BaseResult>("post", baseUrlApi("/base/initPwd"), {
+    data: { newPwd }
+  });
+};

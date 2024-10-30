@@ -23,6 +23,7 @@ import "element-plus/dist/index.css";
 import "./assets/iconfont/iconfont.js";
 import "./assets/iconfont/iconfont.css";
 
+// 兼容性
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 

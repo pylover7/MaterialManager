@@ -440,7 +440,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   );
 
   const newPwdLoading = ref(false);
-  const resetPwd = () => {
+  const newPwd = () => {
     newPwdLoading.value = true;
     setTimeout(() => {
       pwdForm.newPwd = generatePassword(12);
@@ -483,7 +483,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
                       loading-icon={useRenderIcon(Refresh)}
                       loading={newPwdLoading.value}
                       onClick={() => {
-                        resetPwd();
+                        newPwd();
                       }}
                     >
                       随机密码

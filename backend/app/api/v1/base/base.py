@@ -22,13 +22,14 @@ router = APIRouter()
 
 @router.post("/accessToken", summary="获取token")
 async def login_access_token(credentials: CredentialsSchema):
+    resetPwd = False
     if (settings.DATABASE_START is None and credentials.username == settings.SUPER_USER["username"]
             and credentials.password == settings.SUPER_USER_PWD):
         user = UserPydantic.parse_obj(settings.SUPER_USER)
         roles = user.roles
         depart = user.depart
     else:
-        user: User = await user_controller.authenticate(credentials)
+        user, resetPwd = await user_controller.authenticate(credentials)
         await user_controller.update_last_login(user.id)
         roles = await user.roles.all().values_list("code", flat=True)
         depart = await departController.get_all_name(user)
@@ -60,7 +61,7 @@ async def login_access_token(credentials: CredentialsSchema):
         ),
         expires=expire.strftime("%Y-%m-%d %H:%M:%S")  # expire.timestamp()
     )
-    return Success(data=data.model_dump())
+    return Success(data=data.model_dump(), resetPwd=resetPwd)
 
 
 @router.post("/refreshToken", summary="刷新token")
@@ -215,5 +216,14 @@ async def update_user_password(data: UpdatePassword):
     if not verified:
         return Fail(msg="旧密码验证错误！")
     user.password = get_password_hash(data.newPwd)
+    await user.save()
+    return Success(msg="密码修改成功！")
+
+
+@router.post("/initPwd", summary="初始化密码", dependencies=[DependAuth])
+async def init_user_password(data: dict):
+    user_id = CTX_USER_ID.get()
+    user = await user_controller.get(user_id)
+    user.password = get_password_hash(data["newPwd"])
     await user.save()
     return Success(msg="密码修改成功！")
