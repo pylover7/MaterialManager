@@ -15,7 +15,7 @@ from app.controllers.user import role_controller
 from app.utils import generate_uuid
 from app.utils.password import md5_encrypt
 
-excel_file_path = "./goodsmanage_container_person.xlsx"
+excel_file_path = "goodsmanage_container_person.xlsx"
 
 df = pd.read_excel(excel_file_path, header=None)
 async def create_data():

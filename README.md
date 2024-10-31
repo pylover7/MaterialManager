@@ -16,7 +16,7 @@
 构建镜像
 
 ```bash
-docker build -t material-manager:0.0.2 .
+docker build -t material-manager:0.0.8 .
 ```
 
 启动容器
