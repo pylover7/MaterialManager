@@ -50,6 +50,9 @@ export function useNav() {
   const username = computed(() => {
     return useUserStoreHook()?.username;
   });
+  const nickname = computed(() => {
+    return useUserStoreHook()?.nickname;
+  });
 
   /** 设置国际化选中后的样式 */
   const getDropdownItemStyle = computed(() => {
@@ -354,6 +357,7 @@ export function useNav() {
     isCollapse,
     pureApp,
     username,
+    nickname,
     userAvatar,
     avatarsStyle,
     tooltipEffect,

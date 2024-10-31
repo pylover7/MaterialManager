@@ -19,6 +19,7 @@ class JWTReOut(BaseModel):
 
 
 class JWTOut(BaseModel):
+    nickname: str
     username: str
     uuid: str
     depart: str

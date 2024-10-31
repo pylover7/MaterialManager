@@ -11,6 +11,7 @@ export type userInfo = {
 export type borrowInfo = {
   uuid: string;
   username: string;
+  nickname: string;
   reason: string;
   phone: string;
   depart: string;

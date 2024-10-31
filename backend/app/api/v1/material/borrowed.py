@@ -29,9 +29,12 @@ async def create_borrowed(data: CreateBorrowedInfo):
         material = await materialController.get_by_uuid(uuid=item.uuid)
         item = item.model_dump()
         item["username"] = data.username
+        item["nickname"] = data.nickname
         item["phone"] = data.phone
         item["userDepart"] = data.depart
         item["uuid"] = data.uuid
+        user = await user_controller.get_by_uuid(item["uuid"])
+        item["phone"] = user.phone
         item["reason"] = data.reason
         item["material_id"] = material.id
         obj: Borrowed = await borrowedController.create(obj_in=item)

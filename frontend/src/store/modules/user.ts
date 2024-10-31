@@ -12,6 +12,7 @@ import { getLogin, refreshTokenApi } from "@/api/base";
 export const useUserStore = defineStore({
   id: "pure-user",
   state: (): userType => ({
+    nickname: storageLocal().getItem<DataInfo<number>>(userKey)?.nickname ?? "",
     // 用户名
     username: storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "",
     // 用户uuid
@@ -27,6 +28,9 @@ export const useUserStore = defineStore({
   }),
   actions: {
     /** 存储用户名 */
+    SET_NICKNAME(nickname: string) {
+      this.nickname = nickname;
+    },
     SET_USERNAME(username: string) {
       this.username = username;
     },

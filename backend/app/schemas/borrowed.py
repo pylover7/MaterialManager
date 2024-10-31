@@ -30,6 +30,7 @@ class MaterialBorrowed(MaterialCreate):
 class CreateBorrowedInfo(BaseModel):
     uuid: str
     username: str
+    nickname: str
     phone: str
     depart: str
     reason: str

@@ -53,6 +53,7 @@ app.component("Auth", Auth);
 import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light.css";
 import VueTippy from "vue-tippy";
+import "@/utils/globalPolyfills";
 app.use(VueTippy);
 
 getPlatformConfig(app).then(async config => {

@@ -5,6 +5,7 @@ export type UserInfo = {
   uuid: string;
   /** 用户名 */
   username: string;
+  nickname: string;
   /** 部门 */
   depart: string;
   /** 电话 */

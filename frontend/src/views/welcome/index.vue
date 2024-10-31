@@ -26,6 +26,7 @@ const borrowMaterial = (area: string) => {
         borrowInfo: {
           uuid: 0,
           username: "",
+          nickname: "",
           phone: "",
           depart: "",
           reason: "",
@@ -109,6 +110,7 @@ const borrowKey = (area: string) => {
         borrowInfo: {
           uuid: 0,
           username: "",
+          nickname: "",
           phone: "",
           depart: "",
           reason: "",

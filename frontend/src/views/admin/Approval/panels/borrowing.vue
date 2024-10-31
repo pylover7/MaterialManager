@@ -121,10 +121,10 @@ const columns: TableColumnList = [
         width="200"
         trigger="click"
         v-slots={{
-          reference: () => <el-button link>{row.username}</el-button>,
+          reference: () => <el-button link>{row.nickname}</el-button>,
           default: () => (
             <ul>
-              <li>姓名：{row.username}</li>
+              <li>姓名：{row.nickname}</li>
               <li>电话：{row.phone}</li>
               <li>部门：{row.userDepart}</li>
             </ul>

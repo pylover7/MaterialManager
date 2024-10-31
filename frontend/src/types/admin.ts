@@ -16,6 +16,7 @@ export type BorrowedInfo = {
   id: number;
   uuid: string;
   username: string;
+  nickname: string;
   userDepart: string;
   phone: string;
   reason: string;

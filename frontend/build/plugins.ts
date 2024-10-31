@@ -65,7 +65,7 @@ export function getPluginsList(
     // vue-devtools
     // VueDevTools()
     legacy({
-      targets: ["not IE >= 11"], // 指定需要兼容的浏览器版本
+      targets: ["defaults", "IE >= 11"], // 指定需要兼容的浏览器版本
       polyfills: ["es.promise.finally", "es/map", "es/set"],
       modernPolyfills: ["es.promise.finally"]
     })

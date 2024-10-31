@@ -39,6 +39,7 @@ async def login_access_token(credentials: CredentialsSchema):
     expire_refresh = now(0) + refresh_token_expires
 
     data = JWTOut(
+        nickname=user.nickname,
         username=user.username,
         uuid=user.uuid.__str__(),
         depart=depart,
@@ -104,11 +105,12 @@ async def refresh_token(refreshToken: refreshTokenSchema):
 
 @router.post("/auth", summary="用户验证")
 async def auth(credentials: CredentialsSchema):
-    user: User = await user_controller.authenticate(credentials)
+    user, _ = await user_controller.authenticate(credentials)
     depart = await departController.get_all_name(user)
     data = {
         "uuid": user.uuid.__str__(),
         "username": user.username,
+        "nickname": user.nickname,
         "phone": user.phone,
         "depart": depart
     }
