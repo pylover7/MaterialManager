@@ -1,5 +1,3 @@
-from typing import Optional
-
 import jwt
 from fastapi import Depends, Header, HTTPException, Request
 

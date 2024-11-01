@@ -1,18 +1,28 @@
 export type BaseResult = {
   code: number;
   msg: string;
+  data?: object;
+  resetPwd?: boolean;
 };
-export type MaterialItem = {
-  id?: number;
-  uuid?: string;
-  name: string;
-  model: string;
-  depart?: string;
-  position: string;
-  number: number;
-  checking?: number;
-  borrowing?: number;
-  borrowed?: number;
-  created_at?: string;
-  updated_at?: string;
+
+export type ResultList = {
+  code: number;
+  msg: string;
+  data?: Array<any>;
+};
+export type ResultRoleAuth = BaseResult & {
+  data: {
+    menus: Array<number>;
+    apis: Array<number>;
+  };
+};
+export type ResultTable = {
+  success: boolean;
+  data?: Array<any>;
+  /** 总条目数 */
+  total?: number;
+  /** 每页显示条目个数 */
+  pageSize?: number;
+  /** 当前页数 */
+  currentPage?: number;
 };

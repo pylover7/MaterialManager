@@ -13,9 +13,8 @@ import { stringify } from "qs";
 import NProgress from "../progress";
 import { getToken, formatToken, removeToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
-import {baseUrlApi, staticUrl} from "@/api/utils";
+import { baseUrlApi, staticUrl } from "@/api/utils";
 import { router, resetRouter } from "@/router";
-import { message } from "@/utils/message";
 import { errorNotification } from "@/utils/notification";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
@@ -38,6 +37,9 @@ class PureHttp {
     this.httpInterceptorsRequest();
     this.httpInterceptorsResponse();
   }
+
+  /** 重复请求次数 */
+  private static requestCount = 5;
 
   /** token过期后，暂存待执行的请求 */
   private static requests = [];
@@ -142,33 +144,42 @@ class PureHttp {
         }
         return response.data;
       },
-      (error: PureHttpError) => {
-        console.log(error);
+      async (error: PureHttpError) => {
         const $error = error;
         $error.isCancelRequest = Axios.isCancel($error);
         // 关闭进度条动画
         NProgress.done();
         // 所有的响应异常 区分来源为取消请求/非取消请求
-        if (error.response == null) {
-          errorNotification("服务器超时故障，请重新刷新~");
-        }
-        if (error.response.status == 403) {
+        if (error.response == null || error.response.status == 500) {
+          const config = error.config;
+          // 判断是否重复发起请求
+          if (Boolean(PureHttp.requestCount)) {
+            PureHttp.requestCount--;
+            console.log(`第${5 - PureHttp.requestCount}次重试`);
+            // 延时发起请求
+            await new Promise(resolve => {
+              setTimeout(resolve, 1000);
+            });
+            // 重新发起请求
+            return instance(config);
+          } else {
+            errorNotification("服务器异常，请刷新~");
+          }
+        } else if (error.response.status == 403) {
           resetRouter();
           router.push("/403").then(() => {
             errorNotification(error.response.data.msg);
           });
-        }
-        if (error.response.status == 406) {
+        } else if (error.response.status == 406) {
           errorNotification(error.response.data.msg);
-        }
-        if (error.response.status == 401) {
+        } else if (error.response.status == 401) {
           removeToken();
           resetRouter();
           router.push("/login").then(() => {
-            message("请重新登录！", { type: "error" });
+            errorNotification("请重新登录！");
           });
         }
-        return Promise.reject($error);
+        return Promise.reject($error.response.data);
       }
     );
   }

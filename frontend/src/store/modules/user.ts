@@ -4,14 +4,15 @@ import type { userType } from "./types";
 import { routerArrays } from "@/layout/types";
 import { router, resetRouter } from "@/router";
 import { storageLocal } from "@pureadmin/utils";
-import { getLogin, refreshTokenApi } from "@/api/user";
-import type { UserResult, RefreshTokenResult } from "@/api/user";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { type DataInfo, setToken, removeToken, userKey } from "@/utils/auth";
+import type { RefreshTokenResult, LoginResult } from "@/types/user";
+import { getLogin, refreshTokenApi } from "@/api/base";
 
 export const useUserStore = defineStore({
   id: "pure-user",
   state: (): userType => ({
+    nickname: storageLocal().getItem<DataInfo<number>>(userKey)?.nickname ?? "",
     // 用户名
     username: storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "",
     // 用户uuid
@@ -27,6 +28,9 @@ export const useUserStore = defineStore({
   }),
   actions: {
     /** 存储用户名 */
+    SET_NICKNAME(nickname: string) {
+      this.nickname = nickname;
+    },
     SET_USERNAME(username: string) {
       this.username = username;
     },
@@ -51,7 +55,7 @@ export const useUserStore = defineStore({
     },
     /** 登入 */
     async loginByUsername(data) {
-      return new Promise<UserResult>((resolve, reject) => {
+      return new Promise<LoginResult>((resolve, reject) => {
         getLogin(data)
           .then(data => {
             if (data) {

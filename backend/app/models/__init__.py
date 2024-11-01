@@ -3,3 +3,6 @@ from .users import *
 from .material import *
 from .dutyLog import *
 from .borrowed import *
+from .materialType import *
+from .area import *
+from .checked import *

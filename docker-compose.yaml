@@ -1,0 +1,42 @@
+configs:
+  create_db_sql:
+    content: |
+      CREATE DATABASE material DEFAULT CHARACTER SET = 'utf8mb4' DEFAULT COLLATE = 'utf8mb4_0900_ai_ci';
+
+services:
+  db:
+    image: mysql8:8.4
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      TZ: Asia/Shanghai
+    volumes:
+      - ./material-data:/var/lib/mysql:Z
+    configs:
+      - source: create_db_sql
+        target: /docker-entrypoint-initdb.d/create_db.sql
+        mode: 0777
+    networks:
+      material_net:
+        aliases:
+          - db
+  material:
+    image: material:1.0.0
+    environment:
+      - DB_HOST=localhost
+      - DB_DRIVER=org.mysql.jdbc.Driver
+      - DB_URL=jdbc:mysql://db:3306/material?serverTimezone=Asia/Shanghai
+      - DB_USERNAME=root
+      - DB_PASSWORD=mysql
+    ports:
+      - '8000:80'
+    depends_on:
+      - db
+    networks:
+      material_net:
+        aliases:
+          - material
+
+networks:
+  material_net:
+    driver: bridge

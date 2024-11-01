@@ -37,21 +37,20 @@ async def init_api(app: FastAPI):
     :param app:
     :return:
     """
-    api = await Api.exists()
+    await Api.all().delete()
     apiList = []
-    if not api:
-        apis = app.openapi()["paths"]
-        for path, value in apis.items():
-            for method, value2 in value.items():
-                tag = ",".join(value2.get("tags"))
-                summary = value2.get("summary")
-                api_obj = await Api.create(
-                    path=path,
-                    method=method.upper(),
-                    tags=tag,
-                    summary=summary
-                )
-                apiList.append(api_obj.id)
+    apis = app.openapi()["paths"]
+    for path, value in apis.items():
+        for method, value2 in value.items():
+            tag = ",".join(value2.get("tags"))
+            summary = value2.get("summary")
+            api_obj = await Api.create(
+                path=path,
+                method=method.upper(),
+                tags=tag,
+                summary=summary
+            )
+            apiList.append(api_obj.id)
     return apiList
 
 
@@ -94,7 +93,7 @@ async def init_menus():
                 title="隔离办物资管理",
                 name="GlbMaterial",
                 path="/glb/material",
-                component="glb/material",
+                component="material/glbTool",
                 icon="fluent:box-search-16-regular",
             ),
             await Menu.create(
@@ -103,7 +102,7 @@ async def init_menus():
                 title="隔离办钥匙管理",
                 name="GlbKey",
                 path="/glb/key",
-                component="glb/key",
+                component="material/glbKey",
                 icon="fluent:key-reset-24-regular",
             ),
         ]
@@ -141,7 +140,7 @@ async def init_menus():
                 title="辅控物资管理",
                 name="FkMaterial",
                 path="/fk/material",
-                component="fk/material",
+                component="material/fkTool",
                 icon="fluent:box-search-16-regular",
             ),
             await Menu.create(
@@ -150,7 +149,7 @@ async def init_menus():
                 title="辅控钥匙管理",
                 name="FkKey",
                 path="/fk/key",
-                component="fk/key",
+                component="material/fkKey",
                 icon="fluent:key-reset-24-regular",
             )
         ]
@@ -188,7 +187,7 @@ async def init_menus():
                 title="网控物资管理",
                 name="WkMaterial",
                 path="/wk/material",
-                component="wk/material",
+                component="material/wkTool",
                 icon="fluent:box-search-16-regular",
             ),
             await Menu.create(
@@ -197,7 +196,7 @@ async def init_menus():
                 title="网控钥匙管理",
                 name="WkKey",
                 path="/wk/key",
-                component="wk/key",
+                component="material/wkKey",
                 icon="fluent:key-reset-24-regular",
             ),
         ]
@@ -232,6 +231,7 @@ async def init_menus():
             await Menu.create(
                 parentId=admin.id,
                 menuType=0,
+                rank=0,
                 title="审批",
                 name="Approval",
                 path="/admin/approval",
@@ -242,6 +242,7 @@ async def init_menus():
             await Menu.create(
                 parentId=admin.id,
                 menuType=0,
+                rank=1,
                 title="物资数据",
                 name="MaterialMeta",
                 path="/admin/material-meta",
@@ -252,6 +253,18 @@ async def init_menus():
             await Menu.create(
                 parentId=admin.id,
                 menuType=0,
+                rank=2,
+                title="物资送检",
+                name="MaterialChecked",
+                path="/admin/MaterialChecked",
+                component="admin/MaterialChecked",
+                icon="fluent:home-garage-24-regular",
+                keepAlive=True,
+            ),
+            await Menu.create(
+                parentId=admin.id,
+                menuType=0,
+                rank=3,
                 title="日志审计",
                 name="OperationLogs",
                 path="/admin/operation-logs",
@@ -301,6 +314,7 @@ async def init_menus():
             await Menu.create(
                 parentId=chaoGuan.id,
                 menuType=0,
+                rank=1,
                 title="部门管理",
                 name="DeptManagement",
                 path="/superAdmin/deptManagement",
@@ -311,6 +325,7 @@ async def init_menus():
             await Menu.create(
                 parentId=chaoGuan.id,
                 menuType=0,
+                rank=2,
                 title="角色管理",
                 name="RoleManagement",
                 path="/superAdmin/roleManagement",
@@ -321,6 +336,7 @@ async def init_menus():
             await Menu.create(
                 parentId=chaoGuan.id,
                 menuType=0,
+                rank=3,
                 title="菜单管理",
                 name="MenuManagement",
                 path="/superAdmin/menuManagement",
@@ -331,6 +347,7 @@ async def init_menus():
             await Menu.create(
                 parentId=chaoGuan.id,
                 menuType=0,
+                rank=4,
                 title="系统日志",
                 name="Logs",
                 path="/superAdmin/logs",
@@ -341,6 +358,7 @@ async def init_menus():
             await Menu.create(
                 parentId=chaoGuan.id,
                 menuType=0,
+                rank=5,
                 title="系统设置",
                 name="Settings",
                 path="/superAdmin/settings",

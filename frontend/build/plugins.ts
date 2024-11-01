@@ -14,6 +14,8 @@ import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import { genScssMultipleScopeVars } from "../src/layout/theme";
 import { vitePluginFakeServer } from "vite-plugin-fake-server";
 // import VueDevTools from "vite-plugin-vue-devtools";
+import legacy from "@vitejs/plugin-legacy";
+import "core-js";
 
 export function getPluginsList(
   VITE_CDN: boolean,
@@ -59,8 +61,13 @@ export function getPluginsList(
     // 打包分析
     lifecycle === "report"
       ? visualizer({ open: true, brotliSize: true, filename: "report.html" })
-      : (null as any)
+      : (null as any),
     // vue-devtools
     // VueDevTools()
+    legacy({
+      targets: ["defaults", "IE >= 11"], // 指定需要兼容的浏览器版本
+      polyfills: ["es.promise.finally", "es/map", "es/set"],
+      modernPolyfills: ["es.promise.finally"]
+    })
   ];
 }

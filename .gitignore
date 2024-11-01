@@ -6,6 +6,7 @@
 *.pyc
 *.sqlite*
 .venv/
+*/migrations
 
 # frontend
 node_modules

@@ -9,10 +9,12 @@ from .base import BaseModel, UUIDModel
 
 class Borrowed(BaseModel, UUIDModel):
     borrowing = fields.IntField(description="借用数量")
-    username = fields.CharField(max_length=20, description="借用人名称")
+    username = fields.CharField(max_length=20, description="借用人工号")
+    nickname = fields.CharField(max_length=20, description="借用人昵称")
     uuid = fields.UUIDField(pk=False, description="借用人uuid")
     phone = fields.CharField(max_length=20, description="借用人手机号")
     userDepart = fields.CharField(max_length=20, description="借用人部门")
+    reason = fields.CharField(max_length=200, description="借用原因")
     borrowTime = fields.DatetimeField(auto_now_add=True, description="借用时间")
     borrowApproveStatus = fields.BooleanField(default=False, description="借用审批状态，False为未审批，True未已审批")
     borrowApproveWhether = fields.BooleanField(null=True, description="借用通过状态，False为驳回，True为通过")
@@ -20,9 +22,9 @@ class Borrowed(BaseModel, UUIDModel):
     returnApproveStatus = fields.BooleanField(default=False, description="归还批准状态")
     returnApproveTime = fields.DatetimeField(null=True, description="归还批准时间")
 
-    material = fields.ManyToManyField('models.Material', related_name='borrowed_material')
-    borrowApproveUser = fields.ManyToManyField('models.User', related_name='borrowed_approve_user')
-    returnApproveUser = fields.ManyToManyField('models.User', related_name='return_approve_user')
+    material = fields.ForeignKeyField('models.Material', related_name='borrowed_material')
+    borrowApproveUser = fields.ForeignKeyField('models.User', related_name='borrowed_approve_user', null=True)
+    returnApproveUser = fields.ForeignKeyField('models.User', related_name='return_approve_user', null=True)
 
     class Meta:
         table = "borrowed"

@@ -11,6 +11,7 @@ export interface DataInfo<T> {
   refreshToken: string;
   /** 用户名 */
   username?: string;
+  nickname?: string;
   /** uuid */
   uuid?: string;
   /** 部门 */
@@ -67,11 +68,13 @@ export function setToken(data: DataInfo<Date>) {
   );
 
   function setUserKey(
+    nickname: string,
     username: string,
     uuid: string,
     depart: string,
     roles: Array<string>
   ) {
+    useUserStoreHook().SET_NICKNAME(nickname);
     useUserStoreHook().SET_USERNAME(username);
     useUserStoreHook().SET_UUID(uuid);
     useUserStoreHook().SET_DEPART(depart);
@@ -80,16 +83,19 @@ export function setToken(data: DataInfo<Date>) {
       refreshToken,
       expires,
       username,
+      nickname,
       uuid,
       depart,
       roles
     });
   }
 
-  if (data.username && data.roles) {
-    const { username, uuid, depart, roles } = data;
-    setUserKey(username, uuid, depart, roles);
+  if (data.username && data.roles && data.nickname) {
+    const { nickname, username, uuid, depart, roles } = data;
+    setUserKey(nickname, username, uuid, depart, roles);
   } else {
+    const nickname =
+      storageLocal().getItem<DataInfo<number>>(userKey)?.nickname ?? "";
     const username =
       storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "";
     const uuid = storageLocal().getItem<DataInfo<number>>(userKey)?.uuid ?? "";
@@ -97,7 +103,7 @@ export function setToken(data: DataInfo<Date>) {
       storageLocal().getItem<DataInfo<number>>(userKey)?.roles ?? [];
     const depart =
       storageLocal().getItem<DataInfo<number>>(userKey)?.depart ?? "";
-    setUserKey(username, uuid, depart, roles);
+    setUserKey(nickname, username, uuid, depart, roles);
   }
 }
 

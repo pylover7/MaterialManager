@@ -4,7 +4,7 @@ WORKDIR /app
 COPY /frontend /app/frontend
 RUN cd /app/frontend \
     && npm i -g pnpm --registry=https://registry.npmmirror.com \
-    && pnpm i && pnpm build
+    && pnpm config set registry https://registry.npmmirror.com && pnpm i && pnpm build
 
 
 FROM python:3.11-slim
@@ -20,7 +20,7 @@ RUN sed -i s@/deb.debian.org/@/mirrors.aliyun.com/@g /etc/apt/sources.list.d/deb
 
 RUN apt-get update \
     # && apt-get install -y --no-install-recommends gcc python3-dev bash nginx vim curl procps net-tools\
-    && apt-get install -y --no-install-recommends python3-dev bash nginx\
+    && apt-get install -y --no-install-recommends nginx\
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 RUN pip install poetry -i https://pypi.tuna.tsinghua.edu.cn/simple\
@@ -35,4 +35,4 @@ RUN rm -f /etc/nginx/sites-enabled/default \
 ENV LANG=zh_CN.UTF-8
 EXPOSE 80
 
-ENTRYPOINT [ "sh", "entrypoint.sh" ]
+ENTRYPOINT [ "bash", "entrypoint.sh" ]

@@ -2,13 +2,17 @@ import dayjs from "dayjs";
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { deleteDepart, getDeptList, updateDepart } from "@/api/system";
 import { usePublicHooks } from "../../../hooks";
 import { addDialog } from "@/components/ReDialog";
 import { reactive, ref, onMounted, h } from "vue";
 import type { FormItemProps } from "../utils/types";
 import { cloneDeep, isAllEmpty, deviceDetection } from "@pureadmin/utils";
-import { addDepart } from "@/api/system";
+import {
+  addDepart,
+  deleteDepart,
+  getDeptList,
+  updateDepart
+} from "@/api/admin";
 
 export function useDept() {
   const form = reactive({

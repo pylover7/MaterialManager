@@ -3,7 +3,8 @@ import type { BaseResult } from "@/types/base";
 export type LatestNote = BaseResult & {
   data: {
     note: string;
-    depart: string;
+    area: string;
+    type: string;
     dutyDate: string;
   };
 };
@@ -21,4 +22,22 @@ export type DutyInfoResult = BaseResult & {
     dutyPerson: string;
     dutyPersonDepart: string;
   };
+};
+export type MaterialItem = {
+  id?: number;
+  uuid?: string;
+  name: string;
+  code: string;
+  model: string;
+  type: string;
+  area: string;
+  position: string;
+  number: number;
+  nowNumber?: number;
+  checking?: number;
+  borrowing?: number;
+  borrowed?: number;
+  created_at?: string;
+  updated_at?: string;
+  description?: string;
 };
