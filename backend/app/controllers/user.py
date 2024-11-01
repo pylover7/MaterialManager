@@ -4,10 +4,9 @@ from typing import List, Optional, Tuple
 from fastapi.exceptions import HTTPException
 
 from app.core.crud import CRUDBase
-from app.models.users import User
 from app.schemas.login import CredentialsSchema
 from app.schemas.users import UserCreate, UserUpdate
-from app.utils.password import get_password_hash, verify_password
+from app.utils.password import get_password_hash, verify_password, md5_encrypt
 from .depart import departController
 
 from .role import role_controller
@@ -25,7 +24,7 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         return await self.model.filter(username=username).first()
 
     async def create(self, obj_in: UserCreate) -> User:
-        obj_in.password = get_password_hash(password=obj_in.password)
+        obj_in.password = get_password_hash(password=md5_encrypt(obj_in.password))
         obj = await super().create(obj_in.create_dict())
         return obj
 

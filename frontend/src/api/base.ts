@@ -1,9 +1,10 @@
 import { http } from "@/utils/http";
-import {
+import type {
   LoginResult,
   RefreshTokenResult,
   UserResult,
-  UserPwdData, updatePwdData
+  UserPwdData,
+  updatePwdData
 } from "@/types/user";
 import type { BaseResult, ResultList } from "@/types/base";
 import { baseUrlApi } from "@/api/utils";

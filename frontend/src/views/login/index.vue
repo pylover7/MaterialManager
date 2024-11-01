@@ -30,6 +30,7 @@ import { addDialog } from "@/components/ReDialog/index";
 import { deviceDetection, isAllEmpty } from "@pureadmin/utils";
 import { REGEXP_PWD } from "@/views/login/utils/rule";
 import Refresh from "@iconify-icons/ep/refresh";
+import Message from "@iconify-icons/ep/message";
 import { initPassword } from "@/api/base";
 import { zxcvbn } from "@zxcvbn-ts/core";
 
@@ -295,6 +296,28 @@ function initPwd() {
               >
                 {{ t("login.pureLogin") }}
               </el-button>
+            </Motion>
+            <Motion :delay="300">
+              <el-row class="flex mt-4" justify="space-between">
+                <el-link
+                  href="https://hn-disk.hnpc.cc/ucdisk/s/UBjqq2"
+                  target="_blank"
+                  :underline="false"
+                  >使用说明下载</el-link
+                >
+                <div>
+                  <el-text type="info" size="small">若有使用问题请</el-text>
+                  <el-button
+                    type="info"
+                    :icon="useRenderIcon(Message)"
+                    circle
+                    link
+                    tag="a"
+                    target="_blank"
+                    href="mailto:liushuo@cnnp.com.cn?subject=物资管理平台问题"
+                  />
+                </div>
+              </el-row>
             </Motion>
           </el-form>
         </div>

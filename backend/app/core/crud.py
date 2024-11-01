@@ -53,10 +53,14 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         obj = await self.get(id=id)
         await obj.delete()
 
-    async def children_ids(self, id: int) -> List[int]:
-        childrenList = [id]
-        childrenId = await self.model.filter(parentId=id).first().values_list("id", flat=True)
-        while childrenId:
-            childrenList.append(childrenId)
-            childrenId = await self.model.filter(parentId=childrenId).first().values_list("id", flat=True)
+    async def children_ids(self, parentId: int) -> List[int]:
+        childrenList = []
+        childrenId = await self.model.filter(parentId=parentId).all().values_list("id", flat=True)
+        if childrenId:
+            childrenList.extend(childrenId)
+            for item in childrenId:
+                items = await self.children_ids(item)
+                if items:
+                    childrenList.extend(items)
+
         return childrenList

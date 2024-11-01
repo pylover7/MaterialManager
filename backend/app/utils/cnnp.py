@@ -40,6 +40,9 @@ class LDAPAuthentication:
 
 
 if __name__ == '__main__':
-    ldap_auth = LDAPAuthentication()
-    print(ldap_auth.authenticate('some_uid', 'some_password'))
-    ldap_auth.close_ctx()
+    from ldap3 import Server, Connection, ALL
+    server = Server(host='ldap:10.20.21.3', port=389, get_info=ALL)
+    conn = Connection(server, user='uid=hnadservice,ou=user,dc=cnnp,dc=com', password='mTQGi4JlIwQ', auto_bind=True)
+    conn.search('dc=cnnp,dc=com', '(uid=liushuo)', )
+    conn.search('dc=cnnp,dc=com', '(uid=liushuo)', attributes=['dn'])
+    entries = conn.entries
