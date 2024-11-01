@@ -8,7 +8,7 @@ class Material(BaseModel, TimestampMixin, UUIDModel):
     type = fields.CharField(max_length=20, description="物资类型")
     area = fields.CharField(max_length=20, description="物资所属区域")
     name = fields.CharField(max_length=50, description="物资名称")
-    code = fields.CharField(max_length=20, unique=True, null=True, description="物资编号")
+    code = fields.CharField(max_length=20, null=True, description="物资编号")
     model = fields.CharField(max_length=20, null=True, description="物资型号")
     position = fields.CharField(max_length=50, description="物资位置")
     number = fields.IntField(description="物资库存数量")

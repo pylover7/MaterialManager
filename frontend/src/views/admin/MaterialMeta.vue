@@ -319,7 +319,6 @@ const rules = reactive<FormRules<MaterialItem>>({
   area: [{ required: true, message: "请选择区域！", trigger: "blur" }],
   type: [{ required: true, message: "请选择物资类型！", trigger: "blur" }],
   name: [{ required: true, message: "请输入物资名称信息！", trigger: "blur" }],
-  code: [{ required: true, message: "请输入物资编码信息！", trigger: "blur" }],
   position: [
     { required: true, message: "请输入物资位置信息", trigger: "blur" }
   ],
