@@ -44,8 +44,8 @@ async def create_borrowed(data: CreateBorrowedInfo):
 
 
 @borrowedRouter.post("/delete", summary="删除借用信息")
-async def delete_borrowed(data: list[int]):
-    for id in data:
+async def delete_borrowed(data: dict):
+    for id in data["idList"]:
         obj = await borrowedController.get(id=id)
         await obj.delete()
     return Success()
