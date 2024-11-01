@@ -95,7 +95,8 @@ const infoNotification = (message: string | VNode): NotificationHandle => {
  */
 const successNotification = (message: string | VNode): NotificationHandle => {
   return notification("成功通知", message, {
-    type: "success"
+    type: "success",
+    showClose: true
   });
 };
 

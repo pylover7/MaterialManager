@@ -6,10 +6,10 @@ from .borrowed import Borrowed
 
 
 class User(BaseModel, TimestampMixin, UUIDModel):
-    username = fields.CharField(max_length=20, unique=True, description="用户名称")
-    nickname = fields.CharField(max_length=30, null=True, description="用户昵称")
+    username = fields.CharField(max_length=20, unique=True, description="职工号")
+    nickname = fields.CharField(max_length=30, description="用户名称")
     avatar = fields.CharField(max_length=255, null=True, description="头像文件名称")
-    sex = fields.IntField(default=0, description="性别, 0: 女, 1: 男")
+    sex = fields.IntField(default=1, description="性别, 0: 女, 1: 男")
     email = fields.CharField(max_length=255, null=True, unique=True, description="邮箱")
     phone = fields.CharField(max_length=20, null=True, unique=True, description="电话")
     password = fields.CharField(max_length=128, description="密码")
@@ -95,7 +95,7 @@ class Api(BaseModel, TimestampMixin):
 
 
 class Depart(BaseModel, TimestampMixin):
-    name = fields.CharField(max_length=20, unique=True, description="部门名称")
+    name = fields.CharField(max_length=40, unique=True, description="部门名称")
     parentId = fields.IntField(default=0, max_length=10, description="父部门ID")
     sort = fields.IntField(default=0, description="排序")
     phone = fields.CharField(max_length=20, null=True, description="电话")

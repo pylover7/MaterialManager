@@ -141,10 +141,10 @@ const columns: TableColumnList = [
         width="200"
         trigger="click"
         v-slots={{
-          reference: () => <el-button link>{row.username}</el-button>,
+          reference: () => <el-button link>{row.nickname}</el-button>,
           default: () => (
             <ul>
-              <li>姓名：{row.username}</li>
+              <li>姓名：{row.nickname}</li>
               <li>电话：{row.phone}</li>
               <li>部门：{row.userDepart}</li>
             </ul>
@@ -202,11 +202,11 @@ const columns: TableColumnList = [
         trigger="click"
         v-slots={{
           reference: () => (
-            <el-button link>{row.borrowApproveUser?.username}</el-button>
+            <el-button link>{row.borrowApproveUser?.nickname}</el-button>
           ),
           default: () => (
             <ul>
-              <li>姓名：{row.borrowApproveUser?.username}</li>
+              <li>姓名：{row.borrowApproveUser?.nickname}</li>
               <li>电话：{row.borrowApproveUser?.phone}</li>
               <li>部门：{row.borrowApproveUser?.depart}</li>
             </ul>
@@ -241,11 +241,11 @@ const columns: TableColumnList = [
         trigger="click"
         v-slots={{
           reference: () => (
-            <el-button link>{row.returnApproveUser?.username}</el-button>
+            <el-button link>{row.returnApproveUser?.nickname}</el-button>
           ),
           default: () => (
             <ul>
-              <li>姓名：{row.returnApproveUser?.username}</li>
+              <li>姓名：{row.returnApproveUser?.nickname}</li>
               <li>电话：{row.returnApproveUser?.phone}</li>
               <li>部门：{row.returnApproveUser?.depart}</li>
             </ul>

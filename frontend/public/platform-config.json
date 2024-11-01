@@ -1,6 +1,6 @@
 {
-  "Version": "0.0.2",
-  "Title": "MaterialManager",
+  "Version": "0.0.7",
+  "Title": "物资管理平台",
   "FixedHeader": true,
   "HiddenSideBar": false,
   "MultiTagsCache": false,

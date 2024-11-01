@@ -9,7 +9,8 @@ from .base import BaseModel, UUIDModel
 
 class Borrowed(BaseModel, UUIDModel):
     borrowing = fields.IntField(description="借用数量")
-    username = fields.CharField(max_length=20, description="借用人名称")
+    username = fields.CharField(max_length=20, description="借用人工号")
+    nickname = fields.CharField(max_length=20, description="借用人昵称")
     uuid = fields.UUIDField(pk=False, description="借用人uuid")
     phone = fields.CharField(max_length=20, description="借用人手机号")
     userDepart = fields.CharField(max_length=20, description="借用人部门")

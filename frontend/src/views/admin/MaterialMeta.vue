@@ -129,12 +129,33 @@ const columns: TableColumnList = [
     reserveSelection: true // 数据刷新后保留选项
   },
   { label: "序号", type: "index", width: "60" },
+  { label: "编号", prop: "code", width: "100" },
   { label: "名称", prop: "name" },
   { label: "位置", prop: "position" },
   { label: "型号", prop: "model", width: "200" },
   { label: "数量", prop: "number", width: "100" },
   { label: "借出数量", prop: "borrowed", width: "100" },
   { label: "送检数量", prop: "checking", width: "100" },
+  {
+    label: "描述",
+    prop: "description",
+    width: "200",
+    cellRenderer: ({ row }) => (
+      <el-popover
+        placement="right"
+        width="300"
+        trigger="hover"
+        v-slots={{
+          reference: () => (
+            <el-text truncated style="width: 100px">
+              {row.description}
+            </el-text>
+          ),
+          default: () => <p>{row.description}</p>
+        }}
+      ></el-popover>
+    )
+  },
   {
     label: "操作",
     prop: "modify",
@@ -261,9 +282,11 @@ const addMaterial = (title: string, row?: MaterialItem) => {
   addForm.number = row?.number ?? 1;
   addForm.position = row?.position ?? "";
   addForm.name = row?.name ?? "";
+  addForm.code = row?.code ?? "";
   addForm.model = row?.model ?? "";
   addForm.borrowed = row?.borrowed ?? 0;
   addForm.checking = row?.checking ?? 0;
+  addForm.description = row?.description ?? "";
   addForm.id = row?.id;
   addDrawer.value = true;
 };
@@ -276,11 +299,13 @@ const addForm = reactive<MaterialItem>({
   type: "",
   area: "",
   name: "",
+  code: "",
   model: "",
   position: "",
   number: 1,
   checking: 0,
-  borrowed: 0
+  borrowed: 0,
+  description: ""
 });
 
 // 清除添加物资表单数据
@@ -523,6 +548,9 @@ function openDialog(area: string) {
             <el-form-item label="名称" prop="name">
               <el-input v-model="addForm.name" />
             </el-form-item>
+            <el-form-item label="编号" prop="code">
+              <el-input v-model="addForm.code" />
+            </el-form-item>
             <el-form-item label="型号" prop="model">
               <el-input v-model="addForm.model" />
             </el-form-item>
@@ -535,6 +563,9 @@ function openDialog(area: string) {
                 :controls="false"
                 size="default"
               />
+            </el-form-item>
+            <el-form-item label="描述" prop="description">
+              <el-input v-model="addForm.description" />
             </el-form-item>
           </el-form>
         </div>

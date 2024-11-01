@@ -1,16 +1,16 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from fastapi.exceptions import HTTPException
 
 from app.core.crud import CRUDBase
-from app.models.users import User
 from app.schemas.login import CredentialsSchema
 from app.schemas.users import UserCreate, UserUpdate
-from app.utils.password import get_password_hash, verify_password
+from app.utils.password import get_password_hash, verify_password, md5_encrypt
 from .depart import departController
 
 from .role import role_controller
+from ..models import User
 
 
 class UserController(CRUDBase[User, UserCreate, UserUpdate]):
@@ -24,7 +24,7 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         return await self.model.filter(username=username).first()
 
     async def create(self, obj_in: UserCreate) -> User:
-        obj_in.password = get_password_hash(password=obj_in.password)
+        obj_in.password = get_password_hash(password=md5_encrypt(obj_in.password))
         obj = await super().create(obj_in.create_dict())
         return obj
 
@@ -36,16 +36,19 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         user.last_login = datetime.now()
         await user.save()
 
-    async def authenticate(self, credentials: CredentialsSchema) -> Optional["User"]:
+    async def authenticate(self, credentials: CredentialsSchema) -> tuple[User, bool]:
         user = await self.model.filter(username=credentials.username).first()
         if not user:
             raise HTTPException(status_code=400, detail="无效的用户名")
         verified = verify_password(credentials.password, user.password)
-        if not verified:
-            raise HTTPException(status_code=400, detail="密码错误!")
+        match verified:
+            case 0:
+                raise HTTPException(status_code=400, detail="密码错误!")
+            case 2:
+                return user, True
         if not user.status:
             raise HTTPException(status_code=400, detail="用户已被禁用")
-        return user
+        return user, False
 
     async def update_roles(self, user: User, roles: List[int]) -> None:
         await user.roles.clear()

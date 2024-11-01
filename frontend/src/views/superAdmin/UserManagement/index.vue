@@ -69,18 +69,18 @@ const {
         :model="form"
         class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px] overflow-auto"
       >
-        <el-form-item label="用户名称：" prop="username">
+        <el-form-item label="用户名称：" prop="nickname">
           <el-input
-            v-model="form.username"
+            v-model="form.nickname"
             placeholder="请输入用户名称"
             clearable
             class="!w-[180px]"
           />
         </el-form-item>
-        <el-form-item label="手机号码：" prop="phone">
+        <el-form-item label="工号：" prop="username">
           <el-input
-            v-model="form.phone"
-            placeholder="请输入手机号码"
+            v-model="form.username"
+            placeholder="请输入工号"
             clearable
             class="!w-[180px]"
           />

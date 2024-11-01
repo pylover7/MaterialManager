@@ -4,7 +4,7 @@ WORKDIR /app
 COPY /frontend /app/frontend
 RUN cd /app/frontend \
     && npm i -g pnpm --registry=https://registry.npmmirror.com \
-    && pnpm i && pnpm build
+    && pnpm config set registry https://registry.npmmirror.com && pnpm i && pnpm build
 
 
 FROM python:3.11-slim

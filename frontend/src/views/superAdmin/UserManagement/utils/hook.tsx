@@ -1,5 +1,4 @@
 import "./reset.css";
-import dayjs from "dayjs";
 import roleForm from "../form/role.vue";
 import editForm from "../form/index.vue";
 import { zxcvbn } from "@zxcvbn-ts/core";
@@ -13,12 +12,7 @@ import ReCropperPreview from "@/components/ReCropperPreview";
 import type { FormItemProps, RoleFormItemProps } from "../utils/types";
 import Refresh from "@iconify-icons/ep/refresh";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import {
-  getKeyList,
-  isAllEmpty,
-  hideTextAtIndex,
-  deviceDetection
-} from "@pureadmin/utils";
+import { getKeyList, isAllEmpty, deviceDetection } from "@pureadmin/utils";
 
 import {
   ElForm,
@@ -56,9 +50,9 @@ import {
 export function useUser(tableRef: Ref, treeRef: Ref) {
   const form = reactive({
     // 左侧部门树的id
+    nickname: "",
     departId: "",
     username: "",
-    phone: "",
     status: ""
   });
   const formRef = ref();
@@ -77,7 +71,8 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     total: 0,
     pageSize: 10,
     currentPage: 1,
-    background: true
+    background: true,
+    pageSizes: [10, 20, 50, 100]
   });
   const avatar = (avatar: string | null) =>
     avatar ? getUserAvatar(avatar) : userAvatar;
@@ -89,9 +84,9 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       reserveSelection: true // 数据刷新后保留选项
     },
     {
-      label: "用户编号",
+      label: "编号",
       prop: "id",
-      width: 90
+      width: 60
     },
     {
       label: "用户头像",
@@ -109,12 +104,12 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     },
     {
       label: "用户名称",
-      prop: "username",
+      prop: "nickname",
       minWidth: 130
     },
     {
-      label: "用户昵称",
-      prop: "nickname",
+      label: "职工号",
+      prop: "username",
       minWidth: 130
     },
     {
@@ -139,8 +134,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     {
       label: "手机号码",
       prop: "phone",
-      minWidth: 90,
-      formatter: ({ phone }) => hideTextAtIndex(phone, { start: 3, end: 6 })
+      minWidth: 90
     },
     {
       label: "状态",
@@ -162,11 +156,22 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       )
     },
     {
-      label: "创建时间",
-      minWidth: 90,
-      prop: "createTime",
-      formatter: ({ createTime }) =>
-        dayjs(createTime).format("YYYY-MM-DD HH:mm:ss")
+      label: "备注",
+      minWidth: 100,
+      prop: "remark",
+      cellRenderer: ({ row }) => (
+        <el-popover
+          placement="bottom-start"
+          width="100"
+          trigger="hover"
+          v-slots={{
+            reference: () => (
+              <el-text style="width: 100px">{row.remark}</el-text>
+            ),
+            default: () => <p>{row.remark}</p>
+          }}
+        ></el-popover>
+      )
     },
     {
       label: "操作",
@@ -255,11 +260,13 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   }
 
   function handleSizeChange(val: number) {
-    console.log(`${val} items per page`);
+    pagination.pageSize = val;
+    onSearch();
   }
 
   function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`);
+    pagination.currentPage = val;
+    onSearch();
   }
 
   /** 当CheckBox选择项发生变化时会触发该事件 */
@@ -294,7 +301,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       pagination.currentPage,
       pagination.pageSize,
       toRaw(form).username,
-      toRaw(form).phone,
+      toRaw(form).nickname,
       toRaw(form).departId
     );
     dataList.value = data;
@@ -433,7 +440,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   );
 
   const newPwdLoading = ref(false);
-  const resetPwd = () => {
+  const newPwd = () => {
     newPwdLoading.value = true;
     setTimeout(() => {
       pwdForm.newPwd = generatePassword(12);
@@ -476,7 +483,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
                       loading-icon={useRenderIcon(Refresh)}
                       loading={newPwdLoading.value}
                       onClick={() => {
-                        resetPwd();
+                        newPwd();
                       }}
                     >
                       随机密码
@@ -573,7 +580,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
 
     // 角色列表
     roleOptions.value = (
-      await getRoleList(1, 1000, { code: "", name: "", status: 1 })
+      await getRoleList(1, 100, { code: "", name: "", status: 1 })
     ).data;
   });
 

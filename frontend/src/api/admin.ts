@@ -151,7 +151,7 @@ export const getUserList = (
   currentPage: number,
   pageSize: number,
   username: string = null,
-  phone: string = null,
+  nickname: string = null,
   departId: string = null
 ) => {
   return http.request<ResultTable>("get", baseUrlApi("/admin/user/list"), {
@@ -159,7 +159,7 @@ export const getUserList = (
       currentPage,
       pageSize,
       username,
-      phone,
+      nickname,
       departId
     }
   });

@@ -46,7 +46,6 @@ async def register_superAdmin(role):
     if not user:
         settings.SUPER_USER["uuid"] = generate_uuid(settings.SUPER_USER["username"])
         user = await user_controller.create(UserCreate.parse_obj(settings.SUPER_USER))
-        await user.roles.add(role)
 
 
 def test_db(db_info: DbInfo) -> bool:

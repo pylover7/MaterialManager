@@ -29,9 +29,12 @@ async def create_borrowed(data: CreateBorrowedInfo):
         material = await materialController.get_by_uuid(uuid=item.uuid)
         item = item.model_dump()
         item["username"] = data.username
+        item["nickname"] = data.nickname
         item["phone"] = data.phone
         item["userDepart"] = data.depart
         item["uuid"] = data.uuid
+        user = await user_controller.get_by_uuid(item["uuid"])
+        item["phone"] = user.phone
         item["reason"] = data.reason
         item["material_id"] = material.id
         obj: Borrowed = await borrowedController.create(obj_in=item)
@@ -40,9 +43,9 @@ async def create_borrowed(data: CreateBorrowedInfo):
     return Success()
 
 
-@borrowedRouter.delete("/delete", summary="删除借用信息")
-async def delete_borrowed(data: list[int]):
-    for id in data:
+@borrowedRouter.post("/delete", summary="删除借用信息")
+async def delete_borrowed(data: dict):
+    for id in data["idList"]:
         obj = await borrowedController.get(id=id)
         await obj.delete()
     return Success()
@@ -68,13 +71,13 @@ async def get_home_list(
         material = await obj.material.all().values("name", "model", "position", "number", "borrowed")
         obj_dict = await obj.to_dict()
         if obj.borrowApproveStatus:
-            borrowApproveUser = await obj.borrowApproveUser.all().values("id", "username", "phone", "depart_id")
+            borrowApproveUser = await obj.borrowApproveUser.all().values("id", "nickname", "phone", "depart_id")
             user = await user_controller.get(borrowApproveUser["id"])
             depart = await departController.get_all_name(user)
             borrowApproveUser["depart"] = depart
             obj_dict["borrowApproveUser"] = borrowApproveUser
         if obj.returnApproveStatus:
-            returnApproveUser = await obj.returnApproveUser.all().values("id", "username", "phone", "depart_id")
+            returnApproveUser = await obj.returnApproveUser.all().values("id", "nickname", "phone", "depart_id")
             user = await user_controller.get(returnApproveUser["id"])
             depart = await departController.get_all_name(user)
             returnApproveUser["depart"] = depart

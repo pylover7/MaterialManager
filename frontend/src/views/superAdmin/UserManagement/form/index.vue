@@ -63,18 +63,18 @@ defineExpose({ getRef });
   >
     <el-row :gutter="30">
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户昵称" prop="nickname">
+        <el-form-item label="职工号" prop="username">
           <el-input
-            v-model="newFormInline.nickname"
+            v-model="newFormInline.username"
             clearable
-            placeholder="请输入用户昵称"
+            placeholder="请输入职工号"
           />
         </el-form-item>
       </re-col>
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户名称" prop="username">
+        <el-form-item label="用户名称" prop="nickname">
           <el-input
-            v-model="newFormInline.username"
+            v-model="newFormInline.nickname"
             clearable
             placeholder="请输入用户名称"
           />

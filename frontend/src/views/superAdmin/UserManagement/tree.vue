@@ -160,7 +160,6 @@ defineExpose({ onTreeReset });
       node-key="id"
       size="small"
       :props="defaultProps"
-      default-expand-all
       :expand-on-click-node="false"
       :filter-node-method="filterNode"
       @node-click="nodeClick"
@@ -212,5 +211,6 @@ defineExpose({ onTreeReset });
 
 :deep(.el-tree) {
   --el-tree-node-hover-bg-color: transparent;
+  height: 80vh;
 }
 </style>

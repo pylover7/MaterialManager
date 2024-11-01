@@ -37,21 +37,20 @@ async def init_api(app: FastAPI):
     :param app:
     :return:
     """
-    api = await Api.exists()
+    await Api.all().delete()
     apiList = []
-    if not api:
-        apis = app.openapi()["paths"]
-        for path, value in apis.items():
-            for method, value2 in value.items():
-                tag = ",".join(value2.get("tags"))
-                summary = value2.get("summary")
-                api_obj = await Api.create(
-                    path=path,
-                    method=method.upper(),
-                    tags=tag,
-                    summary=summary
-                )
-                apiList.append(api_obj.id)
+    apis = app.openapi()["paths"]
+    for path, value in apis.items():
+        for method, value2 in value.items():
+            tag = ",".join(value2.get("tags"))
+            summary = value2.get("summary")
+            api_obj = await Api.create(
+                path=path,
+                method=method.upper(),
+                tags=tag,
+                summary=summary
+            )
+            apiList.append(api_obj.id)
     return apiList
 
 

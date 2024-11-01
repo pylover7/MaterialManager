@@ -27,6 +27,7 @@ export type MaterialItem = {
   id?: number;
   uuid?: string;
   name: string;
+  code: string;
   model: string;
   type: string;
   area: string;
@@ -38,4 +39,5 @@ export type MaterialItem = {
   borrowed?: number;
   created_at?: string;
   updated_at?: string;
+  description?: string;
 };

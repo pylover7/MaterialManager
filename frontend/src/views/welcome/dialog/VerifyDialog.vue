@@ -60,7 +60,7 @@ type infoType = {
 };
 
 const accountRules = reactive<FormRules<accountType>>({
-  account: [{ required: true, message: "请输入账号", trigger: "blur" }],
+  account: [{ required: true, message: "请输入工号", trigger: "blur" }],
   password: [{ required: true, message: "请输入密码", trigger: "blur" }]
 });
 const infoRules = reactive<FormRules<infoType>>({
@@ -92,14 +92,14 @@ const formSize: Ref<"" | "default" | "small" | "large"> = ref("default");
             :size="formSize"
             status-icon
           >
-            <el-form-item label="用户名" prop="account">
-              <el-input v-model="userInfo.account" placeholder="邮箱账号" />
+            <el-form-item label="工号" prop="account">
+              <el-input v-model="userInfo.account" placeholder="工号" />
             </el-form-item>
             <el-form-item label="密码" prop="password">
               <el-input
                 v-model="userInfo.password"
                 type="password"
-                placeholder="邮箱密码"
+                placeholder="密码"
                 show-password
               />
             </el-form-item>

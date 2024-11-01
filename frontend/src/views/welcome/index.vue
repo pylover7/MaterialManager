@@ -15,18 +15,18 @@ defineOptions({
 });
 const store = useDialogStore();
 const bMForm = ref();
-const toolBtnLoading = ref(false);
-const keyBtnLoading = ref(false);
+const btnLoading = ref(false);
 // 借用物资弹窗
-const borrowMaterial = () => {
-  toolBtnLoading.value = true;
-  getAllMaterialMeta("glb", "tool").then(res => {
+const borrowMaterial = (area: string) => {
+  btnLoading.value = true;
+  getAllMaterialMeta(area, "tool").then(res => {
     addDialog({
       title: "物资借用",
       props: {
         borrowInfo: {
           uuid: 0,
           username: "",
+          nickname: "",
           phone: "",
           depart: "",
           reason: "",
@@ -77,11 +77,14 @@ const borrowMaterial = () => {
                 return;
               }
               curData.baseData = borrowItemList as [MaterialItem];
-              addBorrowed(curData).then(() => {
-                successNotification("物资借用流程发起成功！");
-                toolBtnLoading.value = false;
-                done();
-              });
+              addBorrowed(curData)
+                .then(() => {
+                  successNotification("物资借用流程发起成功！");
+                  done();
+                })
+                .finally(() => {
+                  btnLoading.value = false;
+                });
             }}
           >
             完成
@@ -89,7 +92,7 @@ const borrowMaterial = () => {
         </>
       ),
       beforeClose(done) {
-        toolBtnLoading.value = false;
+        btnLoading.value = false;
         done();
         store.resetActive();
       }
@@ -98,15 +101,16 @@ const borrowMaterial = () => {
 };
 
 // 借用钥匙弹窗
-const borrowKey = () => {
-  keyBtnLoading.value = true;
-  getAllMaterialMeta("glb", "key").then(res => {
+const borrowKey = (area: string) => {
+  btnLoading.value = true;
+  getAllMaterialMeta(area, "key").then(res => {
     addDialog({
       title: "钥匙借用",
       props: {
         borrowInfo: {
           uuid: 0,
           username: "",
+          nickname: "",
           phone: "",
           depart: "",
           reason: "",
@@ -157,11 +161,14 @@ const borrowKey = () => {
                 return;
               }
               curData.baseData = borrowItemList as [MaterialItem];
-              addBorrowed(curData).then(() => {
-                successNotification("钥匙借用流程发起成功！");
-                keyBtnLoading.value = false;
-                done();
-              });
+              addBorrowed(curData)
+                .then(() => {
+                  successNotification("钥匙借用流程发起成功！");
+                  done();
+                })
+                .finally(() => {
+                  btnLoading.value = false;
+                });
             }}
           >
             完成
@@ -169,7 +176,7 @@ const borrowKey = () => {
         </>
       ),
       beforeClose(done) {
-        keyBtnLoading.value = false;
+        btnLoading.value = false;
         done();
         store.resetActive();
       }
@@ -180,28 +187,92 @@ const borrowKey = () => {
 
 <template>
   <div class="main">
-    <el-space alignment="center">
-      <el-button
-        class="largeBtn"
-        type="primary"
-        :loading="toolBtnLoading"
-        plain
-        @click="borrowMaterial"
-        >物资借用</el-button
-      >
-      <el-button
-        class="largeBtn"
-        type="primary"
-        :loading="keyBtnLoading"
-        plain
-        @click="borrowKey"
-        >钥匙借用</el-button
-      >
-    </el-space>
+    <el-scrollbar>
+      <el-space :noresize="true">
+        <el-card class="box-card" shadow="never">
+          <template #header>
+            <div class="card-header">
+              <span>隔离办</span>
+            </div>
+          </template>
+          <el-space alignment="center" direction="vertical">
+            <el-button
+              class="largeBtn"
+              type="primary"
+              :loading="btnLoading"
+              plain
+              @click="borrowMaterial('glb')"
+              >物资借用</el-button
+            >
+            <el-button
+              class="largeBtn"
+              type="primary"
+              :loading="btnLoading"
+              plain
+              @click="borrowKey('glb')"
+              >钥匙借用</el-button
+            >
+          </el-space>
+        </el-card>
+        <el-card class="box-card" shadow="never">
+          <template #header>
+            <div class="card-header">
+              <span>辅控</span>
+            </div>
+          </template>
+          <el-space alignment="center" direction="vertical">
+            <el-button
+              class="largeBtn"
+              type="primary"
+              :loading="btnLoading"
+              plain
+              @click="borrowMaterial('fk')"
+              >物资借用</el-button
+            >
+            <el-button
+              class="largeBtn"
+              type="primary"
+              :loading="btnLoading"
+              plain
+              @click="borrowKey('fk')"
+              >钥匙借用</el-button
+            >
+          </el-space>
+        </el-card>
+        <el-card class="box-card" shadow="never">
+          <template #header>
+            <div class="card-header">
+              <span>网控</span>
+            </div>
+          </template>
+          <el-space alignment="center" direction="vertical">
+            <el-button
+              class="largeBtn"
+              type="primary"
+              :loading="btnLoading"
+              plain
+              @click="borrowMaterial('wk')"
+              >物资借用</el-button
+            >
+            <el-button
+              class="largeBtn"
+              type="primary"
+              :loading="btnLoading"
+              plain
+              @click="borrowKey('wk')"
+              >钥匙借用</el-button
+            >
+          </el-space>
+        </el-card>
+      </el-space>
+    </el-scrollbar>
   </div>
 </template>
 
 <style scoped lang="scss">
+.main {
+  height: 100%;
+}
 .largeBtn {
   width: 400px;
   height: 200px;
@@ -211,5 +282,9 @@ const borrowKey = () => {
   border: 0;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   transition: all 0.3s;
+}
+
+.box-card {
+  border: 2px dashed var(--el-border-color);
 }
 </style>

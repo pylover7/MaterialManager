@@ -101,9 +101,6 @@ function onSelectionCancel() {
   tableRef.value.getTableRef().clearSelection();
 }
 
-/** 标签风格 */
-const { tagStyle } = usePublicHooks();
-
 const columns: TableColumnList = [
   {
     label: "勾选列", // 如果需要表格多选，此处label必须设置
@@ -155,11 +152,11 @@ const columns: TableColumnList = [
         trigger="click"
         v-slots={{
           reference: () => (
-            <el-button link>{row.toCheckUser.username}</el-button>
+            <el-button link>{row.toCheckUser.nickname}</el-button>
           ),
           default: () => (
             <ul>
-              <li>姓名：{row.toCheckUser.username}</li>
+              <li>姓名：{row.toCheckUser.nickname}</li>
               <li>电话：{row.toCheckUser.phone}</li>
               <li>部门：{row.toCheckUser.depart}</li>
             </ul>
@@ -181,11 +178,11 @@ const columns: TableColumnList = [
         trigger="click"
         v-slots={{
           reference: () => (
-            <el-button link>{row.toReturnUser?.username}</el-button>
+            <el-button link>{row.toReturnUser?.nickname}</el-button>
           ),
           default: () => (
             <ul>
-              <li>姓名：{row.toReturnUser?.username}</li>
+              <li>姓名：{row.toReturnUser?.nickname}</li>
               <li>电话：{row.toReturnUser?.phone}</li>
               <li>部门：{row.toReturnUser?.depart}</li>
             </ul>
@@ -307,7 +304,7 @@ const openReturnDialog = (rowList, idList?: [number]) => {
                             username: curData.account,
                             password: curData.password
                           }).then(res => {
-                            data.toReturnUser = res.data.username;
+                            data.toReturnUser = res.data.nickname;
                             data.toReturnUserUUID = res.data.uuid;
                           });
                           done();

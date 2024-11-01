@@ -8,10 +8,10 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { useUserStoreHook } from "@/store/modules/user";
 import { addDialog } from "@/components/ReDialog/index";
 import verifyDialog from "./VerifyDialog.vue";
-import type { userInfo } from "../types";
-import type { borrowInfo } from "../types";
+import type { userInfo, borrowInfo } from "../types";
 import { auth } from "@/api/base";
 import { MaterialItem } from "@/types/material";
+import { errorNotification } from "@/utils/notification";
 
 type materialItemList = {
   borrowInfo: borrowInfo;
@@ -29,6 +29,7 @@ const props = withDefaults(defineProps<materialItemList>(), {
   borrowInfo: () => ({
     uuid: "",
     username: "",
+    nickname: "",
     phone: "",
     depart: "",
     reason: "",
@@ -37,12 +38,14 @@ const props = withDefaults(defineProps<materialItemList>(), {
         type: "",
         area: "",
         name: "",
+        code: "",
         model: "",
         number: 0,
         position: "",
         borrowing: 0,
         borrowed: 0,
-        checking: 0
+        checking: 0,
+        description: ""
       }
     ]
   })
@@ -84,6 +87,7 @@ onMounted(() => {
   borrowInfo.value.username = useUserStoreHook()?.username;
   borrowInfo.value.uuid = useUserStoreHook()?.uuid;
   borrowInfo.value.depart = useUserStoreHook()?.depart;
+  borrowInfo.value.nickname = useUserStoreHook()?.nickname;
 });
 
 const verifyForm = ref();
@@ -111,19 +115,24 @@ const openVerifyDialog = () => {
             auth({
               username: curData.account,
               password: curData.password
-            }).then(res => {
-              borrowInfo.value.username = res.data.username;
-              borrowInfo.value.depart = res.data.depart;
-              borrowInfo.value.phone = res.data.phone;
-              borrowInfo.value.uuid = res.data.uuid;
-            });
+            })
+              .then(res => {
+                borrowInfo.value.username = res.data.username;
+                borrowInfo.value.nickname = res.data.nickname;
+                borrowInfo.value.depart = res.data.depart;
+                borrowInfo.value.phone = res.data.phone;
+                borrowInfo.value.uuid = res.data.uuid;
+              })
+              .catch(error => {
+                errorNotification(error.msg);
+              });
             done();
           }
         });
       } else {
         infoFormRef.validate(valid => {
           if (valid) {
-            borrowInfo.value.username = curData.name;
+            borrowInfo.value.nickname = curData.name;
             borrowInfo.value.depart = curData.depart;
             borrowInfo.value.phone = curData.phone;
             done();
@@ -258,12 +267,33 @@ const openVerifyDialog = () => {
             maxlength="200"
             show-word-limit
             type="textarea"
-            placeholder="请填写借用理由"
+            placeholder="请填写借用理由（必填）"
           />
+          <el-space>
+            <b>常用理由：</b>
+            <el-button plain type="info" @click="borrowInfo.reason = '厂房巡检'"
+              >厂房巡检</el-button
+            >
+            <el-button plain type="info" @click="borrowInfo.reason = '厂房清洁'"
+              >厂房清洁</el-button
+            >
+            <el-button
+              plain
+              type="info"
+              @click="borrowInfo.reason = '持票作业，工作票号：'"
+              >持票作业</el-button
+            >
+            <el-button
+              plain
+              type="info"
+              @click="borrowInfo.reason = '持票作业，紧急工单，工作票号：'"
+              >紧急工单</el-button
+            >
+          </el-space>
           <el-card class="card" header="借用人信息" shadow="never">
             <el-row>
               <el-col :span="8">
-                <p>姓名：{{ borrowInfo.username }}</p>
+                <p>姓名：{{ borrowInfo.nickname }}</p>
               </el-col>
               <el-col :span="8">
                 <p>部门：{{ borrowInfo.depart }}</p>

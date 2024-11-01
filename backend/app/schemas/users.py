@@ -45,7 +45,11 @@ DepartPydantic = pydantic_model_creator(Depart)
 
 
 class DepartCreate(DepartPydantic):
-    ...
+    name: str = Field(description="部门名称")
+    phone: str = None
+    email: str = None
+    remark: str = None
+    principal: str = None
 
     def create_dict(self):
         return self.model_dump(exclude_unset=True)

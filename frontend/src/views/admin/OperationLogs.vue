@@ -157,7 +157,7 @@ const columns: TableColumnList = [
     )
   },
   {
-    label: "值班时间",
+    label: " 接班时间",
     prop: "dutyDate",
     minWidth: 180,
     formatter: ({ dutyDate }) => dayjs(dutyDate).format("YYYY-MM-DD HH:mm:ss")
@@ -195,8 +195,11 @@ const { tagStyle } = usePublicHooks();
 /** 清空日志 */
 function clearAll() {
   // 根据实际业务，调用接口删除所有日志数据
-  successNotification("已删除所有日志数据");
-  onSearch();
+  const allLogs = tableRef.value.getTableRef().data;
+  deleteDutyLogs(getKeyList(allLogs, "id")).then(() => {
+    onSearch();
+    successNotification("已删除所有日志数据");
+  });
 }
 
 // 已选择的行数
