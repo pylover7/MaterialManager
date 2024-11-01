@@ -23,8 +23,8 @@ menus:
 status:
   pureLoad: 加载中...
 login:
-  pureUsername: 邮箱前缀
-  purePassword: 邮箱密码
+  pureUsername: 职工号
+  purePassword: 初始密码：1
   pureLogin: 登录
   pureUsernameReg: 请输入账号
   purePassWordReg: 请输入密码

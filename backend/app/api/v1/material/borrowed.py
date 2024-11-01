@@ -71,13 +71,13 @@ async def get_home_list(
         material = await obj.material.all().values("name", "model", "position", "number", "borrowed")
         obj_dict = await obj.to_dict()
         if obj.borrowApproveStatus:
-            borrowApproveUser = await obj.borrowApproveUser.all().values("id", "username", "phone", "depart_id")
+            borrowApproveUser = await obj.borrowApproveUser.all().values("id", "nickname", "phone", "depart_id")
             user = await user_controller.get(borrowApproveUser["id"])
             depart = await departController.get_all_name(user)
             borrowApproveUser["depart"] = depart
             obj_dict["borrowApproveUser"] = borrowApproveUser
         if obj.returnApproveStatus:
-            returnApproveUser = await obj.returnApproveUser.all().values("id", "username", "phone", "depart_id")
+            returnApproveUser = await obj.returnApproveUser.all().values("id", "nickname", "phone", "depart_id")
             user = await user_controller.get(returnApproveUser["id"])
             depart = await departController.get_all_name(user)
             returnApproveUser["depart"] = depart

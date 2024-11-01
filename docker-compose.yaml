@@ -21,16 +21,15 @@ services:
         aliases:
           - db
   material:
-    image: material:0.0.4
+    image: material:1.0.0
     environment:
+      - DB_HOST=localhost
       - DB_DRIVER=org.mysql.jdbc.Driver
       - DB_URL=jdbc:mysql://db:3306/material?serverTimezone=Asia/Shanghai
       - DB_USERNAME=root
       - DB_PASSWORD=mysql
     ports:
       - '8000:80'
-    volumes:
-      - ./material-data:/app/backend:Z
     depends_on:
       - db
     networks:

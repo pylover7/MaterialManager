@@ -306,7 +306,7 @@ function initPwd() {
                   >使用说明下载</el-link
                 >
                 <div>
-                  <el-text type="info" size="small">若有使用问题请</el-text>
+                  <el-text type="info" size="small">若有使用问题请:</el-text>
                   <el-button
                     type="info"
                     :icon="useRenderIcon(Message)"

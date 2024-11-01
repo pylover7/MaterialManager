@@ -165,6 +165,7 @@ const dutyPerson = ref("");
 const dutyPersonDepart = ref("");
 const dutyOverInfo = reactive({
   username: "",
+  nickname: "",
   depart: "",
   phone: "",
   uuid: ""
@@ -180,6 +181,10 @@ const handoverConfirm = () => {
     dialogVisible.value = true;
   }
 };
+const handoverCancel = () => {
+  dutyOverInfo.nickname = "";
+  dialogVisible.value = false;
+};
 
 const handover = () => {
   let data = {
@@ -190,7 +195,7 @@ const handover = () => {
         position: data.position,
         number: data.number,
         nowNumber: data.nowNumber,
-        dutyPerson: dutyOverInfo.username,
+        dutyPerson: dutyOverInfo.nickname,
         dutyPersonDepart: dutyOverInfo.depart,
         area: props.area,
         type: props.metaType
@@ -201,7 +206,7 @@ const handover = () => {
       area: props.area,
       type: props.metaType
     },
-    dutyPerson: dutyOverInfo.username,
+    dutyPerson: dutyOverInfo.nickname,
     dutyPersonDepart: dutyOverInfo.depart
   };
   handleOverBtnLoading.value = true;
@@ -216,6 +221,7 @@ const handover = () => {
       handleOverBtnLoading.value = false;
     });
   dialogVisible.value = false;
+  dutyOverInfo.nickname = "";
 };
 
 const verifyForm = ref();
@@ -245,6 +251,7 @@ const openVerifyDialog = () => {
             password: curData.password
           })
             .then(res => {
+              dutyOverInfo.nickname = res.data.nickname;
               dutyOverInfo.username = res.data.username;
               dutyOverInfo.depart = res.data.depart;
               dutyOverInfo.phone = res.data.phone;
@@ -291,7 +298,7 @@ const openVerifyDialog = () => {
           </el-col>
           <el-col class="rowFlex" :span="5"
             ><el-text size="large" tag="b"
-              >值班科值：{{ dutyPersonDepart }}</el-text
+              >部门：{{ dutyPersonDepart }}</el-text
             >
           </el-col>
           <el-col :span="5" />
@@ -402,16 +409,16 @@ const openVerifyDialog = () => {
           <span style="font-size: large; color: red">{{ dutyPerson }}</span>
           接班</span
         >
-        <span>接班人员：{{ dutyOverInfo.username }}</span>
+        <span>接班人员：{{ dutyOverInfo.nickname }}</span>
         <el-button type="primary" @click="openVerifyDialog">验证</el-button>
       </el-space>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button @click="handoverCancel">取消</el-button>
           <el-button
             type="primary"
             :loading="handleOverBtnLoading"
-            :disabled="dutyOverInfo.username.length === 0"
+            :disabled="dutyOverInfo.nickname.length === 0"
             @click="handover"
           >
             确定

@@ -92,14 +92,14 @@ const formSize: Ref<"" | "default" | "small" | "large"> = ref("default");
             :size="formSize"
             status-icon
           >
-            <el-form-item label="用户名" prop="account">
+            <el-form-item label="工号" prop="account">
               <el-input v-model="userInfo.account" placeholder="工号" />
             </el-form-item>
             <el-form-item label="密码" prop="password">
               <el-input
                 v-model="userInfo.password"
                 type="password"
-                placeholder="邮箱密码"
+                placeholder="密码"
                 show-password
               />
             </el-form-item>
