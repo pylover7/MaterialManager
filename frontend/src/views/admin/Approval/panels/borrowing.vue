@@ -5,7 +5,7 @@ import Approve from "@iconify-icons/fluent/approvals-app-16-filled";
 import Reject from "@iconify-icons/fluent/text-change-reject-24-filled";
 import { reactive, ref } from "vue";
 import { PaginationProps, PureTable } from "@pureadmin/table";
-import { usePublicHooks } from "@/views/hooks";
+import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
 import { message } from "@/utils/message";
 import PureTableBar from "@/components/RePureTableBar/src/bar";
 import { successNotification } from "@/utils/notification";
@@ -46,10 +46,10 @@ const onSearch = () => {
 // 分页设置
 const pagination = reactive<PaginationProps>({
   total: 0,
-  pageSize: 10,
+  pageSize: 15,
   currentPage: 1,
   background: true,
-  pageSizes: [10, 20, 30, 50]
+  pageSizes: defaultPaginationSizes
 });
 
 const selectedNum = ref(0);

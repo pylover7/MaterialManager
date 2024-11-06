@@ -95,7 +95,7 @@ const {
           row-key="id"
           showOverflowTooltip
           table-layout="auto"
-          default-expand-all
+          :default-expand-all="false"
           :default-sort="{ prop: 'sort', order: 'ascending' }"
           :loading="loading"
           :size="size"

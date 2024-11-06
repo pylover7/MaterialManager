@@ -7,7 +7,7 @@ import { message } from "@/utils/message";
 import { PaginationProps } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
 import { successNotification } from "@/utils/notification";
-import { usePublicHooks } from "@/views/hooks";
+import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
 import PureTableBar from "@/components/RePureTableBar/src/bar";
 import { OptionsType } from "@/components/ReSegmented";
 import { listBorrowed, updateBorrowedInfo } from "@/api/material";
@@ -176,10 +176,10 @@ const returnDataList = ref([]);
 // 分页设置
 const pagination2 = reactive<PaginationProps>({
   total: 0,
-  pageSize: 10,
+  pageSize: 15,
   currentPage: 1,
   background: true,
-  pageSizes: [10, 20, 30, 50]
+  pageSizes: defaultPaginationSizes
 });
 
 const onBatchReturn = () => {

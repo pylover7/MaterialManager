@@ -14,6 +14,7 @@ import { PaginationProps, PureTable } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
 import type { SelectOpt } from "@/views/admin/utils/types";
 import { deleteDutyLogs, getDutyNote, getDutyLogList } from "@/api/duty";
+import { defaultPaginationSizes } from "@/views/hooks";
 
 defineOptions({
   name: "OperationLogs"
@@ -226,10 +227,10 @@ function onBatchDel() {
 // 分页设置
 const pagination = reactive<PaginationProps>({
   total: 0,
-  pageSize: 10,
+  pageSize: 15,
   currentPage: 1,
   background: true,
-  pageSizes: [10, 20, 50, 100]
+  pageSizes: defaultPaginationSizes
 });
 
 function handleSizeChange(val: number) {

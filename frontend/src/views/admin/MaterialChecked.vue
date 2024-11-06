@@ -1,7 +1,7 @@
 <script setup lang="tsx">
 import { h, reactive, ref } from "vue";
 import { PaginationProps, PureTable } from "@pureadmin/table";
-import { usePublicHooks } from "@/views/hooks";
+import { defaultPaginationSizes } from "@/views/hooks";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Search from "@iconify-icons/ep/search";
 import Approve from "@iconify-icons/fluent/approvals-app-16-filled";
@@ -85,10 +85,10 @@ const onSearch = () => {
 // 分页设置
 const pagination = reactive<PaginationProps>({
   total: 0,
-  pageSize: 10,
+  pageSize: 15,
   currentPage: 1,
   background: true,
-  pageSizes: [10, 20, 30, 50]
+  pageSizes: defaultPaginationSizes
 });
 
 const selectedNum = ref(0);

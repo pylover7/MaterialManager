@@ -22,6 +22,7 @@ import { message } from "@/utils/message";
 import { useUserStoreHook } from "@/store/modules/user";
 import { getDutyOverList, updateDutyOverList } from "@/api/duty";
 import { MaterialItem } from "@/types/material";
+import { defaultPaginationSizes } from "@/views/hooks";
 
 defineOptions({
   name: "MaterialMeta"
@@ -102,9 +103,10 @@ const searchDisable = computed(() => {
 // 表格分页配置
 const pagination = reactive<PaginationProps>({
   total: 1,
-  pageSize: 10,
+  pageSize: 15,
   currentPage: 1,
-  background: true
+  background: true,
+  pageSizes: defaultPaginationSizes
 });
 // 表格页面大小改变回调
 const pageSizeChange = (size: number) => {

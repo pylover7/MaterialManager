@@ -4,6 +4,7 @@
 # @Author    :dayezi
 from fastapi import APIRouter
 
+from app.controllers import user_controller
 from app.controllers.depart import departController
 from app.log import logger
 from app.schemas import Success
@@ -29,9 +30,13 @@ async def delete_depart(id: int, name: str):
 
 @departRouter.get("/list", summary="获取部门列表")
 async def depart_list():
-    _, depart_obj = await departController.list(1, 1000)
-    data = [await obj.to_dict() for obj in depart_obj]
-    logger.success(f"部门列表查询成功！{[i['name'] for i in data]}")
+    depart_obj = await departController.all()
+    data = []
+    for item in depart_obj:
+        staffCount = await user_controller.model.filter(depart_id=item.id).count()
+        item = await item.to_dict()
+        item["staffCount"] = staffCount
+        data.append(item)
     return Success(msg="部门列表查询成功！", data=data)
 
 

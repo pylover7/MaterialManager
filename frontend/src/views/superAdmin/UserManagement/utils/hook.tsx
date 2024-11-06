@@ -5,7 +5,7 @@ import { zxcvbn } from "@zxcvbn-ts/core";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 import userAvatar from "@/assets/user.jpg";
-import { usePublicHooks } from "../../../hooks";
+import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
 import { addDialog } from "@/components/ReDialog";
 import type { PaginationProps } from "@pureadmin/table";
 import ReCropperPreview from "@/components/ReCropperPreview";
@@ -69,10 +69,10 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   const selectedNum = ref(0);
   const pagination = reactive<PaginationProps>({
     total: 0,
-    pageSize: 10,
+    pageSize: 15,
     currentPage: 1,
     background: true,
-    pageSizes: [10, 20, 50, 100]
+    pageSizes: defaultPaginationSizes
   });
   const avatar = (avatar: string | null) =>
     avatar ? getUserAvatar(avatar) : userAvatar;
@@ -254,7 +254,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
 
   function handleDelete(row) {
     deleteUser(row.id, row.username).then(() => {
-      successNotification(`您删除了用户编号为${row.id}的这条数据`);
+      successNotification(`您删除了用户名为${row.nickname}的这条数据`);
       onSearch();
     });
   }

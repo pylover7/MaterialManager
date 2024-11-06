@@ -13,10 +13,10 @@
 
 ## 安装
 
-构建镜像
+拉取镜像
 
 ```bash
-docker build -t material-manager:0.0.8 .
+docker pull ghcr.io/pylover7/material
 ```
 
 启动容器

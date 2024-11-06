@@ -3,7 +3,7 @@ import editForm from "../form.vue";
 import { handleTree, buildApiTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
-import { usePublicHooks } from "../../../hooks";
+import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
 import { transformI18n } from "@/plugins/i18n";
 import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "../utils/types";
@@ -61,9 +61,10 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
   };
   const pagination = reactive<PaginationProps>({
     total: 0,
-    pageSize: 10,
+    pageSize: 15,
     currentPage: 1,
-    background: true
+    background: true,
+    pageSizes: defaultPaginationSizes
   });
   const tabOperation: Array<OptionsType> = [
     {
