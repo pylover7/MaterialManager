@@ -5,7 +5,7 @@ class LDAPAuthentication:
     def __init__(self):
         self.server = Server('127.0.0.1', get_info=ALL, connect_timeout=10)
         self.conn = None
-        self.basedn = 'dc=cnnp,dc=com'
+        self.basedn = 'ou=海南核电有限公司,dc=cnnp,dc=com,dc=cn'
 
     def ldap_connect(self):
         self.conn = Connection(self.server, auto_bind=True)
@@ -41,8 +41,8 @@ class LDAPAuthentication:
 
 if __name__ == '__main__':
     from ldap3 import Server, Connection, ALL
-    server = Server(host='ldap:10.20.21.3', port=389, get_info=ALL)
-    conn = Connection(server, user='uid=hnadservice,ou=user,dc=cnnp,dc=com', password='mTQGi4JlIwQ', auto_bind=True)
-    conn.search('dc=cnnp,dc=com', '(uid=liushuo)', )
-    conn.search('dc=cnnp,dc=com', '(uid=liushuo)', attributes=['dn'])
+    server = Server('10.20.21.3', get_info=ALL, connect_timeout=10)
+    conn = Connection(server, user='cn=hnadservice,ou=海南核电有限公司,dc=cnnp,dc=com,dc=cn', password='mTQGi4JlIwQ', auto_bind=True, version=2)
+    conn = Connection(server, user='hnadservice', password='mTQGi4JlIwQ', auto_bind=True, authentication="SIMPLE")
+    conn.search('ou=海南核电有限公司,dc=cnnp,dc=com,dc=cn', '(uid=liushuo)', )
     entries = conn.entries

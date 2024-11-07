@@ -180,7 +180,7 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
 
   function handleDelete(row) {
     deleteRole(row.id, row.name).then(() => {
-      message(`您删除了角色名称为${row.name}的这条数据`, { type: "success" });
+      message(`您删除了角色名称为【${row.name}】的这条数据`, { type: "success" });
       onSearch();
     });
   }

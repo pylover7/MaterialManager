@@ -23,7 +23,7 @@ class UserUpdate(UserPydantic):
     id: int
     last_login: str = None
     password: str = None
-    departId: int = Field(description="部门ID")
+    departId: int | None = Field(description="部门ID")
     uuid: str = None
     avatar: str = None
 

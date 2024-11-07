@@ -209,7 +209,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       `确认要<strong>${
         row.status === 0 ? "停用" : "启用"
       }</strong><strong style='color:var(--el-color-primary)'>${
-        row.username
+        row.nickname
       }</strong>用户吗?`,
       "系统提示",
       {
@@ -288,7 +288,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
     // 返回当前选中的行
     const curSelected = tableRef.value.getTableRef().getSelectionRows();
     // 接下来根据实际业务，通过选中行的某项数据，比如下面的id，调用接口进行批量删除
-    message(`已删除用户编号为 ${getKeyList(curSelected, "id")} 的数据`, {
+    message(`已删除用户编号为【 ${getKeyList(curSelected, "id")} 】的数据`, {
       type: "success"
     });
     tableRef.value.getTableRef().clearSelection();
@@ -369,7 +369,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         const curData = options.props.formInline as FormItemProps;
         function chores() {
           successNotification(
-            `您${title}了用户名称为${curData.username}的这条数据`
+            `您${title}了用户名称为${curData.nickname}的这条数据`
           );
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
