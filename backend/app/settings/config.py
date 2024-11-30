@@ -4,7 +4,7 @@ from ruamel.yaml import YAML
 
 from app.schemas.admin import DbInfo
 
-config_path = Path.joinpath(Path(__file__).parent.parent.parent, "config.yml")
+config_path = Path.joinpath(Path(__file__).parent.parent.parent, "config", "config.yml")
 static_path = Path.joinpath(Path(__file__).parent.parent, "static")
 yaml = YAML()
 
@@ -14,8 +14,11 @@ class Settings:
     DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S"
 
     def __init__(self):
-        with open(config_path, "rb") as f:
-            self.data = yaml.load(f)
+        try:
+            with open(config_path, "rb") as f:
+                self.data = yaml.load(f)
+        except FileNotFoundError:
+            raise FileNotFoundError("config.yml 文件不存在")
 
     def _save(self):
         with open(config_path, "w", encoding="utf-8") as f:
@@ -200,6 +203,28 @@ class Settings:
     @property
     def STATIC_PATH(self) -> Path:
         return static_path
+
+    @property
+    def LDAP_HOST(self) -> str:
+        return self.data["ldap"]["host"]
+
+    @property
+    def LDAP_BASE(self) -> int:
+        return self.data["ldap"]["base"]
+
+    @property
+    def LDAP_USER(self) -> str:
+        return self.data["ldap"]["user"]
+
+    @property
+    def LDAP_PWD(self) -> str:
+        return self.data["ldap"]["password"]
+
+    @property
+    def DEV(self) -> bool:
+        return os.environ.get("DEV", self.data["app"]["dev"])
+
+
 
 
 settings = Settings()

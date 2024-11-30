@@ -274,7 +274,16 @@ function initPwd() {
             </Motion>
 
             <Motion :delay="150">
-              <el-form-item prop="password">
+              <el-form-item
+                prop="password"
+                :rules="[
+                  {
+                    required: true,
+                    message: transformI18n($t('login.purePassWordReg')),
+                    trigger: 'blur'
+                  }
+                ]"
+              >
                 <el-input
                   v-model="ruleForm.password"
                   clearable

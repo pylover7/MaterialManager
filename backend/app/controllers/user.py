@@ -11,6 +11,7 @@ from .depart import departController
 
 from .role import role_controller
 from ..models import User
+from ..utils.cnnp import ldap_auth
 
 
 class UserController(CRUDBase[User, UserCreate, UserUpdate]):
@@ -36,19 +37,25 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         user.last_login = datetime.now()
         await user.save()
 
-    async def authenticate(self, credentials: CredentialsSchema) -> tuple[User, bool]:
-        user = await self.model.filter(username=credentials.username).first()
+    async def authenticate(self, credentials: CredentialsSchema) -> User:
+        # user = await self.model.filter(username=credentials.username).first()
+        ldapUser = ldap_auth.authenticate(credentials.username, credentials.password)
+        user = await self.get_by_username(ldapUser.sAMAccountName)
         if not user:
-            raise HTTPException(status_code=400, detail="无效的用户名")
-        verified = verify_password(credentials.password, user.password)
-        match verified:
-            case 0:
-                raise HTTPException(status_code=400, detail="密码错误!")
-            case 2:
-                return user, True
-        if not user.status:
+            userCreate = UserCreate(
+                username=ldapUser.sAMAccountName,
+                nickname=ldapUser.name,
+                email=ldapUser.mail,
+                mobile=ldapUser.mobile,
+                employeeID=ldapUser.employeeID
+            )
+
+            user = await self.create(userCreate)
+            departController.get(ldapUser.department, ldapUser.company)
             raise HTTPException(status_code=400, detail="用户已被禁用")
-        return user, False
+        elif not user.status:
+            raise HTTPException(status_code=400, detail="用户已被禁用")
+        return user
 
     async def update_roles(self, user: User, roles: List[int]) -> None:
         await user.roles.clear()

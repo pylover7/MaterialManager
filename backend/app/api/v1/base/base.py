@@ -22,14 +22,13 @@ router = APIRouter()
 
 @router.post("/accessToken", summary="获取token")
 async def login_access_token(credentials: CredentialsSchema):
-    resetPwd = False
     if (settings.DATABASE_START is None and credentials.username == settings.SUPER_USER["username"]
             and credentials.password == settings.SUPER_USER_PWD):
         user = UserPydantic.parse_obj(settings.SUPER_USER)
         roles = user.roles
         depart = user.depart
     else:
-        user, resetPwd = await user_controller.authenticate(credentials)
+        user = await user_controller.authenticate(credentials)
         await user_controller.update_last_login(user.id)
         roles = await user.roles.all().values_list("code", flat=True)
         depart = await departController.get_all_name(user)
@@ -62,7 +61,7 @@ async def login_access_token(credentials: CredentialsSchema):
         ),
         expires=expire.strftime("%Y-%m-%d %H:%M:%S")  # expire.timestamp()
     )
-    return Success(data=data.model_dump(), resetPwd=resetPwd)
+    return Success(data=data.model_dump())
 
 
 @router.post("/refreshToken", summary="刷新token")

@@ -6,24 +6,21 @@ from .borrowed import Borrowed
 
 
 class User(BaseModel, TimestampMixin, UUIDModel):
-    username = fields.CharField(max_length=20, unique=True, description="职工号")
-    nickname = fields.CharField(max_length=30, description="用户名称")
+    username = fields.CharField(max_length=20, unique=True, description="用户唯一标识")
+    nickname = fields.CharField(max_length=30, description="用户名字")
+    employeeID = fields.CharField(max_length=20, unique=True, description="员工工号")
     avatar = fields.CharField(max_length=255, null=True, description="头像文件名称")
     sex = fields.IntField(default=1, description="性别, 0: 女, 1: 男")
     email = fields.CharField(max_length=255, null=True, unique=True, description="邮箱")
-    phone = fields.CharField(max_length=20, null=True, unique=True, description="电话")
-    password = fields.CharField(max_length=128, description="密码")
+    mobile = fields.CharField(max_length=20, null=True, unique=True, description="手机号码")
     status = fields.IntField(default=0, max_length=10, description="是否激活")
     is_superuser = fields.BooleanField(default=False, description="是否为超级管理员")
     last_login = fields.DatetimeField(null=True, description="最后登录时间")
     remark = fields.CharField(max_length=500, null=True, blank=True, description="备注")
+    department = fields.CharField(max_length=500, null=True, blank=True, description="部门")
+    company = fields.CharField(max_length=500, null=True, blank=True, description="公司")
 
     roles: fields.ManyToManyRelation["Role"] = fields.ManyToManyField("models.Role", related_name="user_roles")
-    depart: fields.ForeignKeyRelation["Depart"] = fields.ForeignKeyField(
-        "models.Depart",
-        related_name="user_depart",
-        null=True
-    )
     borrowed: fields.ManyToManyRelation["Borrowed"]
 
     class Meta:
@@ -92,22 +89,3 @@ class Api(BaseModel, TimestampMixin):
 
     class Meta:
         table = "api"
-
-
-class Depart(BaseModel, TimestampMixin):
-    name = fields.CharField(max_length=40, unique=True, description="部门名称")
-    parentId = fields.IntField(default=0, max_length=10, description="父部门ID")
-    sort = fields.IntField(default=0, description="排序")
-    phone = fields.CharField(max_length=20, null=True, description="电话")
-    principal = fields.CharField(max_length=20, null=True, description="负责人")
-    email = fields.CharField(max_length=255, null=True, description="邮箱")
-    status = fields.IntField(default=1, description="状态：启用/停用")
-    remark = fields.CharField(max_length=500, null=True, blank=True, description="备注信息")
-
-    users: fields.ReverseRelation["User"]
-
-    class Meta:
-        table = "depart"
-
-    class PydanticMeta:
-        exclude = ("created_at", "updated_at", "id")

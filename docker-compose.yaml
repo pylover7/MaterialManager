@@ -28,8 +28,11 @@ services:
       - DB_URL=jdbc:mysql://db:3306/material?serverTimezone=Asia/Shanghai
       - DB_USERNAME=root
       - DB_PASSWORD=mysql
+      - DEV=false
+    volumes:
+      -./material-config:/app/backend/config
     ports:
-      - '8000:80'
+      - '7001:80'
     depends_on:
       - db
     networks:

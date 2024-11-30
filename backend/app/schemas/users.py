@@ -62,5 +62,17 @@ class DepartUpdate(DepartPydantic):
         return self.model_dump(exclude_unset=True)
 
 
+
+class UserLdap(BaseModel):
+    sAMAccountName: str = Field(description="邮箱前缀")
+    employeeID: str = Field(description="工号")
+    department: str = Field(description="部门")
+    company: str = Field(description="公司")
+    mobile: str = Field(description="手机号")
+    mail: str = Field(description="邮箱")
+    name: str = Field(description="姓名")
+    dn: str = Field(description="DN")
+
+
 if __name__ == '__main__':
     print(DepartCreate.schema())

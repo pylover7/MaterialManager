@@ -296,7 +296,7 @@ onMounted(() => {
               :height="treeHeight"
               :data="menuTreeData"
               :props="menuTreeProps"
-              :check-strictly="!isLinkage"
+              :check-strictly="isLinkage"
               :filter-method="filterMethod"
             >
               <template #default="{ node }">
