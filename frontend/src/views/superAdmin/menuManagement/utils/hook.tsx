@@ -209,7 +209,7 @@ export function useMenu() {
   function handleDelete(row) {
     deleteMenu(row.id, row.name)
       .then(() => {
-        message(`您删除了菜单名称为${transformI18n(row.title)}的这条数据`, {
+        message(`您删除了菜单名称为【${transformI18n(row.title)}】的这条数据`, {
           type: "success"
         });
         onSearch();

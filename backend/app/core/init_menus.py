@@ -4,31 +4,25 @@
 # @Author    :dayezi
 from fastapi import FastAPI
 
-from app.controllers import role_controller
+from app.log import logger
 from app.models import Menu, Api, Role
 
 
-async def init_roles(apiIdList: list, menuIdList: list):
+async def init_roles():
     """
     初始化角色
     :return:
     """
     roles = await Role.exists()
     if not roles:
-        superAdmin = await Role.create(
-            name="超级管理员",
-            code="super",
-            status=1,
-            description="超级管理员",
-        )
-        await role_controller.update_roles(role=superAdmin, menu_ids=menuIdList, api_ids=apiIdList)
+        logger.info("正在初始化角色...")
         await Role.create(
             name="普通用户",
             code="common",
             status=1,
             description="普通用户",
         )
-        return superAdmin
+        logger.info("角色初始化完成")
 
 
 async def init_api(app: FastAPI):
@@ -37,21 +31,42 @@ async def init_api(app: FastAPI):
     :param app:
     :return:
     """
-    await Api.all().delete()
+    logger.info("正在注册API...")
+    apiOld = await Api.all()
     apiList = []
     apis = app.openapi()["paths"]
     for path, value in apis.items():
         for method, value2 in value.items():
             tag = ",".join(value2.get("tags"))
             summary = value2.get("summary")
-            api_obj = await Api.create(
-                path=path,
-                method=method.upper(),
-                tags=tag,
-                summary=summary
-            )
-            apiList.append(api_obj.id)
-    return apiList
+            if len(apiOld) == 0:
+                api = Api(
+                    path=path,
+                    method=method.upper(),
+                    tags=tag,
+                    summary=summary
+                )
+                apiList.append(api)
+            else:
+                apiIsNew = True
+                for api in apiOld:
+                    if api.path == path:
+                        apiIsNew = False
+                        api.method = method.upper()
+                        api.summary = summary
+                        api.tags = tag
+                        await api.save()
+                        break
+                if apiIsNew:
+                    api = Api(
+                        path=path,
+                        method=method.upper(),
+                        tags=tag,
+                        summary=summary
+                    )
+                    apiList.append(api)
+    await Api.bulk_create(apiList)
+    logger.info("API初始化完成...")
 
 
 async def init_menus():
@@ -62,6 +77,7 @@ async def init_menus():
     menus = await Menu.exists()
     menuList = []
     if not menus:
+        logger.info("正在初始化菜单...")
         glb = await Menu.create(
             parentId=0,
             menuType=0,
@@ -71,7 +87,7 @@ async def init_menus():
             component="",
             rank=1,
             redirect="",
-            icon="fluent:desktop-flow-24-regular",
+            icon="Glb",
             extraIcon="",
             enterTransition="",
             leaveTransition="",
@@ -94,7 +110,7 @@ async def init_menus():
                 name="GlbMaterial",
                 path="/glb/material",
                 component="material/glbTool",
-                icon="fluent:box-search-16-regular",
+                icon="Material",
             ),
             await Menu.create(
                 parentId=glb.id,
@@ -103,7 +119,7 @@ async def init_menus():
                 name="GlbKey",
                 path="/glb/key",
                 component="material/glbKey",
-                icon="fluent:key-reset-24-regular",
+                icon="Key",
             ),
         ]
         for item in glb_children:
@@ -118,7 +134,7 @@ async def init_menus():
             component="",
             rank=2,
             redirect="",
-            icon="fluent:brain-circuit-24-regular",
+            icon="Fk",
             extraIcon="",
             enterTransition="",
             leaveTransition="",
@@ -141,7 +157,7 @@ async def init_menus():
                 name="FkMaterial",
                 path="/fk/material",
                 component="material/fkTool",
-                icon="fluent:box-search-16-regular",
+                icon="Material",
             ),
             await Menu.create(
                 parentId=fk.id,
@@ -150,7 +166,7 @@ async def init_menus():
                 name="FkKey",
                 path="/fk/key",
                 component="material/fkKey",
-                icon="fluent:key-reset-24-regular",
+                icon="Key",
             )
         ]
         for item in fk_children:
@@ -165,7 +181,7 @@ async def init_menus():
             component="",
             rank=3,
             redirect="",
-            icon="fluent:desktop-flow-24-regular",
+            icon="Wk",
             extraIcon="",
             enterTransition="",
             leaveTransition="",
@@ -188,7 +204,7 @@ async def init_menus():
                 name="WkMaterial",
                 path="/wk/material",
                 component="material/wkTool",
-                icon="fluent:box-search-16-regular",
+                icon="Material",
             ),
             await Menu.create(
                 parentId=wk.id,
@@ -197,7 +213,7 @@ async def init_menus():
                 name="WkKey",
                 path="/wk/key",
                 component="material/wkKey",
-                icon="fluent:key-reset-24-regular",
+                icon="Key",
             ),
         ]
         for item in wk_children:
@@ -212,7 +228,7 @@ async def init_menus():
             component="",
             rank=5,
             redirect="",
-            icon="fluent:shield-person-20-regular",
+            icon="Admin",
             extraIcon="",
             enterTransition="",
             leaveTransition="",
@@ -236,7 +252,7 @@ async def init_menus():
                 name="Approval",
                 path="/admin/approval",
                 component="admin/Approval",
-                icon="fluent:person-edit-48-regular",
+                icon="Approval",
                 keepAlive=True,
             ),
             await Menu.create(
@@ -247,7 +263,7 @@ async def init_menus():
                 name="MaterialMeta",
                 path="/admin/material-meta",
                 component="admin/MaterialMeta",
-                icon="fluent:home-garage-24-regular",
+                icon="MaterialMeta",
                 keepAlive=True,
             ),
             await Menu.create(
@@ -258,7 +274,7 @@ async def init_menus():
                 name="MaterialChecked",
                 path="/admin/MaterialChecked",
                 component="admin/MaterialChecked",
-                icon="fluent:home-garage-24-regular",
+                icon="MaterialChecked",
                 keepAlive=True,
             ),
             await Menu.create(
@@ -269,7 +285,7 @@ async def init_menus():
                 name="OperationLogs",
                 path="/admin/operation-logs",
                 component="admin/OperationLogs",
-                icon="fluent:notepad-person-24-regular",
+                icon="OperationLogs",
                 keepAlive=True,
             ),
         ]
@@ -285,7 +301,7 @@ async def init_menus():
             component="",
             rank=7,
             redirect="",
-            icon="fluent:person-passkey-48-regular",
+            icon="superAdmin",
             extraIcon="",
             enterTransition="",
             leaveTransition="",
@@ -308,7 +324,7 @@ async def init_menus():
                 name="UserManagement",
                 path="/superAdmin/userManagement",
                 component="superAdmin/UserManagement/index",
-                icon="fluent:people-team-20-regular",
+                icon="UserManagement",
                 keepAlive=True,
             ),
             await Menu.create(
@@ -319,7 +335,7 @@ async def init_menus():
                 name="DeptManagement",
                 path="/superAdmin/deptManagement",
                 component="superAdmin/departManagement/index",
-                icon="fluent:people-community-20-regular",
+                icon="DeptManagement",
                 keepAlive=True,
             ),
             await Menu.create(
@@ -330,7 +346,7 @@ async def init_menus():
                 name="RoleManagement",
                 path="/superAdmin/roleManagement",
                 component="superAdmin/roleManagement/index",
-                icon="fluent:people-team-20-regular",
+                icon="RoleManagement",
                 keepAlive=True,
             ),
             await Menu.create(
@@ -341,7 +357,7 @@ async def init_menus():
                 name="MenuManagement",
                 path="/superAdmin/menuManagement",
                 component="superAdmin/menuManagement/index",
-                icon="fluent:clover-48-regular",
+                icon="MenuManagement",
                 keepAlive=True,
             ),
             await Menu.create(
@@ -352,7 +368,7 @@ async def init_menus():
                 name="Logs",
                 path="/superAdmin/logs",
                 component="superAdmin/Logs",
-                icon="fluent:text-bullet-list-square-search-20-regular",
+                icon="Logs",
                 keepAlive=True,
             ),
             await Menu.create(
@@ -363,10 +379,11 @@ async def init_menus():
                 name="Settings",
                 path="/superAdmin/settings",
                 component="superAdmin/Settings",
-                icon="fluent:settings-48-regular",
+                icon="Settings",
                 keepAlive=True,
             ),
         ]
         for item in chaoGuan_children:
             menuList.append(item.id)
+        logger.info("菜单初始化完成")
     return menuList

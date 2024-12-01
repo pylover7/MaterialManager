@@ -7,7 +7,7 @@ from pathlib import Path
 
 from app.utils import now
 
-path = Path.joinpath(Path(__file__).parent, "dutyInfo.ini")
+path = Path.joinpath(Path(__file__).parent.parent.parent, "config", "dutyInfo.ini")
 
 
 class OnDutyInfo:

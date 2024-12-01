@@ -31,7 +31,7 @@ async def search_operation_logs(
     if len(operatingTime) > 1:
         # 数据库字段条件筛选：大小比较
         q &= Q(dutyDate__gte=operatingTime[0], dutyDate__lte=operatingTime[1])
-    total, duty_logs = await dutyLogController.list(page=page, page_size=pageSize, search=q)
+    total, duty_logs = await dutyLogController.list(page=page, page_size=pageSize, search=q, order=["-dutyDate"])
     data = [await obj.to_dict() for obj in duty_logs]
     return SuccessExtra(data=data, total=total, currentPage=page, pageSize=pageSize)
 

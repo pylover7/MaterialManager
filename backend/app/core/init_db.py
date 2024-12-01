@@ -27,25 +27,19 @@ async def tortoise_init(app: FastAPI):
     logger.info("正在生成数据库表...")
     await Tortoise.generate_schemas(safe=True)
     logger.info("数据库表生成完成")
-    logger.info("正在注册API...")
-    apiIdList = await init_api(app)
-    logger.info("API注册完成")
-    logger.info("正在初始化菜单...")
-    menuIdList = await init_menus()
-    logger.info("菜单初始化完成")
-    logger.info("正在初始化角色...")
-    superAdmin = await init_roles(apiIdList, menuIdList)
-    logger.info("角色初始化完成")
-    logger.info("正在注册超级管理员...")
-    await register_superAdmin(superAdmin)
-    logger.info("超级管理员注册完成")
+    await init_api(app)
+    await init_menus()
+    await init_roles()
+    await register_superAdmin()
 
 
-async def register_superAdmin(role):
+async def register_superAdmin():
     user = await user_controller.model.exists()
     if not user:
+        logger.info("正在注册超级管理员...")
         settings.SUPER_USER["uuid"] = generate_uuid(settings.SUPER_USER["username"])
-        user = await user_controller.create(UserCreate.parse_obj(settings.SUPER_USER))
+        await user_controller.create(UserCreate.parse_obj(settings.SUPER_USER))
+        logger.info("超级管理员注册完成")
 
 
 def test_db(db_info: DbInfo) -> bool:

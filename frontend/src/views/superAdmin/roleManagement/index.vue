@@ -21,6 +21,7 @@ import Close from "@iconify-icons/ep/close";
 import Check from "@iconify-icons/ep/check";
 import PureTable from "@pureadmin/table";
 import Segmented from "@/components/ReSegmented";
+import Search from "@iconify-icons/ri/search-line";
 
 defineOptions({
   name: "roleManagement"
@@ -142,7 +143,7 @@ onMounted(() => {
       <el-form-item>
         <el-button
           type="primary"
-          :icon="useRenderIcon('ri:search-line')"
+          :icon="useRenderIcon(Search)"
           :loading="loading"
           @click="onSearch"
         >
@@ -295,7 +296,7 @@ onMounted(() => {
               :height="treeHeight"
               :data="menuTreeData"
               :props="menuTreeProps"
-              :check-strictly="!isLinkage"
+              :check-strictly="isLinkage"
               :filter-method="filterMethod"
             >
               <template #default="{ node }">

@@ -174,7 +174,7 @@ export function useDept() {
       message("该部门下存在员工，无法删除", { type: "warning" });
     } else {
       deleteDepart(row.id, row.name).then(() => {
-        message(`您删除了部门名称为${row.name}的这条数据`, { type: "success" });
+        message(`您删除了部门名称为【${row.name}】的这条数据`, { type: "success" });
         onSearch();
       });
     }
