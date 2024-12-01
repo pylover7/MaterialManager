@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from ldap3 import Server, Connection, ALL
 
-from app import logger
+from app.log import logger
 from app.schemas.users import UserLdap
 from app.settings import settings
 
@@ -9,7 +9,7 @@ from app.settings import settings
 class LDAPAuthentication:
     def __init__(self):
         self.server = Server(settings.LDAP_HOST, get_info=ALL, connect_timeout=10)
-        self.conn = Connection(self.server, user=settings.LDAP_USER, password=settings.LDAP_PWD, auto_bind=True)
+        self.conn = Connection(self.server, user=settings.LDAP_USER, password=settings.LDAP_PWD)
 
     def get_user_info(self, username: str) -> UserLdap:
         if not settings.DEV:

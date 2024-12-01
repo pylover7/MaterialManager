@@ -4,17 +4,15 @@ from fastapi import APIRouter
 from jwt.exceptions import ExpiredSignatureError
 
 from app.log import logger
-from app.controllers.depart import departController
 from app.controllers.user import user_controller
 from app.core.ctx import CTX_USER_ID
 from app.core.dependency import DependAuth
 from app.models.users import Api, Menu, Role, User
 from app.schemas.base import Fail, Success, FailAuth
 from app.schemas.login import *
-from app.schemas.users import UpdatePassword, UserPydantic
+from app.schemas.users import UserPydantic
 from app.settings import settings
 from app.utils.jwtt import create_access_token, decode_access_token
-from app.utils.password import get_password_hash, verify_password
 from app.utils import now
 
 router = APIRouter()
@@ -31,7 +29,7 @@ async def login_access_token(credentials: CredentialsSchema):
         user = await user_controller.authenticate(credentials)
         await user_controller.update_last_login(user.id)
         roles = await user.roles.all().values_list("code", flat=True)
-        depart = await departController.get_all_name(user)
+        depart = user.department
     access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
     expire = now(0) + access_token_expires
@@ -105,7 +103,7 @@ async def refresh_token(refreshToken: refreshTokenSchema):
 @router.post("/auth", summary="用户验证")
 async def auth(credentials: CredentialsSchema):
     user, _ = await user_controller.authenticate(credentials)
-    depart = await departController.get_all_name(user)
+    depart = user.department
     data = {
         "uuid": user.uuid.__str__(),
         "username": user.username,
@@ -207,24 +205,3 @@ async def get_user_api():
         apis.extend([api.method.lower() + api.path for api in api_objs])
     apis = list(set(apis))
     return Success(data=apis)
-
-
-@router.post("/updatePwd", summary="更新本人密码", dependencies=[DependAuth])
-async def update_user_password(data: UpdatePassword):
-    user_id = CTX_USER_ID.get()
-    user = await user_controller.get(user_id)
-    verified = verify_password(data.oldPwd, user.password)
-    if not verified:
-        return Fail(msg="旧密码验证错误！")
-    user.password = get_password_hash(data.newPwd)
-    await user.save()
-    return Success(msg="密码修改成功！")
-
-
-@router.post("/initPwd", summary="初始化密码", dependencies=[DependAuth])
-async def init_user_password(data: dict):
-    user_id = CTX_USER_ID.get()
-    user = await user_controller.get(user_id)
-    user.password = get_password_hash(data["newPwd"])
-    await user.save()
-    return Success(msg="密码修改成功！")

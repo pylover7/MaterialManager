@@ -12,7 +12,6 @@ from typing import Union
 
 from app.controllers import user_controller
 from app.controllers.borrowed import borrowedController
-from app.controllers.depart import departController
 from app.controllers.material import materialController
 from app.models import Borrowed
 from app.schemas import Success, SuccessExtra
@@ -73,13 +72,13 @@ async def get_home_list(
         if obj.borrowApproveStatus:
             borrowApproveUser = await obj.borrowApproveUser.all().values("id", "nickname", "phone", "depart_id")
             user = await user_controller.get(borrowApproveUser["id"])
-            depart = await departController.get_all_name(user)
+            depart = user.department
             borrowApproveUser["depart"] = depart
             obj_dict["borrowApproveUser"] = borrowApproveUser
         if obj.returnApproveStatus:
             returnApproveUser = await obj.returnApproveUser.all().values("id", "nickname", "phone", "depart_id")
             user = await user_controller.get(returnApproveUser["id"])
-            depart = await departController.get_all_name(user)
+            depart = user.department
             returnApproveUser["depart"] = depart
             obj_dict["returnApproveUser"] = returnApproveUser
         obj_dict["material"] = material

@@ -7,7 +7,6 @@ from app.core.crud import CRUDBase
 from app.schemas.login import CredentialsSchema
 from app.schemas.users import UserCreate, UserUpdate
 from app.utils.password import get_password_hash, verify_password, md5_encrypt
-from .depart import departController
 
 from .role import role_controller
 from ..models import User
@@ -25,12 +24,8 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         return await self.model.filter(username=username).first()
 
     async def create(self, obj_in: UserCreate) -> User:
-        obj_in.password = get_password_hash(password=md5_encrypt(obj_in.password))
         obj = await super().create(obj_in.create_dict())
         return obj
-
-    async def update(self, obj_in: UserUpdate) -> User:
-        return await super().update(id=obj_in.id, obj_in=obj_in.update_dict())
 
     async def update_last_login(self, id: int) -> None:
         user = await self.model.get(id=id)
@@ -47,11 +42,12 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
                 nickname=ldapUser.name,
                 email=ldapUser.mail,
                 mobile=ldapUser.mobile,
-                employeeID=ldapUser.employeeID
+                employeeID=ldapUser.employeeID,
+                department=ldapUser.department,
+                company=ldapUser.company
             )
 
-            user = await self.create(userCreate)
-            departController.get(ldapUser.department, ldapUser.company)
+            await self.create(userCreate)
             raise HTTPException(status_code=400, detail="用户已被禁用")
         elif not user.status:
             raise HTTPException(status_code=400, detail="用户已被禁用")
@@ -62,11 +58,6 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         for role_id in roles:
             role_obj = await role_controller.get(id=role_id)
             await user.roles.add(role_obj)
-
-    async def update_depart(self, user: User, depart_id: int) -> None:
-        depart = await departController.get(id=depart_id)
-        user.depart = depart
-        await user.save()
 
     async def update_status(self, user: User, status: int) -> None:
         user.status = status

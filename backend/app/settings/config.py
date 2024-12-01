@@ -214,7 +214,7 @@ class Settings:
 
     @property
     def LDAP_USER(self) -> str:
-        return self.data["ldap"]["user"]
+        return self.data["ldap"]["username"]
 
     @property
     def LDAP_PWD(self) -> str:
