@@ -20,16 +20,10 @@ router = APIRouter()
 
 @router.post("/accessToken", summary="获取token")
 async def login_access_token(credentials: CredentialsSchema):
-    if (settings.DATABASE_START is None and credentials.username == settings.SUPER_USER["username"]
-            and credentials.password == settings.SUPER_USER_PWD):
-        user = UserPydantic.parse_obj(settings.SUPER_USER)
-        roles = user.roles
-        depart = user.depart
-    else:
-        user = await user_controller.authenticate(credentials)
-        await user_controller.update_last_login(user.id)
-        roles = await user.roles.all().values_list("code", flat=True)
-        depart = user.department
+    user = await user_controller.authenticate(credentials)
+    await user_controller.update_last_login(user.id)
+    roles = await user.roles.all().values_list("code", flat=True)
+    depart = user.department
     access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
     expire = now(0) + access_token_expires

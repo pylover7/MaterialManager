@@ -2,7 +2,6 @@ import "./reset.css";
 import roleForm from "../form/role.vue";
 import editForm from "../form/index.vue";
 import { zxcvbn } from "@zxcvbn-ts/core";
-import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 import userAvatar from "@/assets/user.jpg";
 import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
@@ -36,7 +35,6 @@ import { generatePassword } from "../utils/util";
 import {
   addUser,
   deleteUser,
-  getDeptList,
   getRoleList,
   getUserAvatar,
   getUserList,
@@ -301,8 +299,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       pagination.currentPage,
       pagination.pageSize,
       toRaw(form).username,
-      toRaw(form).nickname,
-      toRaw(form).departId
+      toRaw(form).nickname
     );
     dataList.value = data;
     pagination.total = total;
@@ -571,13 +568,6 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   onMounted(async () => {
     treeLoading.value = true;
     onSearch();
-
-    // 归属部门
-    const { data } = await getDeptList();
-    higherDeptOptions.value = handleTree(data);
-    treeData.value = handleTree(data);
-    treeLoading.value = false;
-
     // 角色列表
     roleOptions.value = (
       await getRoleList(1, 100, { code: "", name: "", status: 1 })

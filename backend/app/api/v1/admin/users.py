@@ -68,12 +68,7 @@ async def list_user(
     total, user_objs = await user_controller.list(page=currentPage, page_size=pageSize, search=q)
     data = []
     for obj in user_objs:
-        obj_dict = await obj.to_dict(m2m=True, exclude_fields=["password"])
-        obj_dict["departId"] = obj_dict["depart_id"]
-        try:
-            obj_dict["depart"] = await obj.depart.all().values("id", "name")
-        except Exception as e:
-            obj_dict["depart"] = {}
+        obj_dict = await obj.to_dict(m2m=True)
         data.append(obj_dict)
     return SuccessExtra(data=data, total=total, currentPage=currentPage, pageSize=pageSize)
 

@@ -47,10 +47,7 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
                 company=ldapUser.company
             )
 
-            await self.create(userCreate)
-            raise HTTPException(status_code=400, detail="用户已被禁用")
-        elif not user.status:
-            raise HTTPException(status_code=400, detail="用户已被禁用")
+            user = await self.create(userCreate)
         return user
 
     async def update_roles(self, user: User, roles: List[int]) -> None:
