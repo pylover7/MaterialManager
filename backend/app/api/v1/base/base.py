@@ -3,17 +3,16 @@ from datetime import timedelta
 from fastapi import APIRouter
 from jwt.exceptions import ExpiredSignatureError
 
-from app.log import logger
 from app.controllers.user import user_controller
 from app.core.ctx import CTX_USER_ID
 from app.core.dependency import DependAuth
+from app.log import logger
 from app.models.users import Api, Menu, Role, User
-from app.schemas.base import Fail, Success, FailAuth
+from app.schemas.base import Success, FailAuth
 from app.schemas.login import *
-from app.schemas.users import UserPydantic
 from app.settings import settings
-from app.utils.jwtt import create_access_token, decode_access_token
 from app.utils import now
+from app.utils.jwtt import create_access_token, decode_access_token
 
 router = APIRouter()
 
@@ -96,14 +95,13 @@ async def refresh_token(refreshToken: refreshTokenSchema):
 
 @router.post("/auth", summary="用户验证")
 async def auth(credentials: CredentialsSchema):
-    user, _ = await user_controller.authenticate(credentials)
-    depart = user.department
+    user = await user_controller.authenticate(credentials)
     data = {
         "uuid": user.uuid.__str__(),
         "username": user.username,
         "nickname": user.nickname,
         "phone": user.phone,
-        "depart": depart
+        "depart": user.department
     }
     return Success(data=data)
 

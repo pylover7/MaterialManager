@@ -24,7 +24,7 @@ async def create_user(
     if user or (data.username == "admin"):
         raise HTTPException(
             status_code=400,
-            detail="The user with this email already exists in the system.",
+            detail="用户已存在",
         )
     id = data.departId
     del data.departId

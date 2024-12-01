@@ -1,12 +1,9 @@
 from datetime import datetime
-from typing import List, Optional, Tuple
-
-from fastapi.exceptions import HTTPException
+from typing import List, Optional
 
 from app.core.crud import CRUDBase
 from app.schemas.login import CredentialsSchema
 from app.schemas.users import UserCreate, UserUpdate
-from app.utils.password import get_password_hash, verify_password, md5_encrypt
 
 from .role import role_controller
 from ..models import User

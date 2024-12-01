@@ -4,7 +4,7 @@ import editForm from "../form/index.vue";
 import { zxcvbn } from "@zxcvbn-ts/core";
 import { message } from "@/utils/message";
 import userAvatar from "@/assets/user.jpg";
-import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
+import { defaultPaginationSizes } from "@/views/hooks";
 import { addDialog } from "@/components/ReDialog";
 import type { PaginationProps } from "@pureadmin/table";
 import ReCropperPreview from "@/components/ReCropperPreview";
@@ -60,7 +60,6 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   // 上传头像信息
   const avatarInfo = ref();
   const switchLoadMap = ref({});
-  const { switchStyle } = usePublicHooks();
   const higherDeptOptions = ref();
   const treeData = ref([]);
   const treeLoading = ref(true);
@@ -87,27 +86,18 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       width: 60
     },
     {
-      label: "用户头像",
-      prop: "avatar",
-      cellRenderer: ({ row }) => (
-        <el-image
-          fit="cover"
-          preview-teleported={true}
-          src={avatar(row.avatar)}
-          preview-src-list={Array.of(avatar(row.avatar))}
-          class="w-[24px] h-[24px] rounded-full align-middle"
-        />
-      ),
-      width: 90
-    },
-    {
       label: "用户名称",
       prop: "nickname",
       minWidth: 130
     },
     {
-      label: "职工号",
+      label: "账号",
       prop: "username",
+      minWidth: 130
+    },
+    {
+      label: "工号",
+      prop: "employeeID",
       minWidth: 130
     },
     {
@@ -125,33 +115,24 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
       )
     },
     {
+      label: "公司",
+      prop: "company",
+      minWidth: 90
+    },
+    {
       label: "部门",
-      prop: "depart.name",
+      prop: "department",
       minWidth: 90
     },
     {
       label: "手机号码",
-      prop: "phone",
+      prop: "mobile",
       minWidth: 90
     },
     {
-      label: "状态",
-      prop: "status",
-      minWidth: 90,
-      cellRenderer: scope => (
-        <el-switch
-          size={scope.props.size === "small" ? "small" : "default"}
-          loading={switchLoadMap.value[scope.index]?.loading}
-          v-model={scope.row.status}
-          active-value={1}
-          inactive-value={0}
-          active-text="已启用"
-          inactive-text="已停用"
-          inline-prompt
-          style={switchStyle.value}
-          onChange={() => onChange(scope as any)}
-        />
-      )
+      label: "邮箱",
+      prop: "email",
+      minWidth: 130
     },
     {
       label: "备注",

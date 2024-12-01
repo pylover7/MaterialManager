@@ -33,7 +33,7 @@ async def create_borrowed(data: CreateBorrowedInfo):
         item["userDepart"] = data.depart
         item["uuid"] = data.uuid
         user = await user_controller.get_by_uuid(item["uuid"])
-        item["phone"] = user.phone
+        item["phone"] = user.mobile
         item["reason"] = data.reason
         item["material_id"] = material.id
         obj: Borrowed = await borrowedController.create(obj_in=item)
@@ -64,22 +64,16 @@ async def get_home_list(
         q &= Q(borrowApproveStatus=borrowedStatus)
     if borrowWhether is not None:
         q &= Q(Q(borrowApproveWhether=borrowWhether), Q(returnApproveStatus=returnStatus))
-    total, objs = await borrowedController.list(page=page, page_size=pageSize, search=q)
+    total, objs = await borrowedController.list(page=page, page_size=pageSize, search=q, order=["-borrowTime"])
     data = []
     for obj in objs:
         material = await obj.material.all().values("name", "model", "position", "number", "borrowed")
         obj_dict = await obj.to_dict()
         if obj.borrowApproveStatus:
-            borrowApproveUser = await obj.borrowApproveUser.all().values("id", "nickname", "phone", "depart_id")
-            user = await user_controller.get(borrowApproveUser["id"])
-            depart = user.department
-            borrowApproveUser["depart"] = depart
+            borrowApproveUser = await obj.borrowApproveUser.all().values("id", "nickname", "mobile", "department")
             obj_dict["borrowApproveUser"] = borrowApproveUser
         if obj.returnApproveStatus:
-            returnApproveUser = await obj.returnApproveUser.all().values("id", "nickname", "phone", "depart_id")
-            user = await user_controller.get(returnApproveUser["id"])
-            depart = user.department
-            returnApproveUser["depart"] = depart
+            returnApproveUser = await obj.returnApproveUser.all().values("id", "nickname", "mobile", "department")
             obj_dict["returnApproveUser"] = returnApproveUser
         obj_dict["material"] = material
         data.append(obj_dict)
