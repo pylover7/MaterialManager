@@ -37,13 +37,15 @@ class AuthControl:
                 if not user:
                     raise HTTPException(status_code=401, detail="Authentication failed")
                 CTX_USER_ID.set(int(user_id))
+                if user.is_superuser:
+                    return user
+                if not user.status:
+                    raise HTTPException(status_code=401, detail="用户已被禁用")
                 return user
             except jwt.DecodeError:
                 raise HTTPException(status_code=401, detail="无效的Token")
             except jwt.ExpiredSignatureError:
                 raise HTTPException(status_code=401, detail="登录已过期")
-            except Exception as e:
-                raise HTTPException(status_code=500, detail=f"{repr(e)}")
 
 
 class PermissionControl:

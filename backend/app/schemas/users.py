@@ -13,6 +13,7 @@ class UserCreate(UserPydantic):
     is_superuser: bool = False
     last_login: str = None
     avatar: str = None
+    remark: str = None
 
     def create_dict(self):
         return self.model_dump(exclude_unset=True, exclude={"roles", "depart"})

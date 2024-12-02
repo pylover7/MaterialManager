@@ -1,7 +1,9 @@
+from typing import Tuple
+
 from fastapi import HTTPException
 from ldap3 import Server, Connection, ALL
 
-from app.utils.log import logger
+from app.utils.log import logger, loginLogger
 from app.schemas.users import UserLdap
 from app.settings import settings
 
@@ -26,6 +28,7 @@ class LDAPAuthentication:
                     mail=user.mail.value,
                     dn=user.distinguishedName.value,
                     sAMAccountName=user.sAMAccountName.value,
+                    name=user.name.value,
                 )
             else:
                 self.conn.unbind()
@@ -43,19 +46,19 @@ class LDAPAuthentication:
             )
 
 
-    def authenticate(self, username: str, password: str) -> UserLdap:
+    def authenticate(self, username: str, password: str) -> Tuple[UserLdap | None, bool]:
         if settings.DEV:
             user = self.get_user_info(username)
-            return user
+            return user, True
         else:
+            user = self.get_user_info(username)
             try:
-                user = self.get_user_info(username)
                 conn = Connection(self.server, user=user.dn, password=password, auto_bind=True)
                 conn.unbind()
-                return user
+                return user, True
             except Exception as e:
                 logger.error(f"LDAP认证失败: {e}")
-                raise HTTPException(status_code=400, detail="密码错误")
+                return user, False
 
 
 ldap_auth = LDAPAuthentication()

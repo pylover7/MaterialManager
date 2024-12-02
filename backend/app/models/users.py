@@ -13,12 +13,13 @@ class User(BaseModel, TimestampMixin, UUIDModel):
     sex = fields.IntField(default=1, description="性别, 0: 女, 1: 男")
     email = fields.CharField(max_length=255, null=True, unique=True, description="邮箱")
     mobile = fields.CharField(max_length=20, null=True, unique=True, description="手机号码")
-    status = fields.IntField(default=0, max_length=10, description="是否激活")
+    status = fields.IntField(default=1, max_length=10, description="是否禁用")
     is_superuser = fields.BooleanField(default=False, description="是否为超级管理员")
     last_login = fields.DatetimeField(null=True, description="最后登录时间")
     remark = fields.CharField(max_length=500, null=True, blank=True, description="备注")
     department = fields.CharField(max_length=500, null=True, blank=True, description="部门")
     company = fields.CharField(max_length=500, null=True, blank=True, description="公司")
+    loginFail = fields.IntField(default=0, description="登录失败次数")
 
     roles: fields.ManyToManyRelation["Role"] = fields.ManyToManyField("models.Role", related_name="user_roles")
     borrowed: fields.ManyToManyRelation["Borrowed"]
