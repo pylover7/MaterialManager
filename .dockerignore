@@ -5,6 +5,7 @@
 *.local
 .eslintcache
 report.html
+*/logs
 
 yarn.lock
 npm-debug.log*

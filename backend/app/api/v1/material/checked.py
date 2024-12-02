@@ -9,7 +9,7 @@ from app.controllers import user_controller
 from app.controllers.checked import checkedController
 from app.models import Checked
 from app.schemas.checked import ReturnChecked
-from app.log import logger
+from app.utils.log import logger
 from app.schemas import Success, SuccessExtra
 from app.utils import now
 

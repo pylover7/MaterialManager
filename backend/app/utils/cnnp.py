@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from ldap3 import Server, Connection, ALL
 
-from app.log import logger
+from app.utils.log import logger
 from app.schemas.users import UserLdap
 from app.settings import settings
 

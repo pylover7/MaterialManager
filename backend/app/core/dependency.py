@@ -5,7 +5,7 @@ from app.core.ctx import CTX_USER_ID
 from app.models import Role, User
 from app.schemas.users import UserPydantic
 from app.settings import settings
-from app.log import logger
+from app.utils.log import logger
 
 
 class DataBaseControl:

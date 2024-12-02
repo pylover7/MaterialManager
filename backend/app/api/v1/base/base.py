@@ -6,7 +6,7 @@ from jwt.exceptions import ExpiredSignatureError
 from app.controllers.user import user_controller
 from app.core.ctx import CTX_USER_ID
 from app.core.dependency import DependAuth
-from app.log import logger
+from app.utils.log import logger
 from app.models.users import Api, Menu, Role, User
 from app.schemas.base import Success, FailAuth
 from app.schemas.login import *

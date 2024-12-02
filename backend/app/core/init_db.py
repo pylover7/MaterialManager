@@ -9,7 +9,7 @@ import pymysql
 from app.controllers import user_controller
 from app.schemas.users import UserCreate
 from app.settings import settings
-from app.log import logger
+from app.utils.log import logger
 from app.schemas.admin import DbInfo
 from app.core.init_menus import init_api, init_menus, init_roles
 from app.utils import generate_uuid

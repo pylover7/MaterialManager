@@ -5,7 +5,7 @@
 from fastapi import APIRouter, Query
 from tortoise.expressions import Q
 
-from app.log import logger
+from app.utils.log import logger
 from app.controllers.dutyLog import dutyNotesController, dutyLogController
 from app.controllers.material import dutyOverListController
 from app.schemas import Success, SuccessExtra, Fail

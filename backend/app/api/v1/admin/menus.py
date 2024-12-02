@@ -3,7 +3,7 @@ from fastapi import APIRouter, Query
 from app.controllers.menu import menu_controller
 from app.schemas.base import Fail, Success
 from app.schemas.menus import *
-from app.log import logger
+from app.utils.log import logger
 
 menuRouter = APIRouter()
 

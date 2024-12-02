@@ -4,7 +4,7 @@
 # @Author    :dayezi
 from fastapi import FastAPI
 
-from app.log import logger
+from app.utils.log import logger
 from app.models import Menu, Api, Role
 
 
