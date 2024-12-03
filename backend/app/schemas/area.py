@@ -10,9 +10,10 @@ from app.models import MaterialArea
 MaterialAreaSchema = pydantic_model_creator(MaterialArea)
 
 
-class MaterialAreaCreate(MaterialAreaSchema):
-    ...
+class AreaCreate(MaterialAreaSchema):
+    uuid: str = None
 
 
-class MaterialAreaUpdate(MaterialAreaSchema):
+class AreaUpdate(MaterialAreaSchema):
     id: int
+    uuid: str = None

@@ -8,11 +8,13 @@ from .base import BaseModel, TimestampMixin, UUIDModel
 
 
 class MaterialArea(BaseModel, TimestampMixin, UUIDModel):
-    key = fields.CharField(max_length=20, description="物资区域关键字")
-    name = fields.CharField(max_length=50, description="物资区域名称")
+    name = fields.CharField(max_length=50, unique=True, description="区域名称")
+    code = fields.CharField(max_length=50, unique=True, description="区域编码")
+    status = fields.IntField(default=0, description="状态：启用/停用")
+    remark = fields.CharField(max_length=500, null=True, blank=True, description="区域描述")
 
     class Meta:
-        table = "material_area"
+        table = "area"
 
     class PydanticMeta:
-        exclude = "id"
+        exclude = ("created_at", "updated_at", "id")
