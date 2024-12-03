@@ -8,7 +8,7 @@ from tortoise.expressions import Q
 from app.controllers.user import user_controller
 from app.schemas.base import Success, SuccessExtra
 from app.schemas.users import *
-from app.log import logger
+from app.utils.log import logger
 from app.settings import settings
 from app.utils import base_decode, generate_uuid
 from app.utils.password import get_password_hash

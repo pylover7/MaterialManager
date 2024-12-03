@@ -7,6 +7,7 @@
 *.sqlite*
 .venv/
 */migrations
+*/logs
 
 # frontend
 node_modules

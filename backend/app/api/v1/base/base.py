@@ -1,12 +1,12 @@
 from datetime import timedelta
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from jwt.exceptions import ExpiredSignatureError
 
 from app.controllers.user import user_controller
 from app.core.ctx import CTX_USER_ID
 from app.core.dependency import DependAuth
-from app.log import logger
+from app.utils.log import logger
 from app.models.users import Api, Menu, Role, User
 from app.schemas.base import Success, FailAuth
 from app.schemas.login import *
@@ -18,11 +18,10 @@ router = APIRouter()
 
 
 @router.post("/accessToken", summary="获取token")
-async def login_access_token(credentials: CredentialsSchema):
-    user = await user_controller.authenticate(credentials)
+async def login_access_token(request: Request, credentials: CredentialsSchema):
+    user = await user_controller.authenticate(credentials, request.client.host)
     await user_controller.update_last_login(user.id)
     roles = await user.roles.all().values_list("code", flat=True)
-    depart = user.department
     access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
     expire = now(0) + access_token_expires
@@ -32,7 +31,7 @@ async def login_access_token(credentials: CredentialsSchema):
         nickname=user.nickname,
         username=user.username,
         uuid=user.uuid.__str__(),
-        depart=depart,
+        depart=user.department,
         roles=roles,
         accessToken=create_access_token(
             data=JWTPayload(
@@ -94,13 +93,13 @@ async def refresh_token(refreshToken: refreshTokenSchema):
 
 
 @router.post("/auth", summary="用户验证")
-async def auth(credentials: CredentialsSchema):
-    user = await user_controller.authenticate(credentials)
+async def auth(request: Request, credentials: CredentialsSchema):
+    user = await user_controller.authenticate(credentials, request.client.host)
     data = {
         "uuid": user.uuid.__str__(),
         "username": user.username,
         "nickname": user.nickname,
-        "phone": user.phone,
+        "phone": user.mobile,
         "depart": user.department
     }
     return Success(data=data)

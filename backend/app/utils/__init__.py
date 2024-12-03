@@ -6,6 +6,7 @@ import base64
 import time
 import uuid
 from datetime import datetime
+import pytz
 
 
 def base_decode(data: str) -> bytes:
@@ -32,11 +33,13 @@ def now(s: int = 1) -> str | datetime | float:
 
     :return: 当前日期时间
     """
+    utc_timezone = pytz.timezone('Asia/Shanghai')
     today = datetime.now()
+    utc_now = today.astimezone(utc_timezone)
     match s:
         case 0:
-            return today
+            return utc_now
         case 1:
-            return today.strftime("%Y-%m-%d %H:%M:%S")
+            return utc_now.strftime("%Y-%m-%d %H:%M:%S")
         case 2:
-            return today.timestamp()
+            return utc_now.timestamp()
