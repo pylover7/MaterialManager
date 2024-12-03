@@ -15,6 +15,7 @@ import { successNotification } from "@/utils/notification";
 import {
   addRole,
   deleteRole,
+  getAllArea,
   getApiList,
   getMenuList,
   getRoleAuth,
@@ -23,7 +24,7 @@ import {
   updateRoleAuth
 } from "@/api/admin";
 
-export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
+export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
   const form = reactive({
     name: "",
     code: "",
@@ -35,8 +36,10 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
   const menuTreeIds = ref([]);
   const apiParentTreeIds = ref([]);
   const apiTreeIds = ref([]);
+  const areaTreeIds = ref([]);
   const menuTreeData = ref([]);
   const apiTreeData = ref([]);
+  const areaTreeData = ref([]);
   const isShow = ref(false);
   const loading = ref(true);
   const isLinkage = ref(true);
@@ -47,6 +50,7 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
   const apiIsExpandAll = ref(false);
   const isSelectAll = ref(false);
   const apiIsSelectAll = ref(false);
+  const areaIsSelectAll = ref(false);
   const tabIndex = ref(0);
   const { switchStyle } = usePublicHooks();
   const menuTreeProps = {
@@ -58,6 +62,10 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
     value: "id",
     label: "summary",
     children: "children"
+  };
+  const areaProps = {
+    value: "id",
+    label: "name"
   };
   const pagination = reactive<PaginationProps>({
     total: 0,
@@ -74,6 +82,10 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
     {
       label: "API权限",
       value: 1
+    },
+    {
+      label: "区域权限",
+      value: 2
     }
   ];
   const columns: TableColumnList = [
@@ -181,7 +193,9 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
 
   function handleDelete(row) {
     deleteRole(row.id, row.name).then(() => {
-      message(`您删除了角色名称为【${row.name}】的这条数据`, { type: "success" });
+      message(`您删除了角色名称为【${row.name}】的这条数据`, {
+        type: "success"
+      });
       onSearch();
     });
   }
@@ -245,7 +259,7 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
         const curData = options.props.formInline as FormItemProps;
         function chores() {
           successNotification(
-            `您${title}了角色名称为${curData.name}的这条数据`
+            `您${title}了角色名称为【${curData.name}】的这条数据`
           );
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
@@ -280,9 +294,11 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
       const { data } = await getRoleAuth(id);
       menuTreeRef.value.setCheckedKeys(data.menus);
       apiTreeRef.value.setCheckedKeys(data.apis);
+      areaTreeRef.value.setCheckedKeys(data.areas);
     } else {
       curRow.value = null;
       isShow.value = false;
+      tabIndex.value = 0;
     }
   }
 
@@ -303,7 +319,8 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
     let data = {
       id: id,
       menus: menuTreeRef.value.getCheckedKeys(),
-      apis: apiIds
+      apis: apiIds,
+      areas: areaTreeRef.value.getCheckedKeys()
     };
     // 根据用户 id 调用实际项目中菜单权限修改接口
     updateRoleAuth(data).then(() => {
@@ -332,6 +349,11 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
       apiTreeIds.value = getKeyList(res.data, "id");
       apiParentTreeIds.value = getKeyList(apiTreeData.value, "id");
     });
+    getAllArea().then(res => {
+      areaTreeData.value = res.data;
+      areaTreeIds.value = getKeyList(res.data, "id");
+    });
+    console.log(areaTreeData);
   });
 
   watch(isExpandAll, val => {
@@ -361,6 +383,12 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
       : apiTreeRef.value.setCheckedKeys([]);
   });
 
+  watch(areaIsSelectAll, val => {
+    val
+      ? areaTreeRef.value.setCheckedKeys(areaTreeIds.value)
+      : areaTreeRef.value.setCheckedKeys([]);
+  });
+
   return {
     form,
     isShow,
@@ -371,15 +399,18 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref) {
     dataList,
     menuTreeData,
     apiTreeData,
+    areaTreeData,
     tabIndex,
     menuTreeProps,
     apiTreeProps,
+    areaProps,
     isLinkage,
     pagination,
     isExpandAll,
     apiIsExpandAll,
     isSelectAll,
     apiIsSelectAll,
+    areaIsSelectAll,
     apiIsLinkage,
     tabOperation,
     treeSearchValue,

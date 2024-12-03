@@ -10,8 +10,6 @@ import {
   useResizeObserver
 } from "@pureadmin/utils";
 
-// import Database from "@iconify-icons/ri/database-2-line";
-// import More from "@iconify-icons/ep/more-filled";
 import Delete from "@iconify-icons/ep/delete";
 import EditPen from "@iconify-icons/ep/edit-pen";
 import Refresh from "@iconify-icons/ep/refresh";
@@ -46,6 +44,7 @@ const iconClass = computed(() => {
 
 const menuTreeRef = ref();
 const apiTreeRef = ref();
+const areaTreeRef = ref();
 const formRef = ref();
 const tableRef = ref();
 const contentRef = ref();
@@ -61,8 +60,10 @@ const {
   dataList,
   menuTreeData,
   apiTreeData,
+  areaTreeData,
   menuTreeProps,
   apiTreeProps,
+  areaProps,
   tabIndex,
   isLinkage,
   apiIsLinkage,
@@ -71,6 +72,7 @@ const {
   apiIsExpandAll,
   isSelectAll,
   apiIsSelectAll,
+  areaIsSelectAll,
   tabOperation,
   treeSearchValue,
   // buttonClass,
@@ -87,7 +89,7 @@ const {
   handleSizeChange,
   handleCurrentChange,
   handleSelectionChange
-} = useRole(menuTreeRef, apiTreeRef);
+} = useRole(menuTreeRef, apiTreeRef, areaTreeRef);
 
 onMounted(() => {
   useResizeObserver(contentRef, async () => {
@@ -316,6 +318,23 @@ onMounted(() => {
               :data="apiTreeData"
               :props="apiTreeProps"
               :check-strictly="!apiIsLinkage"
+              :filter-method="filterMethod"
+            >
+              <template #default="{ node }">
+                <span>{{ transformI18n(node.label) }}</span>
+              </template>
+            </el-tree-v2>
+          </el-tab-pane>
+          <el-tab-pane :name="tabOperation[2].value">
+            <div class="flex flex-wrap">
+              <el-checkbox v-model="areaIsSelectAll" label="全选/全不选" />
+            </div>
+            <el-tree-v2
+              ref="areaTreeRef"
+              show-checkbox
+              :height="treeHeight"
+              :data="areaTreeData"
+              :props="areaProps"
               :filter-method="filterMethod"
             >
               <template #default="{ node }">

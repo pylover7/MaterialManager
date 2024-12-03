@@ -66,3 +66,9 @@ async def list_area(
         item = await area.to_dict()
         data.append(item)
     return SuccessExtra(total=total, data=data, msg="查询成功", currentPage=currentPage, pageSize=pageSize)
+
+@areaRouter.get("/all", summary="查看所有区域")
+async def list_area():
+    area_list = await areaController.all()
+    data = [await area.to_dict() for area in area_list]
+    return Success(data=data, msg="查询成功")

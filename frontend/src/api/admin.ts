@@ -283,3 +283,8 @@ export const getAreaList = (
     }
   });
 };
+
+/** 获取所有区域 **/
+export const getAllArea = () => {
+  return http.request<ResultList>("get", baseUrlApi("/admin/area/all"));
+};

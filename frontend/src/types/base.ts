@@ -14,6 +14,7 @@ export type ResultRoleAuth = BaseResult & {
   data: {
     menus: Array<number>;
     apis: Array<number>;
+    areas: Array<number>;
   };
 };
 export type ResultTable = {

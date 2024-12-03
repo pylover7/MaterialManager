@@ -12,7 +12,7 @@ from .users import userRouter
 from .area import areaRouter
 
 adminRouter = APIRouter()
-adminRouter.include_router(sysRouter, tags=["系统数据库模块"], prefix="/system")
+adminRouter.include_router(sysRouter, tags=["系统模块"], prefix="/system")
 adminRouter.include_router(apiRouter, tags=["系统API模块"], prefix="/api")
 adminRouter.include_router(menuRouter, tags=["系统菜单模块"], prefix="/menu")
 adminRouter.include_router(roleRouter, tags=["系统角色模块"], prefix="/role")
