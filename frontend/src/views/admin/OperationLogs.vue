@@ -234,11 +234,13 @@ const pagination = reactive<PaginationProps>({
 });
 
 function handleSizeChange(val: number) {
+  pagination.pageSize = val;
   onSearch();
   console.log(`${val} items per page`);
 }
 
 function handleCurrentChange(val: number) {
+  pagination.currentPage = val;
   onSearch();
   console.log(`current page: ${val}`);
 }

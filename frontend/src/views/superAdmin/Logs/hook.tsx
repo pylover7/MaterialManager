@@ -1,16 +1,17 @@
 import dayjs from "dayjs";
 import { message } from "@/utils/message";
 import { getKeyList } from "@pureadmin/utils";
-import { getLoginLogsList } from "@/api/system";
-import { usePublicHooks } from "@/views/hooks";
+import { clearLoginLogs, getLoginLogsList } from "@/api/system";
+import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
 import type { PaginationProps } from "@pureadmin/table";
 import { type Ref, reactive, ref, onMounted } from "vue";
+import type { DateModelType } from "element-plus";
 
 export function useRole(tableRef: Ref) {
   const form = reactive({
     username: "",
     status: "",
-    loginTime: ""
+    loginTime: Array<DateModelType>("")
   });
   const dataList = ref([]);
   const loading = ref(true);
@@ -19,21 +20,16 @@ export function useRole(tableRef: Ref) {
 
   const pagination = reactive<PaginationProps>({
     total: 0,
-    pageSize: 10,
+    pageSize: 15,
     currentPage: 1,
-    background: true
+    background: true,
+    pageSizes: defaultPaginationSizes
   });
   const columns: TableColumnList = [
     {
-      label: "勾选列", // 如果需要表格多选，此处label必须设置
-      type: "selection",
-      fixed: "left",
-      reserveSelection: true // 数据刷新后保留选项
-    },
-    {
       label: "序号",
       type: "index",
-      minWidth: 40
+      width: 60
     },
     {
       label: "用户名",
@@ -65,11 +61,13 @@ export function useRole(tableRef: Ref) {
   ];
 
   function handleSizeChange(val: number) {
-    console.log(`${val} items per page`);
+    pagination.pageSize = val;
+    onSearch();
   }
 
   function handleCurrentChange(val: number) {
-    console.log(`current page: ${val}`);
+    pagination.currentPage = val;
+    onSearch();
   }
 
   /** 当CheckBox选择项发生变化时会触发该事件 */
@@ -101,23 +99,39 @@ export function useRole(tableRef: Ref) {
   /** 清空日志 */
   function clearAll() {
     // 根据实际业务，调用接口删除所有日志数据
-    message("已删除所有日志数据", {
-      type: "success"
+    clearLoginLogs().then(() => {
+      message("已删除所有日志数据", {
+        type: "success"
+      });
+      onSearch();
     });
-    onSearch();
   }
 
   async function onSearch() {
     loading.value = true;
-    const { data, total, currentPage, pageSize } = await getLoginLogsList();
-    dataList.value = data;
-    pagination.total = total;
-    pagination.pageSize = pageSize;
-    pagination.currentPage = currentPage;
-
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
+    if (form.loginTime.length > 1) {
+      form.loginTime = form.loginTime.map(time =>
+        dayjs(time).format("YYYY-MM-DD HH:mm:ss")
+      );
+    }
+    getLoginLogsList(
+      pagination.currentPage,
+      pagination.pageSize,
+      form.username,
+      form.status,
+      form.loginTime
+    )
+      .then(({ data, total, pageSize, currentPage }) => {
+        dataList.value = data;
+        pagination.total = total;
+        pagination.pageSize = pageSize;
+        pagination.currentPage = currentPage;
+      })
+      .finally(() => {
+        setTimeout(() => {
+          loading.value = false;
+        }, 500);
+      });
   }
 
   const resetForm = formEl => {

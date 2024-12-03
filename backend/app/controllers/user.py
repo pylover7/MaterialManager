@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 
 from fastapi import HTTPException
+from tortoise.exceptions import IntegrityError
 
 from app.core.crud import CRUDBase
 from app.schemas.login import CredentialsSchema
@@ -26,7 +27,10 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
 
     async def create(self, obj_in: UserCreate) -> User:
         obj_in.uuid = generate_uuid(obj_in.username)
-        obj = await super().create(obj_in.create_dict())
+        try:
+            obj = await super().create(obj_in.create_dict())
+        except IntegrityError:
+            raise HTTPException(status_code=400, detail="用户已存在")
         return obj
 
     async def update_last_login(self, id: int) -> None:
