@@ -353,7 +353,6 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
       areaTreeData.value = res.data;
       areaTreeIds.value = getKeyList(res.data, "id");
     });
-    console.log(areaTreeData);
   });
 
   watch(isExpandAll, val => {

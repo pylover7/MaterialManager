@@ -70,5 +70,10 @@ async def list_area(
 @areaRouter.get("/all", summary="查看所有区域")
 async def list_area():
     area_list = await areaController.all()
-    data = [await area.to_dict() for area in area_list]
+    data = []
+    for area in area_list:
+        if area.status == 0:
+            continue
+        item = await area.to_dict()
+        data.append(item)
     return Success(data=data, msg="查询成功")

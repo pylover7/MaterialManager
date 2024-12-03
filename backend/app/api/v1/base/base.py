@@ -6,6 +6,7 @@ from jwt.exceptions import ExpiredSignatureError
 from app.controllers.user import user_controller
 from app.core.ctx import CTX_USER_ID
 from app.core.dependency import DependAuth
+from app.models import MaterialArea
 from app.utils.log import logger
 from app.models.users import Api, Menu, Role, User
 from app.schemas.base import Success, FailAuth
@@ -196,3 +197,24 @@ async def get_user_api():
         apis.extend([api.method.lower() + api.path for api in api_objs])
     apis = list(set(apis))
     return Success(data=apis)
+
+
+@router.get("/userArea", summary="查看本人授权区域", dependencies=[DependAuth])
+async def get_user_area():
+    user_id = CTX_USER_ID.get()
+    user_obj = await User.filter(id=user_id).first()
+    if user_obj.is_superuser:
+        area_objs: list[MaterialArea] = await MaterialArea.all()
+        areas = [await area.to_dict() for area in area_objs]
+        return Success(data=areas)
+    role_objs: list[Role] = await user_obj.roles
+    areas = []
+    for role_obj in role_objs:
+        area_obj: list[MaterialArea] = await role_obj.areas
+        for area in area_obj:
+            if not area.status:
+                break
+            areas.append(await area.to_dict())
+    seen = set()
+    areas = [area for area in areas if area["code"] not in seen and not seen.add(area["code"])]
+    return Success(data=areas)

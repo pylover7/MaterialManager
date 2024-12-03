@@ -10,13 +10,15 @@ import PureTableBar from "@/components/RePureTableBar/src/bar";
 import { getKeyList } from "@pureadmin/utils";
 import { errorNotification, successNotification } from "@/utils/notification";
 import { deleteBorrowed, listBorrowed } from "@/api/material";
+import { SelectOpt } from "@/views/admin/utils/types";
 
 const props = defineProps({
   segmentedOptions: {
     type: Array<OptionsType>,
     required: true
   },
-  userId: { type: String, required: true }
+  userId: { type: String, required: true },
+  areaOpt: { type: Array<SelectOpt>, required: true }
 });
 
 const borrowedOptBar = reactive({
@@ -276,9 +278,12 @@ const columns: TableColumnList = [
             placeholder="请选择区域"
             class="!w-[150px]"
           >
-            <el-option label="隔离办" value="glb" />
-            <el-option label="辅控" value="fk" />
-            <el-option label="网控" value="wk" />
+            <el-option
+              v-for="item in areaOpt"
+              :key="item.label"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item>
