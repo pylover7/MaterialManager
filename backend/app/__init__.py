@@ -10,7 +10,6 @@ from app.core.init_app import (
     register_routers,
 )
 from app.core.init_db import init_db
-from app.log import logger
 
 try:
     from app.settings.config import settings

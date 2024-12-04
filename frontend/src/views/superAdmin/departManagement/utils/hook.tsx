@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import editForm from "../form.vue";
 import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
-import { usePublicHooks } from "../../../hooks";
+import { usePublicHooks } from "@/views/hooks";
 import { addDialog } from "@/components/ReDialog";
 import { reactive, ref, onMounted, h } from "vue";
 import type { FormItemProps } from "../utils/types";
@@ -47,6 +47,11 @@ export function useDept() {
           {row.status === 1 ? "启用" : "停用"}
         </el-tag>
       )
+    },
+    {
+      label: "人数",
+      prop: "staffCount",
+      minWidth: 70
     },
     {
       label: "创建时间",
@@ -165,10 +170,14 @@ export function useDept() {
   }
 
   function handleDelete(row) {
-    deleteDepart(row.id, row.name).then(() => {
-      message(`您删除了部门名称为${row.name}的这条数据`, { type: "success" });
-      onSearch();
-    });
+    if (row.staffCount > 0) {
+      message("该部门下存在员工，无法删除", { type: "warning" });
+    } else {
+      deleteDepart(row.id, row.name).then(() => {
+        message(`您删除了部门名称为【${row.name}】的这条数据`, { type: "success" });
+        onSearch();
+      });
+    }
   }
 
   onMounted(() => {

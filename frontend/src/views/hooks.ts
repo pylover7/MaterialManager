@@ -37,3 +37,5 @@ export function usePublicHooks() {
     tagStyle
   };
 }
+
+export const defaultPaginationSizes = [15, 30, 50, 100];

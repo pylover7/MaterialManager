@@ -3,7 +3,7 @@ import { ref } from "vue";
 import ReCol from "@/components/ReCol";
 import { formRules } from "../utils/rule";
 import { FormProps } from "../utils/types";
-import { usePublicHooks } from "../../../hooks";
+import { usePublicHooks } from "@/views/hooks";
 import Refresh from "@iconify-icons/ep/refresh";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { generatePassword } from "../utils/util";
@@ -127,7 +127,7 @@ defineExpose({ getRef });
         </el-form-item>
       </re-col>
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户性别">
+        <el-form-item label="用户性别" prop="sex">
           <el-select
             v-model="newFormInline.sex"
             placeholder="请选择用户性别"
@@ -145,7 +145,7 @@ defineExpose({ getRef });
       </re-col>
 
       <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="归属部门">
+        <el-form-item label="归属部门" prop="depart">
           <el-cascader
             v-model="newFormInline.departId"
             class="w-full"

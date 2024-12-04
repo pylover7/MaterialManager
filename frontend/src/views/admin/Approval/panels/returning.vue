@@ -7,17 +7,19 @@ import { message } from "@/utils/message";
 import { PaginationProps } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
 import { successNotification } from "@/utils/notification";
-import { usePublicHooks } from "@/views/hooks";
+import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
 import PureTableBar from "@/components/RePureTableBar/src/bar";
 import { OptionsType } from "@/components/ReSegmented";
 import { listBorrowed, updateBorrowedInfo } from "@/api/material";
+import { SelectOpt } from "@/views/admin/utils/types";
 
 const props = defineProps({
   segmentedOptions: {
     type: Array<OptionsType>,
     required: true
   },
-  userId: { type: String, required: true }
+  userId: { type: String, required: true },
+  areaOpt: { type: Array<SelectOpt>, required: true }
 });
 
 const returnOptBarRef = ref();
@@ -176,10 +178,10 @@ const returnDataList = ref([]);
 // 分页设置
 const pagination2 = reactive<PaginationProps>({
   total: 0,
-  pageSize: 10,
+  pageSize: 15,
   currentPage: 1,
   background: true,
-  pageSizes: [10, 20, 30, 50]
+  pageSizes: defaultPaginationSizes
 });
 
 const onBatchReturn = () => {
@@ -233,9 +235,12 @@ function handleCurrentChange(val: number) {
             placeholder="请选择区域"
             class="!w-[150px]"
           >
-            <el-option label="隔离办" value="glb" />
-            <el-option label="辅控" value="fk" />
-            <el-option label="网控" value="wk" />
+            <el-option
+              v-for="item in areaOpt"
+              :key="item.label"
+              :label="item.label"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item>

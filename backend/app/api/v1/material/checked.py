@@ -7,10 +7,9 @@ from tortoise.expressions import Q
 
 from app.controllers import user_controller
 from app.controllers.checked import checkedController
-from app.controllers.depart import departController
 from app.models import Checked
 from app.schemas.checked import ReturnChecked
-from app.log import logger
+from app.utils.log import logger
 from app.schemas import Success, SuccessExtra
 from app.utils import now
 
@@ -48,7 +47,7 @@ async def get_checked(
     data = []
     for obj in checked_objs:
         user = await obj.toCheckUser.all()
-        userDepart = await departController.get_all_name(user)
+        userDepart = user.department
         material = await obj.material.all()
         material_dict = await material.to_dict()
         user_dict = await user.to_dict()
@@ -58,7 +57,7 @@ async def get_checked(
         obj_dict["toCheckUser"] = user_dict
         try:
             user2 = await obj.toReturnUser.all()
-            user2Depart = await departController.get_all_name(user2)
+            user2Depart = user2.department
             user_dict2 = await user2.to_dict()
             obj_dict["toReturnUser"] = user_dict2
             user_dict2["depart"] = user2Depart

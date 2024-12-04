@@ -54,7 +54,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         await obj.delete()
 
     async def children_ids(self, parentId: int) -> List[int]:
-        childrenList = []
+        childrenList = [parentId]
         childrenId = await self.model.filter(parentId=parentId).all().values_list("id", flat=True)
         if childrenId:
             childrenList.extend(childrenId)
@@ -63,4 +63,4 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                 if items:
                     childrenList.extend(items)
 
-        return childrenList
+        return list(set(childrenList))

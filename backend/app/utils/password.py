@@ -17,6 +17,12 @@ def md5_encrypt(input_string) -> str:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> int:
+    """
+    验证密码
+    :param plain_password: 明文密码
+    :param hashed_password: 哈希密码
+    :return: 0: 密码错误, 1: 密码正确, 2: 密码为初始密码
+    """
     if pwd_context.verify(plain_password, hashed_password):
         if plain_password == md5_encrypt("1"):
             return 2

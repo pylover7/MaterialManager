@@ -10,7 +10,12 @@ export interface FormProps {
   formData: [FormItemProps];
 }
 
-export type SelectOpt = Array<{
+export type SelectOptList = Array<{
   label: string;
   value: string | boolean | number;
 }>;
+
+export interface SelectOpt {
+  label: string;
+  value: string | boolean | number;
+}

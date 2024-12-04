@@ -8,7 +8,7 @@ from app.models import Material
 from app.schemas.base import Success, SuccessExtra, Fail
 from app.schemas.material import MaterialCreate, MaterialUpdate
 from app.utils import generate_uuid
-from app.log import logger
+from app.utils.log import logger
 
 
 router = APIRouter()

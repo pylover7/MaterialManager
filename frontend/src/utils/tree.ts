@@ -132,13 +132,15 @@ export const appendFieldByUniqueId = (
  * @param id id字段 默认id
  * @param parentId 父节点字段，默认parentId
  * @param children 子节点字段，默认children
+ * @param countField 节点字段，默认staffCount
  * @returns 追加字段后的树
  */
 export const handleTree = (
   data: any[],
   id?: string,
   parentId?: string,
-  children?: string
+  children?: string,
+  countField?: string
 ): any => {
   if (!Array.isArray(data)) {
     console.warn("data must be an array");
@@ -147,7 +149,8 @@ export const handleTree = (
   const config = {
     id: id || "id",
     parentId: parentId || "parentId",
-    childrenList: children || "children"
+    childrenList: children || "children",
+    countField: countField || "staffCount"
   };
 
   const childrenListMap: any = {};
@@ -172,6 +175,18 @@ export const handleTree = (
 
   for (const t of tree) {
     adaptToChildrenList(t);
+    calculateStaffCounts(t);
+  }
+
+  function calculateStaffCounts(node: Record<string, any>) {
+    let totalStaffCount = 0;
+    if (node[config.childrenList] && node[config.childrenList].length > 0) {
+      node[config.childrenList].forEach(child => {
+        calculateStaffCounts(child);
+        totalStaffCount += child[config.countField];
+      });
+    }
+    node[config.countField] += totalStaffCount;
   }
 
   function adaptToChildrenList(o: Record<string, any>) {

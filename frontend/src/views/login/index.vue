@@ -17,7 +17,6 @@ import { initRouter, getTopMenu } from "@/router/utils";
 import { bg, avatar, illustration } from "./utils/static";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { ref, reactive, toRaw, onMounted, onBeforeUnmount, watch } from "vue";
-import { useTranslationLang } from "@/layout/hooks/useTranslationLang";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
 
 import dayIcon from "@/assets/svg/day.svg?component";
@@ -30,7 +29,6 @@ import { addDialog } from "@/components/ReDialog/index";
 import { deviceDetection, isAllEmpty } from "@pureadmin/utils";
 import { REGEXP_PWD } from "@/views/login/utils/rule";
 import Refresh from "@iconify-icons/ep/refresh";
-import Message from "@iconify-icons/ep/message";
 import { initPassword } from "@/api/base";
 import { zxcvbn } from "@zxcvbn-ts/core";
 
@@ -48,7 +46,6 @@ const { t } = useI18n();
 const { dataTheme, dataThemeChange } = useDataThemeChange();
 dataThemeChange();
 const { title } = useNav();
-const { locale } = useTranslationLang();
 
 const ruleForm = reactive({
   username: "",
@@ -95,6 +92,8 @@ function onkeypress({ code }: KeyboardEvent) {
     onLogin(ruleFormRef.value);
   }
 }
+
+const clipboardText = ref("liushuo@cnnp.com.cn");
 
 onMounted(() => {
   window.document.addEventListener("keypress", onkeypress);
@@ -275,7 +274,16 @@ function initPwd() {
             </Motion>
 
             <Motion :delay="150">
-              <el-form-item prop="password">
+              <el-form-item
+                prop="password"
+                :rules="[
+                  {
+                    required: true,
+                    message: transformI18n($t('login.purePassWordReg')),
+                    trigger: 'blur'
+                  }
+                ]"
+              >
                 <el-input
                   v-model="ruleForm.password"
                   clearable
@@ -300,22 +308,29 @@ function initPwd() {
             <Motion :delay="300">
               <el-row class="flex mt-4" justify="space-between">
                 <el-link
-                  href="https://hn-disk.hnpc.cc/ucdisk/s/UBjqq2"
+                  href="https://hn-disk.hnpc.cc/ucdisk/s/AraYn2"
                   target="_blank"
                   :underline="false"
                   >使用说明下载</el-link
                 >
                 <div>
-                  <el-text type="info" size="small">若有使用问题请:</el-text>
-                  <el-button
-                    type="info"
-                    :icon="useRenderIcon(Message)"
-                    circle
-                    link
-                    tag="a"
-                    target="_blank"
-                    href="mailto:liushuo@cnnp.com.cn?subject=物资管理平台问题"
-                  />
+                  <el-text type="info" size="small"
+                    >若有使用问题请邮件联系:</el-text
+                  >
+                  <el-tooltip
+                    class="box-item"
+                    effect="dark"
+                    content="双击复制邮箱"
+                    placement="bottom"
+                  >
+                    <el-button
+                      v-copy="clipboardText"
+                      type="primary"
+                      link
+                      size="small"
+                      >刘硕</el-button
+                    >
+                  </el-tooltip>
                 </div>
               </el-row>
             </Motion>

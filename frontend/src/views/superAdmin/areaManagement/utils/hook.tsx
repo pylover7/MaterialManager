@@ -1,30 +1,23 @@
 import dayjs from "dayjs";
 import editForm from "../form.vue";
-import { handleTree, buildApiTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
 import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
-import { transformI18n } from "@/plugins/i18n";
 import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "../utils/types";
 import type { PaginationProps } from "@pureadmin/table";
-import { getKeyList, deviceDetection } from "@pureadmin/utils";
-import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
-import type { OptionsType } from "@/components/ReSegmented";
+import { deviceDetection } from "@pureadmin/utils";
+import { reactive, ref, onMounted, h } from "vue";
 import { successNotification } from "@/utils/notification";
 import {
-  addRole,
-  deleteRole,
-  getAllArea,
-  getApiList,
-  getMenuList,
-  getRoleAuth,
-  getRoleList,
-  updateRole,
-  updateRoleAuth
+  addArea,
+  deleteArea,
+  getAreaList,
+  updateArea,
+  updateAreaStatus
 } from "@/api/admin";
 
-export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
+export function useRole() {
   const form = reactive({
     name: "",
     code: "",
@@ -33,40 +26,11 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
   const curRow = ref();
   const formRef = ref();
   const dataList = ref([]);
-  const menuTreeIds = ref([]);
-  const apiParentTreeIds = ref([]);
-  const apiTreeIds = ref([]);
-  const areaTreeIds = ref([]);
-  const menuTreeData = ref([]);
-  const apiTreeData = ref([]);
-  const areaTreeData = ref([]);
   const isShow = ref(false);
   const loading = ref(true);
-  const isLinkage = ref(true);
-  const apiIsLinkage = ref(true);
-  const treeSearchValue = ref();
   const switchLoadMap = ref({});
-  const isExpandAll = ref(false);
-  const apiIsExpandAll = ref(false);
-  const isSelectAll = ref(false);
-  const apiIsSelectAll = ref(false);
-  const areaIsSelectAll = ref(false);
-  const tabIndex = ref(0);
+  ref(0);
   const { switchStyle } = usePublicHooks();
-  const menuTreeProps = {
-    value: "id",
-    label: "title",
-    children: "children"
-  };
-  const apiTreeProps = {
-    value: "id",
-    label: "summary",
-    children: "children"
-  };
-  const areaProps = {
-    value: "id",
-    label: "name"
-  };
   const pagination = reactive<PaginationProps>({
     total: 0,
     pageSize: 15,
@@ -74,20 +38,6 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
     background: true,
     pageSizes: defaultPaginationSizes
   });
-  const tabOperation: Array<OptionsType> = [
-    {
-      label: "菜单权限",
-      value: 0
-    },
-    {
-      label: "API权限",
-      value: 1
-    },
-    {
-      label: "区域权限",
-      value: 2
-    }
-  ];
   const columns: TableColumnList = [
     {
       label: "编号",
@@ -95,11 +45,11 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
       width: 60
     },
     {
-      label: "角色名称",
+      label: "区域名称",
       prop: "name"
     },
     {
-      label: "角色标识",
+      label: "区域标识",
       prop: "code"
     },
     {
@@ -166,7 +116,7 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
         );
         delete row.updated_at;
         delete row.created_at;
-        updateRole(row)
+        updateAreaStatus(row.id, row.status)
           .then(() => {
             setTimeout(() => {
               switchLoadMap.value[index] = Object.assign(
@@ -192,8 +142,8 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
   }
 
   function handleDelete(row) {
-    deleteRole(row.id, row.name).then(() => {
-      message(`您删除了角色名称为【${row.name}】的这条数据`, {
+    deleteArea(row.id).then(() => {
+      message(`您删除了区域名称为【${row.name}】的这条数据`, {
         type: "success"
       });
       onSearch();
@@ -216,10 +166,11 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
 
   async function onSearch() {
     loading.value = true;
-    const { data, total, currentPage, pageSize } = await getRoleList(
+    const { data, total, currentPage, pageSize } = await getAreaList(
       pagination.currentPage,
       pagination.pageSize,
-      toRaw(form)
+      form.name,
+      form.code
     );
     dataList.value = data;
     pagination.total = total;
@@ -239,7 +190,7 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
 
   function openDialog(title = "新增", row?: FormItemProps) {
     addDialog({
-      title: `${title}角色`,
+      title: `${title}区域`,
       props: {
         formInline: {
           id: row?.id ?? 0,
@@ -259,7 +210,7 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
         const curData = options.props.formInline as FormItemProps;
         function chores() {
           successNotification(
-            `您${title}了角色名称为【${curData.name}】的这条数据`
+            `您${title}了区域名称为${curData.name}的这条数据`
           );
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
@@ -270,36 +221,29 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
             if (title === "新增") {
               delete curData.id;
               // 实际开发先调用新增接口，再进行下面操作
-              addRole(curData).then(() => {
-                chores();
-              });
+              addArea(curData.name, curData.code, curData.remark)
+                .then(() => {
+                  chores();
+                })
+                .catch(err => {
+                  message(`新增失败：${err.msg}`, { type: "error" });
+                  done();
+                });
             } else {
-              updateRole(curData).then(() => {
-                // 实际开发先调用修改接口，再进行下面操作
-                chores();
-              });
+              updateArea(curData)
+                .then(() => {
+                  // 实际开发先调用修改接口，再进行下面操作
+                  chores();
+                })
+                .catch(err => {
+                  message(`修改失败：${err.msg}`, { type: "error" });
+                  done();
+                });
             }
           }
         });
       }
     });
-  }
-
-  /** 菜单权限 */
-  async function handleMenu(row?: any) {
-    const { id } = row;
-    if (id) {
-      curRow.value = row;
-      isShow.value = true;
-      const { data } = await getRoleAuth(id);
-      menuTreeRef.value.setCheckedKeys(data.menus);
-      apiTreeRef.value.setCheckedKeys(data.apis);
-      areaTreeRef.value.setCheckedKeys(data.areas);
-    } else {
-      curRow.value = null;
-      isShow.value = false;
-      tabIndex.value = 0;
-    }
   }
 
   /** 高亮当前权限选中行 */
@@ -310,120 +254,22 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
     };
   }
 
-  /** 菜单API权限-保存 */
-  function handleSave() {
-    const { id, name } = curRow.value;
-    const apiIds = apiTreeRef.value
-      .getCheckedKeys()
-      .filter(item => typeof item === "number");
-    let data = {
-      id: id,
-      menus: menuTreeRef.value.getCheckedKeys(),
-      apis: apiIds,
-      areas: areaTreeRef.value.getCheckedKeys()
-    };
-    // 根据用户 id 调用实际项目中菜单权限修改接口
-    updateRoleAuth(data).then(() => {
-      successNotification(`角色名称为${name}的菜单权限修改成功`);
-    });
-  }
-
-  /** 数据权限 可自行开发 */
-  // function handleDatabase() {}
-
-  const onQueryChanged = (query: string) => {
-    menuTreeRef.value!.filter(query);
-  };
-
-  const filterMethod = (query: string, node) => {
-    return transformI18n(node.title)!.includes(query);
-  };
-
   onMounted(async () => {
     onSearch();
-    const { data } = await getMenuList();
-    menuTreeIds.value = getKeyList(data, "id");
-    menuTreeData.value = handleTree(data);
-    getApiList().then(res => {
-      apiTreeData.value = buildApiTree(res.data);
-      apiTreeIds.value = getKeyList(res.data, "id");
-      apiParentTreeIds.value = getKeyList(apiTreeData.value, "id");
-    });
-    getAllArea().then(res => {
-      areaTreeData.value = res.data;
-      areaTreeIds.value = getKeyList(res.data, "id");
-    });
-  });
-
-  watch(isExpandAll, val => {
-    val
-      ? menuTreeRef.value.setExpandedKeys(menuTreeIds.value)
-      : menuTreeRef.value.setExpandedKeys([]);
-  });
-
-  watch(isSelectAll, val => {
-    val
-      ? menuTreeRef.value.setCheckedKeys(menuTreeIds.value)
-      : menuTreeRef.value.setCheckedKeys([]);
-  });
-
-  watch(apiIsExpandAll, val => {
-    val
-      ? apiTreeRef.value.setExpandedKeys(apiParentTreeIds.value)
-      : apiTreeRef.value.setExpandedKeys([]);
-  });
-
-  watch(apiIsSelectAll, val => {
-    val
-      ? apiTreeRef.value.setCheckedKeys([
-          ...apiTreeIds.value,
-          ...apiParentTreeIds.value
-        ])
-      : apiTreeRef.value.setCheckedKeys([]);
-  });
-
-  watch(areaIsSelectAll, val => {
-    val
-      ? areaTreeRef.value.setCheckedKeys(areaTreeIds.value)
-      : areaTreeRef.value.setCheckedKeys([]);
   });
 
   return {
     form,
     isShow,
-    curRow,
     loading,
     columns,
     rowStyle,
     dataList,
-    menuTreeData,
-    apiTreeData,
-    areaTreeData,
-    tabIndex,
-    menuTreeProps,
-    apiTreeProps,
-    areaProps,
-    isLinkage,
     pagination,
-    isExpandAll,
-    apiIsExpandAll,
-    isSelectAll,
-    apiIsSelectAll,
-    areaIsSelectAll,
-    apiIsLinkage,
-    tabOperation,
-    treeSearchValue,
-    // buttonClass,
     onSearch,
     resetForm,
     openDialog,
-    handleMenu,
-    handleSave,
     handleDelete,
-    filterMethod,
-    transformI18n,
-    onQueryChanged,
-    // handleDatabase,
     handleSizeChange,
     handleCurrentChange,
     handleSelectionChange

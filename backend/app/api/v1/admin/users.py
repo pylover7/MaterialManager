@@ -5,11 +5,10 @@ from fastapi import APIRouter, Query
 from fastapi.exceptions import HTTPException
 from tortoise.expressions import Q
 
-from app.controllers.depart import departController
 from app.controllers.user import user_controller
 from app.schemas.base import Success, SuccessExtra
 from app.schemas.users import *
-from app.log import logger
+from app.utils.log import logger
 from app.settings import settings
 from app.utils import base_decode, generate_uuid
 from app.utils.password import get_password_hash
@@ -25,7 +24,7 @@ async def create_user(
     if user or (data.username == "admin"):
         raise HTTPException(
             status_code=400,
-            detail="The user with this email already exists in the system.",
+            detail="用户已存在",
         )
     id = data.departId
     del data.departId
@@ -60,26 +59,16 @@ async def list_user(
         pageSize: int = Query(10, description="每页数量"),
         username: str = Query("", description="工号，用于搜索"),
         nickname: str = Query("", description="用户名称，用于搜索"),
-        departId: str = Query("", description="部门ID，用于搜索")
 ):
     q = Q()
-    departId = int(departId) if departId else 0
     if username:
         q &= Q(username__contains=username)
     if nickname:
         q &= Q(nickname__contains=nickname)
-    if departId:
-        childrenList = await departController.children_ids(departId)
-        q &= Q(depart_id__in=childrenList)
     total, user_objs = await user_controller.list(page=currentPage, page_size=pageSize, search=q)
     data = []
     for obj in user_objs:
-        obj_dict = await obj.to_dict(m2m=True, exclude_fields=["password"])
-        obj_dict["departId"] = obj_dict["depart_id"]
-        try:
-            obj_dict["depart"] = await obj.depart.all().values("id", "name")
-        except Exception as e:
-            obj_dict["depart"] = {}
+        obj_dict = await obj.to_dict(m2m=True)
         data.append(obj_dict)
     return SuccessExtra(data=data, total=total, currentPage=currentPage, pageSize=pageSize)
 

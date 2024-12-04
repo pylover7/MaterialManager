@@ -24,3 +24,4 @@ class RoleUpdateMenusApis(BaseModel):
     id: int
     menus: list[int] = []
     apis: list[int] = []
+    areas: list[int] = []
