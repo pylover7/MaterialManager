@@ -269,7 +269,9 @@ function initPwd() {
                   clearable
                   :placeholder="t('login.pureUsername')"
                   :prefix-icon="useRenderIcon(User)"
-                />
+                >
+                  <template #append>@cnnp.com.cn</template>
+                </el-input>
               </el-form-item>
             </Motion>
 
@@ -347,7 +349,7 @@ function initPwd() {
 
 <style lang="scss" scoped>
 :deep(.el-input-group__append, .el-input-group__prepend) {
-  padding: 0;
+  padding: 0 10px;
 }
 
 .translation {
