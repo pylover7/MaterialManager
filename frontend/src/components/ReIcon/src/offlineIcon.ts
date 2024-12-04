@@ -31,6 +31,7 @@ import DesktopKeyboard from "@iconify-icons/fluent/desktop-keyboard-24-regular";
 import BoxMultipleArrowRight from "@iconify-icons/fluent/box-multiple-arrow-right-24-regular";
 import PersonBoard from "@iconify-icons/fluent/person-board-32-regular";
 import PersonVoice from "@iconify-icons/fluent/person-voice-24-regular";
+import DataTreemap from "@iconify-icons/fluent/data-treemap-24-regular";
 
 addIcon("Glb", Desktop);
 addIcon("Material", BoxSearch);
@@ -50,3 +51,4 @@ addIcon("Wk", DesktopKeyboard);
 addIcon("MaterialChecked", BoxMultipleArrowRight);
 addIcon("RoleManagement", PersonBoard);
 addIcon("dutyPerson", PersonVoice);
+addIcon("AreaManagement", DataTreemap);

@@ -60,3 +60,7 @@ export const initPassword = (newPwd: string) => {
     data: { newPwd }
   });
 };
+
+export const getAreaList = () => {
+  return http.request<ResultList>("get", baseUrlApi("/base/userArea"));
+};

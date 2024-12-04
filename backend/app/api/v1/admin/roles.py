@@ -64,9 +64,11 @@ async def get_role_menu_id(id: int = Query(..., description="角色ID")):
     role_obj = await role_controller.get(id=id)
     menuID = await role_obj.menus.all().values_list("id", flat=True)
     apiId = await role_obj.apis.all().values_list("id", flat=True)
+    areaID = await role_obj.areas.all().values_list("id", flat=True)
     data = {
         "menus": menuID,
-        "apis": apiId
+        "apis": apiId,
+        "areas": areaID,
     }
     return Success(data=data)
 
@@ -81,6 +83,6 @@ async def update_role(role_in: RoleUpdate):
 @roleRouter.post("/updateRoleAuth", summary="更新角色权限")
 async def update_role_menu_id(data: RoleUpdateMenusApis):
     role_obj = await role_controller.get(id=data.id)
-    await role_controller.update_roles(role=role_obj, menu_ids=data.menus, api_ids=data.apis)
+    await role_controller.update_roles(role=role_obj, menu_ids=data.menus, api_ids=data.apis, area_ids=data.areas)
     return Success(msg="权限更新成功")
 

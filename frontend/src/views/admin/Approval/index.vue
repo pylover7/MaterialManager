@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import Segmented, { OptionsType } from "@/components/ReSegmented";
 import Borrowing from "./panels/borrowing.vue";
 import Returning from "./panels/returning.vue";
 import Returned from "./panels/returned.vue";
 import { useUserStoreHook } from "@/store/modules/user";
+import { getAreaList } from "@/api/base";
 
 defineOptions({
   name: "Approval"
 });
 
 const tabIndex = ref(0);
+const areaOpt = ref([]);
 const userId = computed(() => {
   return useUserStoreHook()?.uuid;
 });
@@ -28,6 +30,16 @@ const segmentedOptions: Array<OptionsType> = [
     value: 2
   }
 ];
+onMounted(() => {
+  getAreaList().then(res => {
+    areaOpt.value = res.data.map(item => {
+      return {
+        label: item.name,
+        value: item.id
+      };
+    });
+  });
+});
 </script>
 
 <template>
@@ -39,6 +51,7 @@ const segmentedOptions: Array<OptionsType> = [
           v-show="segmentedOptions[0].value == tabIndex"
           :segmentedOptions="segmentedOptions"
           :userId="userId"
+          :areaOpt="areaOpt"
         />
       </Transition>
       <Transition>
@@ -46,6 +59,7 @@ const segmentedOptions: Array<OptionsType> = [
           v-show="segmentedOptions[1].value == tabIndex"
           :segmentedOptions="segmentedOptions"
           :userId="userId"
+          :areaOpt="areaOpt"
         />
       </Transition>
       <Transition>
@@ -53,6 +67,7 @@ const segmentedOptions: Array<OptionsType> = [
           v-show="segmentedOptions[2].value == tabIndex"
           :segmentedOptions="segmentedOptions"
           :userId="userId"
+          :areaOpt="areaOpt"
         />
       </Transition>
     </el-tabs>

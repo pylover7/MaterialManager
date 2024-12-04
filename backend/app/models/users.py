@@ -1,5 +1,6 @@
 from tortoise import fields
 
+from .area import MaterialArea
 from .base import BaseModel, TimestampMixin, UUIDModel
 from .enums import MethodType
 from .borrowed import Borrowed
@@ -37,9 +38,10 @@ class Role(BaseModel, TimestampMixin):
     status = fields.IntField(default=0, description="状态：启用/停用")
     remark = fields.CharField(max_length=500, null=True, blank=True, description="角色描述")
 
-    menus: fields.ManyToManyRelation["Menu"] = fields.ManyToManyField("models.Menu", related_name="role_menus")
-    apis: fields.ManyToManyRelation["Api"] = fields.ManyToManyField("models.Api", related_name="role_apis")
+    menus: fields.ManyToManyRelation["Menu"] = fields.ManyToManyField("models.Menu", related_name="roles")
+    apis: fields.ManyToManyRelation["Api"] = fields.ManyToManyField("models.Api", related_name="roles")
     users: fields.ManyToManyRelation["User"]
+    areas: fields.ManyToManyRelation["MaterialArea"] = fields.ManyToManyField("models.MaterialArea", related_name="roles")
 
     class Meta:
         table = "role"

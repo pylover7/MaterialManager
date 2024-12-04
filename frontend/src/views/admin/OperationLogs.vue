@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import dayjs from "dayjs";
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
 import { ElMessageBox, FormInstance } from "element-plus";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { getPickerShortcuts, usePublicHooks } from "./utils";
@@ -12,30 +12,17 @@ import Delete from "@iconify-icons/ep/delete";
 import Search from "@iconify-icons/ep/search";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
-import type { SelectOpt } from "@/views/admin/utils/types";
+import type { SelectOptList } from "@/views/admin/utils/types";
 import { deleteDutyLogs, getDutyNote, getDutyLogList } from "@/api/duty";
 import { defaultPaginationSizes } from "@/views/hooks";
+import { getAreaList } from "@/api/base";
 
 defineOptions({
   name: "OperationLogs"
 });
-// 区域配置
-const areaOpt: SelectOpt = [
-  {
-    label: "隔离办",
-    value: "glb"
-  },
-  {
-    label: "辅控",
-    value: "fk"
-  },
-  {
-    label: "网控",
-    value: "wk"
-  }
-];
+const areaOpt = ref([]);
 // 类型配置
-const typeOpt: SelectOpt = [
+const typeOpt: SelectOptList = [
   {
     label: "工具",
     value: "tool"
@@ -251,6 +238,18 @@ function handleSelectionChange(val) {
   // 重置表格高度
   tableRef.value.setAdaptive();
 }
+
+onMounted(() => {
+  getAreaList().then(res => {
+    areaOpt.value = res.data.map(item => {
+      return {
+        label: item.name,
+        value: item.id
+      };
+    });
+    console.log(areaOpt.value);
+  });
+});
 </script>
 
 <template>

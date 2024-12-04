@@ -3,16 +3,20 @@
 # @Time      :2024/6/9 上午9:52
 # @Author    :dayezi
 from tortoise.contrib.pydantic import pydantic_model_creator
+from pydantic import BaseModel
 
-from app.models import MaterialArea
+class AreaCreate(BaseModel):
+    uuid: str = None
+    name: str
+    code: str
+    status: int = 0
+    remark: str = None
 
 
-MaterialAreaSchema = pydantic_model_creator(MaterialArea)
-
-
-class MaterialAreaCreate(MaterialAreaSchema):
-    ...
-
-
-class MaterialAreaUpdate(MaterialAreaSchema):
+class AreaUpdate(BaseModel):
     id: int
+    uuid: str = None
+    name: str = None
+    code: str = None
+    status: int = None
+    remark: str = None

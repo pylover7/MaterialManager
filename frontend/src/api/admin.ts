@@ -230,3 +230,61 @@ export const setDB = async (data: object) => {
     data
   });
 };
+
+/** 新增区域 **/
+export const addArea = (name: string, code: string, remark?: string) => {
+  return http.request<BaseResult>("post", baseUrlApi("/admin/area/add"), {
+    data: {
+      name,
+      code,
+      remark
+    }
+  });
+};
+
+/** 删除区域 **/
+export const deleteArea = (id: number) => {
+  return http.request<BaseResult>("delete", baseUrlApi("/admin/area/delete"), {
+    params: { id }
+  });
+};
+
+/** 更新区域 **/
+export const updateArea = (data?: object) => {
+  return http.request<BaseResult>("put", baseUrlApi("/admin/area/update"), {
+    data
+  });
+};
+
+/* 更新区域状态 **/
+export const updateAreaStatus = (id: number, status: number) => {
+  return http.request<BaseResult>(
+    "get",
+    baseUrlApi("/admin/area/updateStatus"),
+    {
+      params: { id, status }
+    }
+  );
+};
+
+/** 获取区域列表 **/
+export const getAreaList = (
+  currentPage: number,
+  pageSize: number,
+  name: string = null,
+  code: string = null
+) => {
+  return http.request<ResultTable>("get", baseUrlApi("/admin/area/list"), {
+    params: {
+      currentPage,
+      pageSize,
+      name,
+      code
+    }
+  });
+};
+
+/** 获取所有区域 **/
+export const getAllArea = () => {
+  return http.request<ResultList>("get", baseUrlApi("/admin/area/all"));
+};

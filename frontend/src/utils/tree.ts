@@ -140,7 +140,7 @@ export const handleTree = (
   id?: string,
   parentId?: string,
   children?: string,
-  countField?: string,
+  countField?: string
 ): any => {
   if (!Array.isArray(data)) {
     console.warn("data must be an array");
