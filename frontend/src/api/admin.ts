@@ -162,6 +162,19 @@ export const getUserList = (
     }
   });
 };
+/** 获取Ldap用户列表 */
+export const getLdapUserList = (filterKey: string, filterValue: string) => {
+  return http.request<ResultList>(
+    "get",
+    baseUrlApi("/admin/user/listLdapUser"),
+    {
+      params: {
+        filterKey,
+        filterValue
+      }
+    }
+  );
+};
 /** 获取用户头像 */
 export const getUserAvatar = (name: string) => {
   return staticUrl(`/avatar/${name}`);
