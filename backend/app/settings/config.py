@@ -228,7 +228,7 @@ class Settings:
         elif res == "true":
             return True
         else:
-            raise self.data["app"]["dev"]
+            return self.data["app"]["dev"]
 
 
 

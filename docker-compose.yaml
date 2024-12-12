@@ -26,10 +26,10 @@ services:
     environment:
       - DB_HOST=localhost
       - DB_DRIVER=org.mysql.jdbc.Driver
-      - DB_URL=jdbc:mysql://db:3306/material?serverTimezone=Asia/Shanghai
+      - DB_URL=jdbc:mysql://home-db-1:3306/material?serverTimezone=Asia/Shanghai
       - DB_USERNAME=root
       - DB_PASSWORD=mysql
-      - DEV=False
+      - DEV=false
     volumes:
       - ./material-config:/app/config
       - ./material-logs:/app/logs
