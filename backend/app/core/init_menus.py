@@ -219,6 +219,43 @@ async def init_menus():
         for item in wk_children:
             menuList.append(item.id)
 
+        duty = await Menu.create(
+            parentId=0,
+            menuType=0,
+            title="值班员",
+            name="Duty",
+            path="/duty",
+            icon="dutyPerson",
+            rank=4,
+        )
+        menuList.append(duty.id)
+        duty_children = [
+            await Menu.create(
+                parentId=duty.id,
+                menuType=0,
+                rank=0,
+                title="审批",
+                name="Approval",
+                path="/duty/approval",
+                component="admin/Approval",
+                icon="Approval",
+                keepAlive=True,
+            ),
+            await Menu.create(
+                parentId=duty.id,
+                menuType=0,
+                rank=1,
+                title="物资数据",
+                name="MaterialMeta",
+                path="/duty/material-meta",
+                component="admin/MaterialMeta",
+                icon="MaterialMeta",
+                keepAlive=True,
+            ),
+        ]
+        for item in duty_children:
+            menuList.append(item.id)
+
         admin = await Menu.create(
             parentId=0,
             menuType=0,
@@ -244,28 +281,6 @@ async def init_menus():
         )
         menuList.append(admin.id)
         admin_children = [
-            await Menu.create(
-                parentId=admin.id,
-                menuType=0,
-                rank=0,
-                title="审批",
-                name="Approval",
-                path="/admin/approval",
-                component="admin/Approval",
-                icon="Approval",
-                keepAlive=True,
-            ),
-            await Menu.create(
-                parentId=admin.id,
-                menuType=0,
-                rank=1,
-                title="物资数据",
-                name="MaterialMeta",
-                path="/admin/material-meta",
-                component="admin/MaterialMeta",
-                icon="MaterialMeta",
-                keepAlive=True,
-            ),
             await Menu.create(
                 parentId=admin.id,
                 menuType=0,
@@ -333,7 +348,7 @@ async def init_menus():
                 rank=1,
                 title="部门管理",
                 name="DeptManagement",
-                path="/superAdmin/deptManagement",
+                path="/superAdmin/DeptManagement",
                 component="superAdmin/departManagement/index",
                 icon="DeptManagement",
                 keepAlive=True,
@@ -344,7 +359,7 @@ async def init_menus():
                 rank=2,
                 title="角色管理",
                 name="RoleManagement",
-                path="/superAdmin/roleManagement",
+                path="/superAdmin/RoleManagement",
                 component="superAdmin/roleManagement/index",
                 icon="RoleManagement",
                 keepAlive=True,
@@ -355,7 +370,7 @@ async def init_menus():
                 rank=3,
                 title="菜单管理",
                 name="MenuManagement",
-                path="/superAdmin/menuManagement",
+                path="/superAdmin/MenuManagement",
                 component="superAdmin/menuManagement/index",
                 icon="MenuManagement",
                 keepAlive=True,
@@ -364,6 +379,17 @@ async def init_menus():
                 parentId=chaoGuan.id,
                 menuType=0,
                 rank=4,
+                title="区域管理",
+                name="AreaManagement",
+                path="/superAdmin/AreaManagement",
+                component="superAdmin/areaManagement/index",
+                icon="AreaManagement",
+                keepAlive=True,
+            ),
+            await Menu.create(
+                parentId=chaoGuan.id,
+                menuType=0,
+                rank=5,
                 title="系统日志",
                 name="Logs",
                 path="/superAdmin/logs",
@@ -374,7 +400,7 @@ async def init_menus():
             await Menu.create(
                 parentId=chaoGuan.id,
                 menuType=0,
-                rank=5,
+                rank=6,
                 title="系统设置",
                 name="Settings",
                 path="/superAdmin/settings",

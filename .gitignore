@@ -1,5 +1,4 @@
 # backend
-*.yml
 *.toml
 .env.*
 .env
@@ -8,6 +7,7 @@
 .venv/
 */migrations
 */logs
+*/config
 
 # frontend
 node_modules

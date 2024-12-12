@@ -1,55 +1,47 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import ReCol from "@/components/ReCol";
 import { formRules } from "../utils/rule";
-import { FormProps } from "../utils/types";
-import { usePublicHooks } from "@/views/hooks";
-import Refresh from "@iconify-icons/ep/refresh";
+import Search from "@iconify-icons/ep/search";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { generatePassword } from "../utils/util";
+import { getLdapUserList } from "@/api/admin";
 
-const props = withDefaults(defineProps<FormProps>(), {
+const props = withDefaults(defineProps<{ formInline: { userList: [] } }>(), {
   formInline: () => ({
-    title: "新增",
-    higherDeptOptions: [],
-    departId: 0,
-    nickname: "",
-    username: "",
-    password: "",
-    phone: "",
-    email: "",
-    sex: "",
-    status: 1,
-    remark: ""
+    userList: []
   })
 });
 
-const creatPwdLoading = ref(false);
-const creatPwd = () => {
-  creatPwdLoading.value = true;
-  setTimeout(() => {
-    creatPwdLoading.value = false;
-    newFormInline.value.password = generatePassword(12);
-  }, 1000);
-};
-
-const sexOptions = [
-  {
-    value: 0,
-    label: "女"
-  },
-  {
-    value: 1,
-    label: "男"
-  }
-];
 const ruleFormRef = ref();
-const { switchStyle } = usePublicHooks();
 const newFormInline = ref(props.formInline);
+const transferProps = {
+  key: "employeeID",
+  value: "name"
+};
 
 function getRef() {
   return ruleFormRef.value;
 }
+
+const select = ref("sAMAccountName");
+const filter = ref("");
+const transferList = ref([
+  {
+    employeeID: 1,
+    name: "张三",
+    sAMAccountName: "zhangsan"
+  },
+  {
+    employeeID: 2,
+    name: "李四",
+    sAMAccountName: "lisi"
+  }
+]);
+
+const searchUser = () => {
+  getLdapUserList(select.value, filter.value).then(res => {
+    transferList.value = res.data;
+  });
+};
 
 defineExpose({ getRef });
 </script>
@@ -61,140 +53,54 @@ defineExpose({ getRef });
     :rules="formRules"
     label-width="82px"
   >
-    <el-row :gutter="30">
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="职工号" prop="username">
-          <el-input
-            v-model="newFormInline.username"
-            clearable
-            placeholder="请输入职工号"
-          />
-        </el-form-item>
-      </re-col>
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户名称" prop="nickname">
-          <el-input
-            v-model="newFormInline.nickname"
-            clearable
-            placeholder="请输入用户名称"
-          />
-        </el-form-item>
-      </re-col>
-
-      <re-col
-        v-if="newFormInline.title === '新增'"
-        :value="12"
-        :xs="24"
-        :sm="24"
-      >
-        <el-form-item label="用户密码" prop="password">
-          <el-input
-            v-model="newFormInline.password"
-            clearable
-            placeholder="请输入用户密码"
-            type="password"
-            show-password
-          >
-            <template #append>
-              <el-button
-                :icon="useRenderIcon(Refresh)"
-                :loading-icon="useRenderIcon(Refresh)"
-                :loading="creatPwdLoading"
-                @click="creatPwd"
-                >随机密码</el-button
-              >
-            </template>
-          </el-input>
-        </el-form-item>
-      </re-col>
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="手机号" prop="phone">
-          <el-input
-            v-model="newFormInline.phone"
-            clearable
-            placeholder="请输入手机号"
-          />
-        </el-form-item>
-      </re-col>
-
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="邮箱" prop="email">
-          <el-input
-            v-model="newFormInline.email"
-            clearable
-            placeholder="请输入邮箱"
-          />
-        </el-form-item>
-      </re-col>
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="用户性别" prop="sex">
-          <el-select
-            v-model="newFormInline.sex"
-            placeholder="请选择用户性别"
-            class="w-full"
-            clearable
-          >
-            <el-option
-              v-for="(item, index) in sexOptions"
-              :key="index"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-      </re-col>
-
-      <re-col :value="12" :xs="24" :sm="24">
-        <el-form-item label="归属部门" prop="depart">
-          <el-cascader
-            v-model="newFormInline.departId"
-            class="w-full"
-            :options="newFormInline.higherDeptOptions"
-            :props="{
-              value: 'id',
-              label: 'name',
-              emitPath: false,
-              checkStrictly: true
-            }"
-            clearable
-            filterable
-            placeholder="请选择归属部门"
-          >
-            <template #default="{ node, data }">
-              <span>{{ data.name }}</span>
-              <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
-            </template>
-          </el-cascader>
-        </el-form-item>
-      </re-col>
-      <re-col
-        v-if="newFormInline.title === '新增'"
-        :value="12"
-        :xs="24"
-        :sm="24"
-      >
-        <el-form-item label="用户状态">
-          <el-switch
-            v-model="newFormInline.status"
-            inline-prompt
-            :active-value="1"
-            :inactive-value="0"
-            active-text="启用"
-            inactive-text="停用"
-            :style="switchStyle"
-          />
-        </el-form-item>
-      </re-col>
-
-      <re-col>
-        <el-form-item label="备注">
-          <el-input
-            v-model="newFormInline.remark"
-            placeholder="请输入备注信息"
-            type="textarea"
-          />
-        </el-form-item>
-      </re-col>
-    </el-row>
+    <el-transfer
+      v-model="newFormInline.userList"
+      :props="transferProps"
+      filter-placeholder="请输入"
+      :titles="['搜索用户', '新增用户']"
+      :button-texts="['退回', '新增']"
+      :data="transferList"
+      style="padding: 10px 0"
+    >
+      <template #default="{ option }">
+        <span>{{ option.sAMAccountName }} - {{ option.name }}</span>
+      </template>
+      <template #right-footer>
+        <el-button class="transfer-footer" size="small">清空已选择</el-button>
+      </template>
+      <template #left-footer>
+        <el-input
+          v-model="filter"
+          style="max-width: 600px"
+          placeholder="请输入"
+          class="input-with-select"
+          @keyup.enter="searchUser"
+        >
+          <template #prepend>
+            <el-select
+              v-model="select"
+              placeholder="请选择"
+              style="width: 90px; height: 100%"
+            >
+              <el-option label="按账号" value="sAMAccountName" />
+              <el-option label="按部门" value="department" />
+            </el-select>
+          </template>
+          <template #append>
+            <el-button :icon="useRenderIcon(Search)" @click="searchUser" />
+          </template>
+        </el-input>
+      </template>
+    </el-transfer>
   </el-form>
 </template>
+
+<style scoped lang="scss">
+.transfer-footer {
+  margin-left: 15px;
+  padding: 6px 5px;
+}
+:deep(.el-transfer-panel) {
+  width: 300px;
+}
+</style>

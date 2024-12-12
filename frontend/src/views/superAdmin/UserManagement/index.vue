@@ -4,103 +4,39 @@ import { useUser } from "./utils/hook";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 
-import Upload from "@iconify-icons/ri/upload-line";
 import Role from "@iconify-icons/ri/admin-line";
-import Password from "@iconify-icons/ri/lock-password-line";
-import More from "@iconify-icons/ep/more-filled";
 import Delete from "@iconify-icons/ep/delete";
-import Refresh from "@iconify-icons/ep/refresh";
 import AddFill from "@iconify-icons/ri/add-circle-line";
 import PureTable from "@pureadmin/table";
-import Search from "@iconify-icons/ri/search-line";
 
 defineOptions({
   name: "UserManagement"
 });
 
-const treeRef = ref();
-const formRef = ref();
 const tableRef = ref();
 
 const {
-  form,
   loading,
   columns,
   dataList,
-  //treeData,
-  //treeLoading,
   selectedNum,
   pagination,
-  buttonClass,
   deviceDetection,
   onSearch,
-  resetForm,
   onBatchDel,
   openDialog,
-  //onTreeSelect,
-  handleUpdate,
   handleDelete,
-  handleUpload,
-  handleReset,
   handleRole,
   handleSizeChange,
   onSelectionCancel,
   handleCurrentChange,
   handleSelectionChange
-} = useUser(tableRef, treeRef);
+} = useUser(tableRef);
 </script>
 
 <template>
   <div :class="['flex', 'justify-between', deviceDetection() && 'flex-wrap']">
     <div :class="[deviceDetection() ? ['w-full', 'mt-2'] : 'w-full mt-2']">
-      <el-form
-        ref="formRef"
-        :inline="true"
-        :model="form"
-        class="search-form bg-bg_color w-[99/100] pl-8 pt-[12px] overflow-auto"
-      >
-        <el-form-item label="用户名称：" prop="nickname">
-          <el-input
-            v-model="form.nickname"
-            placeholder="请输入用户名称"
-            clearable
-            class="!w-[180px]"
-          />
-        </el-form-item>
-        <el-form-item label="工号：" prop="username">
-          <el-input
-            v-model="form.username"
-            placeholder="请输入工号"
-            clearable
-            class="!w-[180px]"
-          />
-        </el-form-item>
-        <el-form-item label="状态：" prop="status">
-          <el-select
-            v-model="form.status"
-            placeholder="请选择"
-            clearable
-            class="!w-[180px]"
-          >
-            <el-option label="已开启" :value="1" />
-            <el-option label="已关闭" :value="0" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            type="primary"
-            :icon="useRenderIcon(Search)"
-            :loading="loading"
-            @click="onSearch"
-          >
-            搜索
-          </el-button>
-          <el-button :icon="useRenderIcon(Refresh)" @click="resetForm(formRef)">
-            重置
-          </el-button>
-        </el-form-item>
-      </el-form>
-
       <PureTableBar title="用户管理" :columns="columns" @refresh="onSearch">
         <template #buttons>
           <el-button

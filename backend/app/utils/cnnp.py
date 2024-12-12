@@ -1,9 +1,9 @@
 from typing import Tuple
 
 from fastapi import HTTPException
-from ldap3 import Server, Connection, ALL
+from ldap3 import Server, Connection, ALL, SUBTREE
 
-from app.utils.log import logger, loginLogger
+from app.utils.log import logger
 from app.schemas.users import UserLdap
 from app.settings import settings
 
@@ -12,12 +12,12 @@ class LDAPAuthentication:
     def __init__(self):
         self.server = Server(settings.LDAP_HOST, get_info=ALL, connect_timeout=10)
         self.conn = Connection(self.server, user=settings.LDAP_USER, password=settings.LDAP_PWD)
+        self.attr = ["company", "department", "employeeID", "mobile", "mail", "distinguishedName", "sAMAccountName", "name"]
 
     def get_user_info(self, username: str) -> UserLdap:
         if not settings.DEV:
             self.conn.bind()
-            attr = ["company", "department", "employeeID", "mobile", "mail", "distinguishedName", "sAMAccountName", "name"]
-            if self.conn.search(settings.LDAP_BASE, f'(sAMAccountName={username})', attributes=attr):
+            if self.conn.search(settings.LDAP_BASE, f'(sAMAccountName={username})', SUBTREE, attributes=self.attr):
                 user = self.conn.entries[0]
                 self.conn.unbind()
                 return UserLdap(
@@ -59,6 +59,28 @@ class LDAPAuthentication:
             except Exception as e:
                 logger.error(f"LDAP认证失败: {e}")
                 return user, False
+
+    def getUserList(self, fiterKey: str, fiterValue: str) -> list[UserLdap]:
+        self.conn.bind()
+        if self.conn.search(settings.LDAP_BASE, f'({fiterKey}={fiterValue})', attributes=self.attr):
+            userList = self.conn.entries
+            for user in userList:
+                userList[userList.index(user)] = UserLdap(
+                    company=user.company.value,
+                    department=user.department.value,
+                    employeeID=user.employeeID.value,
+                    mobile=user.mobile.value,
+                    mail=user.mail.value,
+                    dn=user.distinguishedName.value,
+                    sAMAccountName=user.sAMAccountName.value,
+                    name=user.name.value,
+                ).model_dump()
+            self.conn.unbind()
+            return userList
+        else:
+            self.conn.unbind()
+            return []
+
 
 
 ldap_auth = LDAPAuthentication()
