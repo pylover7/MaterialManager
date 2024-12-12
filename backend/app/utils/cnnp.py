@@ -1,9 +1,9 @@
 from typing import Tuple
 
 from fastapi import HTTPException
-from ldap3 import Server, Connection, ALL
+from ldap3 import Server, Connection, ALL, SUBTREE
 
-from app.utils.log import logger, loginLogger
+from app.utils.log import logger
 from app.schemas.users import UserLdap
 from app.settings import settings
 
@@ -17,7 +17,7 @@ class LDAPAuthentication:
     def get_user_info(self, username: str) -> UserLdap:
         if not settings.DEV:
             self.conn.bind()
-            if self.conn.search(settings.LDAP_BASE, f'(sAMAccountName={username})', attributes=self.attr):
+            if self.conn.search(settings.LDAP_BASE, f'(sAMAccountName={username})', SUBTREE, attributes=self.attr):
                 user = self.conn.entries[0]
                 self.conn.unbind()
                 return UserLdap(

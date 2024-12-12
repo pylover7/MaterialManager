@@ -6,7 +6,7 @@ import { message } from "@/utils/message";
 import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
 import { addDialog } from "@/components/ReDialog";
 import type { PaginationProps } from "@pureadmin/table";
-import type { FormItemProps, RoleFormItemProps } from "../utils/types";
+import type { RoleFormItemProps } from "../utils/types";
 import { getKeyList, isAllEmpty, deviceDetection } from "@pureadmin/utils";
 
 import { ElMessageBox } from "element-plus";
@@ -26,7 +26,6 @@ import {
   deleteUser,
   getRoleList,
   getUserList,
-  updateUser,
   updateUserRole,
   updateUserStatus
 } from "@/api/admin";
@@ -45,7 +44,6 @@ export function useUser(tableRef: Ref) {
   // 上传头像信息
   const switchLoadMap = ref({});
   const { switchStyle } = usePublicHooks();
-  const higherDeptOptions = ref();
   const treeData = ref([]);
   const treeLoading = ref(true);
   const selectedNum = ref(0);
@@ -270,18 +268,6 @@ export function useUser(tableRef: Ref) {
           loading.value = false;
         }, 500);
       });
-  }
-
-  function formatHigherDeptOptions(treeList) {
-    // 根据返回数据的status字段值判断追加是否禁用disabled字段，返回处理后的树结构，用于上级部门级联选择器的展示（实际开发中也是如此，不可能前端需要的每个字段后端都会返回，这时需要前端自行根据后端返回的某些字段做逻辑处理）
-    if (!treeList || !treeList.length) return;
-    const newTreeList = [];
-    for (let i = 0; i < treeList.length; i++) {
-      treeList[i].disabled = treeList[i].status === 0;
-      formatHigherDeptOptions(treeList[i].children);
-      newTreeList.push(treeList[i]);
-    }
-    return newTreeList;
   }
 
   function openDialog() {

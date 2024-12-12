@@ -30,7 +30,7 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         try:
             obj = await super().create(obj_in.create_dict())
         except IntegrityError:
-            raise HTTPException(status_code=400, detail="用户已存在")
+            raise HTTPException(status_code=400, detail=f"用户已存在！")
         return obj
 
     async def update_last_login(self, id: int) -> None:
