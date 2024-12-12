@@ -244,7 +244,7 @@ onMounted(() => {
     areaOpt.value = res.data.map(item => {
       return {
         label: item.name,
-        value: item.id
+        value: item.code
       };
     });
     console.log(areaOpt.value);

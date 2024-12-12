@@ -12,7 +12,6 @@ import { hashPwd } from "@/utils/hash";
 
 /** 登录获取token */
 export const getLogin = (data?: UserPwdData) => {
-  data.password = hashPwd(data.password);
   return http.request<LoginResult>("post", baseUrlApi("/base/accessToken"), {
     data
   });
@@ -27,7 +26,6 @@ export const refreshTokenApi = (data?: object) => {
 };
 /** 用户验证 */
 export const auth = (data?: UserPwdData) => {
-  data.password = hashPwd(data.password);
   return http.request<UserResult>("post", baseUrlApi("/base/auth"), {
     data
   });

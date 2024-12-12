@@ -222,7 +222,13 @@ class Settings:
 
     @property
     def DEV(self) -> bool:
-        return os.environ.get("DEV", self.data["app"]["dev"])
+        res = os.environ.get("DEV", self.data["app"]["dev"])
+        if res == "false":
+            return False
+        elif res == "true":
+            return True
+        else:
+            return self.data["app"]["dev"]
 
 
 

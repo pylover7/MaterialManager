@@ -6,7 +6,7 @@ configs:
 services:
   db:
     image: mysql8:8.4
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: mysql
       TZ: Asia/Shanghai
@@ -21,16 +21,18 @@ services:
         aliases:
           - db
   material:
-    image: material:1.0.0
+    image: material:1.0.3
+    restart: unless-stopped
     environment:
       - DB_HOST=localhost
       - DB_DRIVER=org.mysql.jdbc.Driver
-      - DB_URL=jdbc:mysql://db:3306/material?serverTimezone=Asia/Shanghai
+      - DB_URL=jdbc:mysql://home-db-1:3306/material?serverTimezone=Asia/Shanghai
       - DB_USERNAME=root
       - DB_PASSWORD=mysql
       - DEV=false
     volumes:
-      -./material-config:/app/backend/config
+      - ./material-config:/app/config
+      - ./material-logs:/app/logs
     ports:
       - '7001:80'
     depends_on:

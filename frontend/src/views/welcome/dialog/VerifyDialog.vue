@@ -92,10 +92,12 @@ const formSize: Ref<"" | "default" | "small" | "large"> = ref("default");
             :size="formSize"
             status-icon
           >
-            <el-form-item label="工号" prop="account">
-              <el-input v-model="userInfo.account" placeholder="工号" />
+            <el-form-item label="邮箱账号" prop="account">
+              <el-input v-model="userInfo.account" placeholder="账号">
+                <template #append>@cnnp.com.cn</template>
+              </el-input>
             </el-form-item>
-            <el-form-item label="密码" prop="password">
+            <el-form-item label="邮箱密码" prop="password">
               <el-input
                 v-model="userInfo.password"
                 type="password"
@@ -158,5 +160,9 @@ const formSize: Ref<"" | "default" | "small" | "large"> = ref("default");
   .el-tabs__content {
     padding-bottom: 4px;
   }
+}
+
+:deep(.el-input-group__append, .el-input-group__prepend) {
+  padding: 0 10px;
 }
 </style>

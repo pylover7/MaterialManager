@@ -1,6 +1,3 @@
-import time
-from pathlib import Path
-
 from fastapi import APIRouter, Query
 from fastapi.exceptions import HTTPException
 from tortoise.expressions import Q
@@ -8,9 +5,8 @@ from tortoise.expressions import Q
 from app.controllers.user import user_controller
 from app.schemas.base import Success, SuccessExtra
 from app.schemas.users import *
+from app.utils.cnnp import ldap_auth
 from app.utils.log import logger
-from app.settings import settings
-from app.utils import base_decode, generate_uuid
 from app.utils.password import get_password_hash
 
 userRouter = APIRouter()
@@ -18,20 +14,10 @@ userRouter = APIRouter()
 
 @userRouter.post("/add", summary="新增用户")
 async def create_user(
-        data: UserCreate,
+        data: list[UserCreate],
 ):
-    user = await user_controller.get_by_username(data.username)
-    if user or (data.username == "admin"):
-        raise HTTPException(
-            status_code=400,
-            detail="用户已存在",
-        )
-    id = data.departId
-    del data.departId
-    data.uuid = generate_uuid(data.username)
-    new_user = await user_controller.create(obj_in=data)
-    await user_controller.update_depart(new_user, id)
-    return Success(msg="Created Successfully")
+    await User.bulk_create(data, ignore_conflicts=True)
+    return Success(msg="创建成功！")
 
 
 @userRouter.delete("/delete", summary="删除用户")
@@ -72,6 +58,14 @@ async def list_user(
         data.append(obj_dict)
     return SuccessExtra(data=data, total=total, currentPage=currentPage, pageSize=pageSize)
 
+@userRouter.get("/listLdapUser", summary="查看LDAP用户列表")
+async def list_ldap_user(
+        filterKey: str = Query("sAMAccountName", description="搜索条件字段"),
+        filterValue: str = Query("", description="搜索条件值"),
+):
+    result = ldap_auth.getUserList(filterKey, filterValue)
+    return Success(msg="获取成功", data=result)
+
 
 @userRouter.post("/update", summary="更新用户")
 async def update_user(
@@ -90,22 +84,6 @@ async def update_status(
 ):
     user = await user_controller.get(id=data.id)
     await user_controller.update_status(user, data.status)
-    return Success(msg="Updated Successfully")
-
-
-@userRouter.post("/updateAvatar", summary="更新用户头像")
-async def update_avatar(
-        data: dict,
-        id: int = Query(..., description="用户ID"),
-):
-    user = await user_controller.get(id=id)
-    avatar_name = f"{user.uuid}_{time.time_ns()}.{data['base64'].split(';')[0].split('/')[-1]}"
-    avatar_path = Path.joinpath(settings.STATIC_PATH, "avatar", avatar_name)
-    with open(avatar_path, "wb") as f:
-        imgData = base_decode(data["base64"].split(",")[1])
-        f.write(imgData)
-    user.avatar = avatar_name
-    await user.save()
     return Success(msg="Updated Successfully")
 
 
