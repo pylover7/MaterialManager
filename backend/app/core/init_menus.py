@@ -225,6 +225,7 @@ async def init_menus():
             title="值班员",
             name="Duty",
             path="/duty",
+            icon="dutyPerson",
             rank=4,
         )
         menuList.append(duty.id)
