@@ -24,18 +24,7 @@ function getRef() {
 
 const select = ref("sAMAccountName");
 const filter = ref("");
-const transferList = ref([
-  {
-    employeeID: 1,
-    name: "张三",
-    sAMAccountName: "zhangsan"
-  },
-  {
-    employeeID: 2,
-    name: "李四",
-    sAMAccountName: "lisi"
-  }
-]);
+const transferList = ref([]);
 
 const searchUser = () => {
   getLdapUserList(select.value, filter.value).then(res => {
