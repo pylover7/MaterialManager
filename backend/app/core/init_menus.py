@@ -345,17 +345,6 @@ async def init_menus():
             await Menu.create(
                 parentId=chaoGuan.id,
                 menuType=0,
-                rank=1,
-                title="部门管理",
-                name="DeptManagement",
-                path="/superAdmin/DeptManagement",
-                component="superAdmin/departManagement/index",
-                icon="DeptManagement",
-                keepAlive=True,
-            ),
-            await Menu.create(
-                parentId=chaoGuan.id,
-                menuType=0,
                 rank=2,
                 title="角色管理",
                 name="RoleManagement",
