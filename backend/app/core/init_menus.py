@@ -111,6 +111,7 @@ async def init_menus():
                 path="/glb/material",
                 component="material/glbTool",
                 icon="Material",
+                keepAlive=True,
             ),
             await Menu.create(
                 parentId=glb.id,
@@ -120,6 +121,7 @@ async def init_menus():
                 path="/glb/key",
                 component="material/glbKey",
                 icon="Key",
+                keepAlive=True,
             ),
         ]
         for item in glb_children:
@@ -158,6 +160,7 @@ async def init_menus():
                 path="/fk/material",
                 component="material/fkTool",
                 icon="Material",
+                keepAlive=True,
             ),
             await Menu.create(
                 parentId=fk.id,
@@ -167,6 +170,7 @@ async def init_menus():
                 path="/fk/key",
                 component="material/fkKey",
                 icon="Key",
+                keepAlive=True,
             )
         ]
         for item in fk_children:
@@ -205,6 +209,7 @@ async def init_menus():
                 path="/wk/material",
                 component="material/wkTool",
                 icon="Material",
+                keepAlive=True,
             ),
             await Menu.create(
                 parentId=wk.id,
@@ -214,6 +219,7 @@ async def init_menus():
                 path="/wk/key",
                 component="material/wkKey",
                 icon="Key",
+                keepAlive=True,
             ),
         ]
         for item in wk_children:
