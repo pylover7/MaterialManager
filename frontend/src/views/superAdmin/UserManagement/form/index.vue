@@ -32,6 +32,10 @@ const searchUser = () => {
   });
 };
 
+const clearAll = () => {
+  newFormInline.value.userList = [];
+};
+
 defineExpose({ getRef });
 </script>
 
@@ -55,7 +59,9 @@ defineExpose({ getRef });
         <span>{{ option.sAMAccountName }} - {{ option.name }}</span>
       </template>
       <template #right-footer>
-        <el-button class="transfer-footer" size="small">清空已选择</el-button>
+        <el-button class="transfer-footer" size="small" @click="clearAll"
+          >清空已选择</el-button
+        >
       </template>
       <template #left-footer>
         <el-input
