@@ -281,7 +281,11 @@ function handleCurrentChange(val: number) {
             @confirm="onBatchReturn"
           >
             <template #reference>
-              <el-button type="success" :icon="useRenderIcon(Approve)">
+              <el-button
+                type="success"
+                :disabled="selectedNum < 1"
+                :icon="useRenderIcon(Approve)"
+              >
                 批量批准
               </el-button>
             </template>
