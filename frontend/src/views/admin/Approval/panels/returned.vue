@@ -75,11 +75,13 @@ function handleSelectionChange(val) {
 }
 
 function handleSizeChange(val: number) {
-  console.log(`${val} items per page`);
+  pagination.pageSize = val;
+  onSearch();
 }
 
 function handleCurrentChange(val: number) {
-  console.log(`current page: ${val}`);
+  pagination.currentPage = val;
+  onSearch();
 }
 const onBatchBtnLoading = ref(false);
 // 删除所选择的行

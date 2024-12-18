@@ -212,11 +212,13 @@ function returnHandleSelectionChange(val) {
 }
 
 function handleSizeChange(val: number) {
-  console.log(`${val} items per page`);
+  pagination2.pageSize = val;
+  onSearchReturn();
 }
 
 function handleCurrentChange(val: number) {
-  console.log(`current page: ${val}`);
+  pagination2.currentPage = val;
+  onSearchReturn();
 }
 </script>
 
