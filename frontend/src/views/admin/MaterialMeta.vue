@@ -1,5 +1,5 @@
-<script setup lang="tsx">
-import { ref, reactive, h, computed } from "vue";
+<script lang="tsx" setup>
+import { computed, h, reactive, ref } from "vue";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Delete from "@iconify-icons/ep/delete";
@@ -7,16 +7,16 @@ import Add from "@iconify-icons/ep/circle-plus";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { deviceDetection, getKeyList } from "@pureadmin/utils";
 import {
-  getMaterialMeta,
+  addCheckMaterial,
   addMaterialMeta,
   deleteMaterialMeta,
-  addCheckMaterial
+  getMaterialMeta
 } from "@/api/material";
 import type { FormInstance, FormRules } from "element-plus";
 import { errorNotification, successNotification } from "@/utils/notification";
 import { addDialog } from "@/components/ReDialog";
 import attentionForm from "./utils/attentionForm.vue";
-import { SelectOpt, FormItemProps } from "./utils/types";
+import { FormItemProps, SelectOpt } from "./utils/types";
 import Search from "@iconify-icons/ep/search";
 import { message } from "@/utils/message";
 import { useUserStoreHook } from "@/store/modules/user";
@@ -92,10 +92,12 @@ const onBatchDel = () => {
       onBatchBtnLoading.value = false;
     });
 };
+
 // 表格勾选项变化回调函数
 function handleSelectionChange(val) {
   selectedNum.value = val.length;
 }
+
 // 搜索按钮可用
 const searchDisable = computed(() => {
   return area.value == "" || type.value == "";
@@ -248,6 +250,7 @@ const toCheckNumber = ref(1);
 
 // 表格数据
 const dataList = reactive([]);
+
 // 表格刷新
 function onSearch() {
   loading.value = true;
@@ -268,6 +271,7 @@ function onSearch() {
       loading.value = false;
     });
 }
+
 // 添加物资表单ref
 const addFormRef = ref<FormInstance>();
 // 添加物资抽屉控制
@@ -353,6 +357,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   });
 };
 const attRef = ref();
+
 // 注意事项弹窗
 function openDialog(area: string) {
   getDutyOverList(area).then(res => {
@@ -413,35 +418,35 @@ function openDialog(area: string) {
         <el-select-v2
           v-model="type"
           :options="typeOpt"
-          placeholder="请选择类型"
           class="!w-[150px]"
+          placeholder="请选择类型"
         />
       </el-form-item>
       <el-form-item label="选择区域" prop="area">
         <el-select-v2
           v-model="area"
           :options="areaOpt"
-          placeholder="请选择区域"
           class="!w-[150px]"
+          placeholder="请选择区域"
         />
       </el-form-item>
       <el-form-item>
         <el-button
-          type="primary"
+          :disabled="searchDisable"
           :icon="useRenderIcon(Search)"
           :loading="loading"
-          :disabled="searchDisable"
+          type="primary"
           @click="onSearch"
-          >搜索</el-button
-        >
+          >搜索
+        </el-button>
       </el-form-item>
       <el-form-item style="margin-left: auto">
         <el-button
-          type="primary"
           :disabled="searchDisable"
+          type="primary"
           @click="openDialog(area)"
-          >查看注意事项</el-button
-        >
+          >查看注意事项
+        </el-button>
       </el-form-item>
     </el-form>
 
@@ -450,12 +455,12 @@ function openDialog(area: string) {
         <div v-motion-fade class="h-full mb-2 pl-4 flex items-center">
           <div class="flex-auto">
             <span
-              style="font-size: var(--el-font-size-base)"
               class="text-[rgba(42,46,54,0.5)] dark:text-[rgba(220,220,242,0.5)]"
+              style="font-size: var(--el-font-size-base)"
             >
               已选 {{ selectedNum }} 项
             </span>
-            <el-button type="primary" text @click="onSelectionCancel">
+            <el-button text type="primary" @click="onSelectionCancel">
               取消选择
             </el-button>
           </div>
@@ -463,9 +468,9 @@ function openDialog(area: string) {
       </template>
       <template #buttons>
         <el-button
-          type="primary"
-          :icon="useRenderIcon(Add)"
           :disabled="searchDisable"
+          :icon="useRenderIcon(Add)"
+          type="primary"
           @click="addMaterial('新增')"
         >
           新增
@@ -473,10 +478,10 @@ function openDialog(area: string) {
         <el-popconfirm title="确定要删除选择的数据吗？" @confirm="onBatchDel">
           <template #reference>
             <el-button
-              type="danger"
-              :icon="useRenderIcon(Delete)"
               :disabled="selectedNum < 1"
+              :icon="useRenderIcon(Delete)"
               :loading="onBatchBtnLoading"
+              type="danger"
             >
               删除所选
             </el-button>
@@ -486,22 +491,22 @@ function openDialog(area: string) {
       <template v-slot="{ size, dynamicColumns }">
         <pure-table
           ref="tableRef"
-          :data="dataList"
-          row-key="id"
-          align-whole="center"
-          table-layout="auto"
-          :loading="loading"
-          border
-          :size="size"
-          adaptive
           :adaptiveConfig="{ offsetBottom: 108 }"
           :columns="dynamicColumns"
-          :paginationSmall="size === 'small'"
-          :pagination="pagination"
+          :data="dataList"
           :header-cell-style="{
             background: 'var(--el-fill-color-light)',
             color: 'var(--el-text-color-primary)'
           }"
+          :loading="loading"
+          :pagination="pagination"
+          :paginationSmall="size === 'small'"
+          :size="size"
+          adaptive
+          align-whole="center"
+          border
+          row-key="id"
+          table-layout="auto"
           @selection-change="handleSelectionChange"
           @page-current-change="pageCurrentChange"
           @page-size-change="pageSizeChange"
@@ -511,11 +516,11 @@ function openDialog(area: string) {
 
     <el-drawer
       v-model="addDrawer"
-      direction="rtl"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :destroy-on-close="true"
       :show-close="false"
+      direction="rtl"
       @close="clearAddForm(addFormRef)"
     >
       <template #header>
@@ -525,26 +530,26 @@ function openDialog(area: string) {
         <div>
           <el-form
             ref="addFormRef"
-            style="max-width: 600px"
             :model="addForm"
-            label-width="auto"
             :rules="rules"
+            label-width="auto"
             status-icon
+            style="max-width: 600px"
           >
             <el-form-item label="类型" prop="type">
               <el-select-v2
                 v-model="addForm.type"
-                disabled
                 :options="typeOpt"
                 class="!w-[150px]"
+                disabled
               />
             </el-form-item>
             <el-form-item label="区域" prop="area">
               <el-select-v2
                 v-model="addForm.area"
-                disabled
                 :options="areaOpt"
                 class="!w-[150px]"
+                disabled
               />
             </el-form-item>
             <el-form-item label="名称" prop="name">
@@ -575,20 +580,20 @@ function openDialog(area: string) {
       <template #footer>
         <div style="flex: auto; text-align: left">
           <el-row class="row-bg" justify="space-between">
-            <el-col :span="6"
-              ><el-button
-                type="success"
-                plain
+            <el-col :span="6">
+              <el-button
                 :loading="submitLoading"
+                plain
+                type="success"
                 @click="submitForm(addFormRef)"
-                >确定</el-button
-              ></el-col
-            >
-            <el-col :span="6" style="text-align: right"
-              ><el-button type="warning" plain @click="drawerCancel"
-                >取消</el-button
-              ></el-col
-            >
+                >确定
+              </el-button>
+            </el-col>
+            <el-col :span="6" style="text-align: right">
+              <el-button plain type="warning" @click="drawerCancel"
+                >取消
+              </el-button>
+            </el-col>
           </el-row>
         </div>
       </template>
@@ -596,7 +601,7 @@ function openDialog(area: string) {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 :deep(.el-dropdown-menu__item i) {
   margin: 0;
 }
@@ -607,6 +612,7 @@ function openDialog(area: string) {
 
 .search-form {
   display: flex;
+
   :deep(.el-form-item) {
     margin-bottom: 12px;
   }

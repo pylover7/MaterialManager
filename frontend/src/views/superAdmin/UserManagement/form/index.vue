@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from "vue";
 import { formRules } from "../utils/rule";
 import Search from "@iconify-icons/ep/search";
@@ -51,11 +51,11 @@ defineExpose({ getRef });
   >
     <el-transfer
       v-model="newFormInline.userList"
-      :props="transferProps"
-      filter-placeholder="请输入"
-      :titles="['搜索用户', '新增用户']"
       :button-texts="['退回', '新增']"
       :data="newFormInline.transferList"
+      :props="transferProps"
+      :titles="['搜索用户', '新增用户']"
+      filter-placeholder="请输入"
       style="padding: 10px 0"
     >
       <template #default="{ option }">
@@ -63,15 +63,15 @@ defineExpose({ getRef });
       </template>
       <template #right-footer>
         <el-button class="transfer-footer" size="small" @click="clearAll"
-          >清空已选择</el-button
-        >
+          >清空已选择
+        </el-button>
       </template>
       <template #left-footer>
         <el-input
           v-model="filter"
-          style="max-width: 600px"
-          placeholder="请输入"
           class="input-with-select"
+          placeholder="请输入"
+          style="max-width: 600px"
           @keyup.enter="searchUser"
         >
           <template #prepend>
@@ -93,11 +93,12 @@ defineExpose({ getRef });
   </el-form>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .transfer-footer {
-  margin-left: 15px;
   padding: 6px 5px;
+  margin-left: 15px;
 }
+
 :deep(.el-transfer-panel) {
   width: 300px;
 }

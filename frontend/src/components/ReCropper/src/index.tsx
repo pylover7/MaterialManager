@@ -2,40 +2,40 @@ import "./circled.css";
 import Cropper from "cropperjs";
 import { ElUpload } from "element-plus";
 import type { CSSProperties } from "vue";
-import { useEventListener } from "@vueuse/core";
-import { longpress } from "@/directives/longpress";
-import { useTippy, directive as tippy } from "vue-tippy";
 import {
-  type PropType,
-  ref,
-  unref,
   computed,
+  defineComponent,
   onMounted,
   onUnmounted,
-  defineComponent
+  type PropType,
+  ref,
+  unref
 } from "vue";
+import { useEventListener } from "@vueuse/core";
+import { longpress } from "@/directives/longpress";
+import { directive as tippy, useTippy } from "vue-tippy";
 import {
-  delay,
   debounce,
-  isArray,
+  delay,
   downloadByBase64,
+  isArray,
   useResizeObserver
 } from "@pureadmin/utils";
 import {
-  Reload,
-  Upload,
-  ArrowH,
-  ArrowV,
-  ArrowUp,
   ArrowDown,
+  ArrowH,
   ArrowLeft,
-  ChangeIcon,
   ArrowRight,
+  ArrowUp,
+  ArrowV,
+  ChangeIcon,
+  DownloadIcon,
+  Reload,
   RotateLeft,
-  SearchPlus,
   RotateRight,
   SearchMinus,
-  DownloadIcon
+  SearchPlus,
+  Upload
 } from "./svg";
 
 type Options = Cropper.Options;

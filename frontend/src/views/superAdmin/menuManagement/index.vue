@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from "vue";
 import { useMenu } from "./utils/hook";
 import { transformI18n } from "@/plugins/i18n";
@@ -42,16 +42,16 @@ const {
       <el-form-item label="菜单名称：" prop="title">
         <el-input
           v-model="form.title"
-          placeholder="请输入菜单名称"
-          clearable
           class="!w-[180px]"
+          clearable
+          placeholder="请输入菜单名称"
         />
       </el-form-item>
       <el-form-item>
         <el-button
-          type="primary"
           :icon="useRenderIcon(Search)"
           :loading="loading"
+          type="primary"
           @click="onSearch"
         >
           搜索
@@ -63,16 +63,16 @@ const {
     </el-form>
 
     <PureTableBar
-      title="菜单管理"
       :columns="columns"
       :isExpandAll="false"
       :tableRef="tableRef?.getTableRef()"
+      title="菜单管理"
       @refresh="onSearch"
     >
       <template #buttons>
         <el-button
-          type="primary"
           :icon="useRenderIcon(AddFill)"
+          type="primary"
           @click="openDialog()"
         >
           新增菜单
@@ -81,40 +81,40 @@ const {
       <template v-slot="{ size, dynamicColumns }">
         <pure-table
           ref="tableRef"
-          adaptive
           :adaptiveConfig="{ offsetBottom: 45 }"
-          align-whole="center"
-          row-key="id"
-          showOverflowTooltip
-          table-layout="auto"
-          :loading="loading"
-          :size="size"
-          :data="dataList"
           :columns="dynamicColumns"
+          :data="dataList"
           :header-cell-style="{
             background: 'var(--el-fill-color-light)',
             color: 'var(--el-text-color-primary)'
           }"
+          :loading="loading"
+          :size="size"
+          adaptive
+          align-whole="center"
+          row-key="id"
+          showOverflowTooltip
+          table-layout="auto"
           @selection-change="handleSelectionChange"
         >
           <template #operation="{ row }">
             <el-button
+              :icon="useRenderIcon(EditPen)"
+              :size="size"
               class="reset-margin"
               link
               type="primary"
-              :size="size"
-              :icon="useRenderIcon(EditPen)"
               @click="openDialog('修改', row)"
             >
               修改
             </el-button>
             <el-button
               v-show="row.menuType !== 3"
+              :icon="useRenderIcon(AddFill)"
+              :size="size"
               class="reset-margin"
               link
               type="primary"
-              :size="size"
-              :icon="useRenderIcon(AddFill)"
               @click="openDialog('新增', { parentId: row.id } as any)"
             >
               新增
@@ -125,11 +125,11 @@ const {
             >
               <template #reference>
                 <el-button
+                  :icon="useRenderIcon(Delete)"
+                  :size="size"
                   class="reset-margin"
                   link
                   type="primary"
-                  :size="size"
-                  :icon="useRenderIcon(Delete)"
                 >
                   删除
                 </el-button>

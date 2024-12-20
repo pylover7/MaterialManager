@@ -1,21 +1,16 @@
-<script setup lang="tsx">
+<script lang="tsx" setup>
 import { useI18n } from "vue-i18n";
 import Motion from "./utils/motion";
 import { useRouter } from "vue-router";
 import { useNav } from "@/layout/hooks/useNav";
-import {
-  ElForm,
-  ElFormItem,
-  ElInput,
-  FormInstance
-} from "element-plus";
+import { ElForm, ElFormItem, ElInput, FormInstance } from "element-plus";
 import { $t, transformI18n } from "@/plugins/i18n";
 import { useLayout } from "@/layout/hooks/useLayout";
 import { useUserStoreHook } from "@/store/modules/user";
-import { initRouter, getTopMenu } from "@/router/utils";
-import { bg, avatar, illustration } from "./utils/static";
+import { getTopMenu, initRouter } from "@/router/utils";
+import { avatar, bg, illustration } from "./utils/static";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { ref, reactive, toRaw, onMounted, onBeforeUnmount, watch } from "vue";
+import { onBeforeUnmount, onMounted, reactive, ref, toRaw } from "vue";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
 
 import dayIcon from "@/assets/svg/day.svg?component";
@@ -95,14 +90,14 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="select-none">
-    <img :src="bg" class="wave" alt="" />
+    <img :src="bg" alt="" class="wave" />
     <div class="flex-c absolute right-5 top-3">
       <!-- 主题 -->
       <el-switch
         v-model="dataTheme"
-        inline-prompt
         :active-icon="dayIcon"
         :inactive-icon="darkIcon"
+        inline-prompt
         @change="dataThemeChange"
       />
     </div>
@@ -131,9 +126,9 @@ onBeforeUnmount(() => {
               >
                 <el-input
                   v-model="ruleForm.username"
-                  clearable
                   :placeholder="t('login.pureUsername')"
                   :prefix-icon="useRenderIcon(User)"
+                  clearable
                 >
                   <template #append>@cnnp.com.cn</template>
                 </el-input>
@@ -142,7 +137,6 @@ onBeforeUnmount(() => {
 
             <Motion :delay="150">
               <el-form-item
-                prop="password"
                 :rules="[
                   {
                     required: true,
@@ -150,23 +144,24 @@ onBeforeUnmount(() => {
                     trigger: 'blur'
                   }
                 ]"
+                prop="password"
               >
                 <el-input
                   v-model="ruleForm.password"
-                  clearable
-                  show-password
                   :placeholder="t('login.purePassword')"
                   :prefix-icon="useRenderIcon(Lock)"
+                  clearable
+                  show-password
                 />
               </el-form-item>
             </Motion>
 
             <Motion :delay="250">
               <el-button
+                :loading="loading"
                 class="w-full mt-4"
                 size="default"
                 type="primary"
-                :loading="loading"
                 @click="onLogin(ruleFormRef)"
               >
                 {{ t("login.pureLogin") }}
@@ -175,28 +170,28 @@ onBeforeUnmount(() => {
             <Motion :delay="300">
               <el-row class="flex mt-4" justify="space-between">
                 <el-link
+                  :underline="false"
                   href="https://hn-disk.hnpc.cc/ucdisk/s/AraYn2"
                   target="_blank"
-                  :underline="false"
-                  >使用说明下载</el-link
-                >
+                  >使用说明下载
+                </el-link>
                 <div>
-                  <el-text type="info" size="small"
-                    >若有使用问题请邮件联系:</el-text
-                  >
+                  <el-text size="small" type="info"
+                    >若有使用问题请邮件联系:
+                  </el-text>
                   <el-tooltip
                     class="box-item"
-                    effect="dark"
                     content="双击复制邮箱"
+                    effect="dark"
                     placement="bottom"
                   >
                     <el-button
                       v-copy="clipboardText"
-                      type="primary"
                       link
                       size="small"
-                      >刘硕</el-button
-                    >
+                      type="primary"
+                      >刘硕
+                    </el-button>
                   </el-tooltip>
                 </div>
               </el-row>

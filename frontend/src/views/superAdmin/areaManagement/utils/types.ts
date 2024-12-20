@@ -10,6 +10,7 @@ interface FormItemProps {
   /** 备注 */
   remark: string;
 }
+
 interface FormProps {
   formInline: FormItemProps;
 }

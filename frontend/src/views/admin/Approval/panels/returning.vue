@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script lang="tsx" setup>
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import Search from "@iconify-icons/ep/search";
 import Approve from "@iconify-icons/fluent/approvals-app-16-filled";
@@ -198,12 +198,14 @@ const onBatchReturn = () => {
     successNotification("已批通过选请求");
   });
 };
+
 /** 取消选择 */
 function onSelectionCancel() {
   selectedNum.value = 0;
   // 用于多选表格，清空用户的选择
   tableRef.value.getTableRef().clearSelection();
 }
+
 /** 当CheckBox选择项发生变化时会触发该事件 */
 function returnHandleSelectionChange(val) {
   returnSelectedNum.value = val.length;
@@ -224,7 +226,7 @@ function handleCurrentChange(val: number) {
 
 <template>
   <div class="main">
-    <el-tab-pane :name="props.segmentedOptions[1].value" :lazy="true">
+    <el-tab-pane :lazy="true" :name="props.segmentedOptions[1].value">
       <el-form
         ref="returnOptBarRef"
         :inline="true"
@@ -234,8 +236,8 @@ function handleCurrentChange(val: number) {
         <el-form-item label="选择区域" prop="area">
           <el-select
             v-model="returnedOptBar.area"
-            placeholder="请选择区域"
             class="!w-[150px]"
+            placeholder="请选择区域"
           >
             <el-option
               v-for="item in areaOpt"
@@ -247,10 +249,10 @@ function handleCurrentChange(val: number) {
         </el-form-item>
         <el-form-item>
           <el-button
-            type="primary"
+            :disabled="returnedOptBar.area === ''"
             :icon="useRenderIcon(Search)"
             :loading="loading"
-            :disabled="returnedOptBar.area === ''"
+            type="primary"
             @click="onSearchReturn"
           >
             搜索
@@ -259,20 +261,20 @@ function handleCurrentChange(val: number) {
       </el-form>
 
       <PureTableBar
-        title="归还待审批"
         :columns="returnFormColumns"
+        title="归还待审批"
         @refresh="onSearchReturn"
       >
         <template #buttons>
           <div class="h-full mb-2 pl-4 flex items-center">
             <div class="flex-auto">
               <span
-                style="font-size: var(--el-font-size-base)"
                 class="text-[rgba(42,46,54,0.5)] dark:text-[rgba(220,220,242,0.5)]"
+                style="font-size: var(--el-font-size-base)"
               >
                 已选 {{ returnSelectedNum }} 项
               </span>
-              <el-button type="primary" text @click="onSelectionCancel">
+              <el-button text type="primary" @click="onSelectionCancel">
                 取消选择
               </el-button>
             </div>
@@ -284,9 +286,9 @@ function handleCurrentChange(val: number) {
           >
             <template #reference>
               <el-button
-                type="success"
                 :disabled="selectedNum < 1"
                 :icon="useRenderIcon(Approve)"
+                type="success"
               >
                 批量批准
               </el-button>
@@ -296,21 +298,21 @@ function handleCurrentChange(val: number) {
         <template v-slot="{ size, dynamicColumns }">
           <pure-table
             ref="returnTableRef"
-            row-key="id"
-            align-whole="center"
-            table-layout="auto"
-            :loading="returnLoading"
-            :size="size"
-            adaptive
             :adaptiveConfig="{ offsetBottom: 108 }"
-            :data="returnDataList"
             :columns="dynamicColumns"
-            :pagination="pagination2"
-            :paginationSmall="size === 'small'"
+            :data="returnDataList"
             :header-cell-style="{
               background: 'var(--el-fill-color-light)',
               color: 'var(--el-text-color-primary)'
             }"
+            :loading="returnLoading"
+            :pagination="pagination2"
+            :paginationSmall="size === 'small'"
+            :size="size"
+            adaptive
+            align-whole="center"
+            row-key="id"
+            table-layout="auto"
             @selection-change="returnHandleSelectionChange"
             @page-size-change="handleSizeChange"
             @page-current-change="handleCurrentChange"
@@ -320,5 +322,3 @@ function handleCurrentChange(val: number) {
     </el-tab-pane>
   </div>
 </template>
-
-<style scoped lang="scss"></style>

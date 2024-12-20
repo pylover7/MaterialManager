@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { optionsItem } from "../types";
 import { transformI18n } from "@/plugins/i18n";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
@@ -11,6 +11,7 @@ interface Props {
 
 interface Emits {
   (e: "collectItem", val: optionsItem): void;
+
   (e: "deleteItem", val: optionsItem): void;
 }
 

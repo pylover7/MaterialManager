@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import editForm from "../form.vue";
-import { handleTree, buildApiTree } from "@/utils/tree";
+import { buildApiTree, handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
 import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
@@ -8,8 +8,8 @@ import { transformI18n } from "@/plugins/i18n";
 import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "../utils/types";
 import type { PaginationProps } from "@pureadmin/table";
-import { getKeyList, deviceDetection } from "@pureadmin/utils";
-import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
+import { deviceDetection, getKeyList } from "@pureadmin/utils";
+import { h, onMounted, reactive, type Ref, ref, toRaw, watch } from "vue";
 import type { OptionsType } from "@/components/ReSegmented";
 import { successNotification } from "@/utils/notification";
 import {
@@ -332,6 +332,7 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
+
         function chores() {
           successNotification(
             `您${title}了角色名称为【${curData.name}】的这条数据`
@@ -339,6 +340,7 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
+
         FormRef.validate(valid => {
           if (valid) {
             // 表单规则校验通过

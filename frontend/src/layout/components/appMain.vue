@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import Footer from "./footer/index.vue";
-import { useGlobal, isNumber } from "@pureadmin/utils";
+import { isNumber, useGlobal } from "@pureadmin/utils";
 import KeepAliveFrame from "./keepAliveFrame/index.vue";
 import backTop from "@/assets/svg/back_top.svg?component";
-import { h, computed, Transition, defineComponent } from "vue";
+import { computed, defineComponent, h, Transition } from "vue";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 
 const props = defineProps({
@@ -106,6 +106,12 @@ const transitionMain = defineComponent({
           <template #default="{ Comp, fullPath, frameInfo }">
             <el-scrollbar
               v-if="props.fixedHeader"
+              :view-style="{
+                display: 'flex',
+                flex: 'auto',
+                overflow: 'hidden',
+                'flex-direction': 'column'
+              }"
               :wrap-style="{
                 display: 'flex',
                 'flex-wrap': 'wrap',
@@ -113,16 +119,10 @@ const transitionMain = defineComponent({
                 margin: '0 auto',
                 transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)'
               }"
-              :view-style="{
-                display: 'flex',
-                flex: 'auto',
-                overflow: 'hidden',
-                'flex-direction': 'column'
-              }"
             >
               <el-backtop
-                title="回到顶部"
                 target=".app-main .el-scrollbar__wrap"
+                title="回到顶部"
               >
                 <backTop />
               </el-backtop>

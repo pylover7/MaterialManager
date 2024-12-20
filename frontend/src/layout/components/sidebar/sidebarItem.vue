@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import path from "path";
 import { getConfig } from "@/config";
 import LinkItem from "./linkItem.vue";
@@ -9,11 +9,11 @@ import { useNav } from "@/layout/hooks/useNav";
 import { transformI18n } from "@/plugins/i18n";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import {
-  type PropType,
+  computed,
   type CSSProperties,
+  type PropType,
   ref,
   toRaw,
-  computed,
   useAttrs
 } from "vue";
 
@@ -114,15 +114,15 @@ function resolvePath(routePath) {
     :to="item"
   >
     <el-menu-item
-      :index="resolvePath(onlyOneChild.path)"
       :class="{ 'submenu-title-noDropdown': !isNest }"
+      :index="resolvePath(onlyOneChild.path)"
       :style="getNoDropdownStyle"
       v-bind="attrs"
     >
       <div
         v-if="toRaw(props.item.meta.icon)"
-        class="sub-menu-icon"
         :style="getSubMenuIconStyle"
+        class="sub-menu-icon"
       >
         <component
           :is="
@@ -144,8 +144,8 @@ function resolvePath(routePath) {
             layout === 'mix' &&
             props.item?.pathList?.length === 2)
         "
-        truncated
         class="!px-4 !text-inherit"
+        truncated
       >
         {{ transformI18n(onlyOneChild.meta.title) }}
       </el-text>
@@ -169,8 +169,8 @@ function resolvePath(routePath) {
   <el-sub-menu
     v-else
     ref="subMenu"
-    teleported
     :index="resolvePath(props.item.path)"
+    teleported
     v-bind="expandCloseIcon"
   >
     <template #title>
@@ -192,10 +192,6 @@ function resolvePath(routePath) {
             props.item.parentId === null
           )
         "
-        :tippyProps="{
-          offset: [0, -10],
-          theme: tooltipEffect
-        }"
         :class="{
           '!text-inherit': true,
           '!px-4':
@@ -203,6 +199,10 @@ function resolvePath(routePath) {
             isCollapse &&
             !toRaw(props.item.meta.icon) &&
             props.item.parentId === null
+        }"
+        :tippyProps="{
+          offset: [0, -10],
+          theme: tooltipEffect
         }"
       >
         {{ transformI18n(props.item.meta.title) }}
@@ -213,9 +213,9 @@ function resolvePath(routePath) {
     <sidebar-item
       v-for="child in props.item.children"
       :key="child.path"
+      :base-path="resolvePath(child.path)"
       :is-nest="true"
       :item="child"
-      :base-path="resolvePath(child.path)"
       class="nest-menu"
     />
   </el-sub-menu>

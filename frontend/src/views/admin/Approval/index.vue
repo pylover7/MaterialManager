@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, onMounted, ref } from "vue";
 import Segmented, { OptionsType } from "@/components/ReSegmented";
 import Borrowing from "./panels/borrowing.vue";
@@ -45,50 +45,52 @@ onMounted(() => {
 <template>
   <div class="main">
     <Segmented v-model="tabIndex" :options="segmentedOptions" size="large" />
-    <el-tabs v-model="tabIndex" type="card" class="myTabs">
+    <el-tabs v-model="tabIndex" class="myTabs" type="card">
       <Transition>
         <Borrowing
           v-show="segmentedOptions[0].value == tabIndex"
+          :areaOpt="areaOpt"
           :segmentedOptions="segmentedOptions"
           :userId="userId"
-          :areaOpt="areaOpt"
         />
       </Transition>
       <Transition>
         <Returning
           v-show="segmentedOptions[1].value == tabIndex"
+          :areaOpt="areaOpt"
           :segmentedOptions="segmentedOptions"
           :userId="userId"
-          :areaOpt="areaOpt"
         />
       </Transition>
       <Transition>
         <Returned
           v-show="segmentedOptions[2].value == tabIndex"
+          :areaOpt="areaOpt"
           :segmentedOptions="segmentedOptions"
           :userId="userId"
-          :areaOpt="areaOpt"
         />
       </Transition>
     </el-tabs>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .tab-pane > .el-tabs__items {
   padding: 0;
 }
 
 :deep(.myTabs) {
   .el-tabs__header {
-    border-radius: var(--el-border-radius-base);
-    border: 0;
     height: 0;
+    border: 0;
+    border-radius: var(--el-border-radius-base);
+
     .el-tabs__nav {
       border: 0;
+
       .el-tabs__item {
-        border: 0;
         padding: 0;
+        border: 0;
       }
     }
   }

@@ -1,18 +1,18 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { $t } from "@/plugins/i18n";
 import { emitter } from "@/utils/mitt";
 import { RouteConfigs } from "../../types";
 import { useTags } from "../../hooks/useTag";
 import { routerArrays } from "@/layout/types";
 import { onClickOutside } from "@vueuse/core";
-import { handleAliveRoute, getTopMenu } from "@/router/utils";
+import { getTopMenu, handleAliveRoute } from "@/router/utils";
 import { useSettingStoreHook } from "@/store/modules/settings";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
-import { ref, watch, unref, toRaw, nextTick, onBeforeUnmount } from "vue";
+import { nextTick, onBeforeUnmount, ref, toRaw, unref, watch } from "vue";
 import {
   delay,
-  isEqual,
   isAllEmpty,
+  isEqual,
   useResizeObserver
 } from "@pureadmin/utils";
 
@@ -194,6 +194,7 @@ function dynamicRouteTag(value: string): void {
       });
     }
   }
+
   concatPath(router.options.routes as any, value);
 }
 
@@ -544,16 +545,16 @@ onBeforeUnmount(() => {
       class="scroll-container"
       @wheel.prevent="handleWheel"
     >
-      <div ref="tabDom" class="tab select-none" :style="getTabStyle">
+      <div ref="tabDom" :style="getTabStyle" class="tab select-none">
         <div
           v-for="(item, index) in multiTags"
-          :ref="'dynamic' + index"
           :key="index"
+          :ref="'dynamic' + index"
           :class="['scroll-item is-closable', linkIsActive(item)]"
+          @click="tagOnClick(item)"
           @contextmenu.prevent="openMenu(item, $event)"
           @mouseenter.prevent="onMouseenter(index)"
           @mouseleave.prevent="onMouseleave(index)"
-          @click="tagOnClick(item)"
         >
           <span
             class="tag-title dark:!text-text_color_primary dark:hover:!text-primary"
@@ -585,8 +586,8 @@ onBeforeUnmount(() => {
     <transition name="el-zoom-in-top">
       <ul
         v-show="visible"
-        ref="contextmenuRef"
         :key="Math.random()"
+        ref="contextmenuRef"
         :style="getContextMenuStyle"
         class="contextmenu"
       >
@@ -604,8 +605,8 @@ onBeforeUnmount(() => {
     </transition>
     <!-- 右侧功能按钮 -->
     <el-dropdown
-      trigger="click"
       placement="bottom-end"
+      trigger="click"
       @command="handleCommand"
     >
       <span class="arrow-down">
@@ -617,8 +618,8 @@ onBeforeUnmount(() => {
             v-for="(item, key) in tagsViews"
             :key="key"
             :command="{ key, item }"
-            :divided="item.divided"
             :disabled="item.disabled"
+            :divided="item.divided"
           >
             <IconifyIconOffline :icon="item.icon" />
             {{ transformI18n(item.text) }}

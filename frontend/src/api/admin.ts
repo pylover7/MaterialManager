@@ -1,5 +1,5 @@
 import { http } from "@/utils/http";
-import { baseUrlApi, staticUrl } from "./utils";
+import { baseUrlApi } from "./utils";
 import type { dbInfoResult } from "@/types/superAdmin";
 import type {
   BaseResult,
@@ -166,16 +166,6 @@ export const getLdapUserList = (filterKey: string, filterValue: string) => {
     }
   );
 };
-/** 获取用户头像 */
-export const getUserAvatar = (name: string) => {
-  return staticUrl(`/avatar/${name}`);
-};
-/** 更新用户 */
-export const updateUser = (data?: object) => {
-  return http.request<BaseResult>("post", baseUrlApi("/admin/user/update"), {
-    data
-  });
-};
 /** 更新用户状态 */
 export const updateUserStatus = (data?: object) => {
   return http.request<BaseResult>(
@@ -183,19 +173,6 @@ export const updateUserStatus = (data?: object) => {
     baseUrlApi("/admin/user/updateStatus"),
     {
       data
-    }
-  );
-};
-/** 更新用户头像 */
-export const updateUserAvatar = (id: number, data?: object) => {
-  return http.request<BaseResult>(
-    "post",
-    baseUrlApi("/admin/user/updateAvatar"),
-    {
-      data,
-      params: {
-        id
-      }
     }
   );
 };

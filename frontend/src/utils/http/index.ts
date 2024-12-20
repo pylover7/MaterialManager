@@ -5,16 +5,16 @@ import Axios, {
 } from "axios";
 import type {
   PureHttpError,
-  RequestMethods,
+  PureHttpRequestConfig,
   PureHttpResponse,
-  PureHttpRequestConfig
+  RequestMethods
 } from "./types.d";
 import { stringify } from "qs";
 import NProgress from "../progress";
-import { getToken, formatToken, removeToken } from "@/utils/auth";
+import { formatToken, getToken, removeToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
 import { baseUrlApi, staticUrl } from "@/api/utils";
-import { router, resetRouter } from "@/router";
+import { resetRouter, router } from "@/router";
 import { errorNotification } from "@/utils/notification";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
@@ -33,25 +33,21 @@ const defaultConfig: AxiosRequestConfig = {
 };
 
 class PureHttp {
+  /** 重复请求次数 */
+  private static requestCount = 5;
+  /** token过期后，暂存待执行的请求 */
+  private static requests = [];
+  /** 防止重复刷新token */
+  private static isRefreshing = false;
+  /** 初始化配置对象 */
+  private static initConfig: PureHttpRequestConfig = {};
+  /** 保存当前Axios实例对象 */
+  private static axiosInstance: AxiosInstance = Axios.create(defaultConfig);
+
   constructor() {
     this.httpInterceptorsRequest();
     this.httpInterceptorsResponse();
   }
-
-  /** 重复请求次数 */
-  private static requestCount = 5;
-
-  /** token过期后，暂存待执行的请求 */
-  private static requests = [];
-
-  /** 防止重复刷新token */
-  private static isRefreshing = false;
-
-  /** 初始化配置对象 */
-  private static initConfig: PureHttpRequestConfig = {};
-
-  /** 保存当前Axios实例对象 */
-  private static axiosInstance: AxiosInstance = Axios.create(defaultConfig);
 
   /** 重连原始请求 */
   private static retryOriginalRequest(config: PureHttpRequestConfig) {
@@ -61,6 +57,51 @@ class PureHttp {
         resolve(config);
       });
     });
+  }
+
+  /** 通用请求工具函数 */
+  public request<T>(
+    method: RequestMethods,
+    url: string,
+    param?: AxiosRequestConfig,
+    axiosConfig?: PureHttpRequestConfig
+  ): Promise<T> {
+    const config = {
+      method,
+      url,
+      ...param,
+      ...axiosConfig
+    } as PureHttpRequestConfig;
+
+    // 单独处理自定义请求/响应回调
+    return new Promise((resolve, reject) => {
+      PureHttp.axiosInstance
+        .request(config)
+        .then((response: undefined) => {
+          resolve(response);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
+  /** 单独抽离的post工具函数 */
+  public post<T, P>(
+    url: string,
+    params?: AxiosRequestConfig<T>,
+    config?: PureHttpRequestConfig
+  ): Promise<P> {
+    return this.request<P>("post", url, params, config);
+  }
+
+  /** 单独抽离的get工具函数 */
+  public get<T, P>(
+    url: string,
+    params?: AxiosRequestConfig<T>,
+    config?: PureHttpRequestConfig
+  ): Promise<P> {
+    return this.request<P>("get", url, params, config);
   }
 
   /** 请求拦截 */
@@ -182,51 +223,6 @@ class PureHttp {
         return Promise.reject($error.response.data);
       }
     );
-  }
-
-  /** 通用请求工具函数 */
-  public request<T>(
-    method: RequestMethods,
-    url: string,
-    param?: AxiosRequestConfig,
-    axiosConfig?: PureHttpRequestConfig
-  ): Promise<T> {
-    const config = {
-      method,
-      url,
-      ...param,
-      ...axiosConfig
-    } as PureHttpRequestConfig;
-
-    // 单独处理自定义请求/响应回调
-    return new Promise((resolve, reject) => {
-      PureHttp.axiosInstance
-        .request(config)
-        .then((response: undefined) => {
-          resolve(response);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  }
-
-  /** 单独抽离的post工具函数 */
-  public post<T, P>(
-    url: string,
-    params?: AxiosRequestConfig<T>,
-    config?: PureHttpRequestConfig
-  ): Promise<P> {
-    return this.request<P>("post", url, params, config);
-  }
-
-  /** 单独抽离的get工具函数 */
-  public get<T, P>(
-    url: string,
-    params?: AxiosRequestConfig<T>,
-    config?: PureHttpRequestConfig
-  ): Promise<P> {
-    return this.request<P>("get", url, params, config);
   }
 }
 

@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import { ref, computed } from "vue";
+<script lang="ts" setup>
+import { computed, ref } from "vue";
 import { animates } from "./animate";
 import { cloneDeep } from "@pureadmin/utils";
 
@@ -63,6 +63,7 @@ function filterMethod(value: any) {
 }
 
 const animateMap = ref({});
+
 function onMouseEnter(index: string | number) {
   animateMap.value[index] = animateMap.value[index]?.loading
     ? Object.assign({}, animateMap.value[index], {
@@ -72,6 +73,7 @@ function onMouseEnter(index: string | number) {
         loading: true
       });
 }
+
 function onMouseleave() {
   animateMap.value = {};
 }
@@ -79,21 +81,21 @@ function onMouseleave() {
 
 <template>
   <el-select
+    :filter-method="filterMethod"
+    :model-value="inputValue"
+    :placeholder="props.placeholder"
     clearable
     filterable
-    :placeholder="props.placeholder"
     popper-class="pure-animate-popper"
-    :model-value="inputValue"
-    :filter-method="filterMethod"
     @clear="onClear"
   >
     <template #empty>
       <div class="w-[280px]">
         <el-scrollbar
-          noresize
-          height="212px"
           :view-style="{ overflow: 'hidden' }"
           class="border-t border-[#e5e7eb]"
+          height="212px"
+          noresize
         >
           <ul class="flex flex-wrap justify-around mb-1">
             <li
@@ -101,9 +103,9 @@ function onMouseleave() {
               :key="index"
               :class="animateClass"
               :style="animateStyle(animate)"
+              @click="onChangeIcon(animate)"
               @mouseenter.prevent="onMouseEnter(index)"
               @mouseleave.prevent="onMouseleave"
-              @click="onChangeIcon(animate)"
             >
               <h4
                 :class="[

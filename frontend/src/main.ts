@@ -11,7 +11,6 @@ import { injectResponsiveStorage } from "@/utils/responsive";
 
 import Table from "@pureadmin/table";
 // import PureDescriptions from "@pureadmin/descriptions";
-
 // 引入重置样式
 import "./style/reset.scss";
 // 导入公共样式
@@ -26,34 +25,34 @@ import "./assets/iconfont/iconfont.css";
 // 兼容性
 import "core-js/stable";
 import "regenerator-runtime/runtime";
-
-const app = createApp(App);
-
 // 自定义指令
 import * as directives from "@/directives";
-Object.keys(directives).forEach(key => {
-  app.directive(key, (directives as { [key: string]: Directive })[key]);
-});
-
 // 全局注册@iconify/vue图标库
 import {
+  FontIcon,
   IconifyIconOffline,
-  IconifyIconOnline,
-  FontIcon
+  IconifyIconOnline
 } from "./components/ReIcon";
-app.component("IconifyIconOffline", IconifyIconOffline);
-app.component("IconifyIconOnline", IconifyIconOnline);
-app.component("FontIcon", FontIcon);
-
 // 全局注册按钮级别权限组件
 import { Auth } from "@/components/ReAuth";
-app.component("Auth", Auth);
-
 // 全局注册vue-tippy
 import "tippy.js/dist/tippy.css";
 import "tippy.js/themes/light.css";
 import VueTippy from "vue-tippy";
 import "@/utils/globalPolyfills";
+
+const app = createApp(App);
+
+Object.keys(directives).forEach(key => {
+  app.directive(key, (directives as { [key: string]: Directive })[key]);
+});
+
+app.component("IconifyIconOffline", IconifyIconOffline);
+app.component("IconifyIconOnline", IconifyIconOnline);
+app.component("FontIcon", FontIcon);
+
+app.component("Auth", Auth);
+
 app.use(VueTippy);
 
 getPlatformConfig(app).then(async config => {

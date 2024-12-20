@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from "vue";
 import { useRole } from "./hook";
 import { getPickerShortcuts } from "./utils";
@@ -41,17 +41,17 @@ const {
       <el-form-item label="用户名" prop="username">
         <el-input
           v-model="form.username"
-          placeholder="请输入用户名"
-          clearable
           class="!w-[150px]"
+          clearable
+          placeholder="请输入用户名"
         />
       </el-form-item>
       <el-form-item label="登录状态" prop="status">
         <el-select
           v-model="form.status"
-          placeholder="请选择"
-          clearable
           class="!w-[150px]"
+          clearable
+          placeholder="请选择"
         >
           <el-option label="成功" value="1" />
           <el-option label="失败" value="0" />
@@ -61,17 +61,17 @@ const {
         <el-date-picker
           v-model="form.loginTime"
           :shortcuts="getPickerShortcuts()"
-          type="datetimerange"
+          end-placeholder="结束日期时间"
           range-separator="至"
           start-placeholder="开始日期时间"
-          end-placeholder="结束日期时间"
+          type="datetimerange"
         />
       </el-form-item>
       <el-form-item>
         <el-button
-          type="primary"
           :icon="useRenderIcon('ri:search-line')"
           :loading="loading"
+          type="primary"
           @click="onSearch"
         >
           搜索
@@ -82,11 +82,11 @@ const {
       </el-form-item>
     </el-form>
 
-    <PureTableBar title="登录日志" :columns="columns" @refresh="onSearch">
+    <PureTableBar :columns="columns" title="登录日志" @refresh="onSearch">
       <template #buttons>
         <el-popconfirm title="确定要删除所有日志数据吗？" @confirm="clearAll">
           <template #reference>
-            <el-button type="danger" :icon="useRenderIcon(Delete)">
+            <el-button :icon="useRenderIcon(Delete)" type="danger">
               清空日志
             </el-button>
           </template>
@@ -95,20 +95,20 @@ const {
       <template v-slot="{ size, dynamicColumns }">
         <pure-table
           ref="tableRef"
-          row-key="id"
-          align-whole="center"
-          table-layout="auto"
-          :loading="loading"
-          :size="size"
-          adaptive
           :adaptiveConfig="{ offsetBottom: 108 }"
-          :data="dataList"
           :columns="dynamicColumns"
-          :pagination="{ ...pagination, size }"
+          :data="dataList"
           :header-cell-style="{
             background: 'var(--el-fill-color-light)',
             color: 'var(--el-text-color-primary)'
           }"
+          :loading="loading"
+          :pagination="{ ...pagination, size }"
+          :size="size"
+          adaptive
+          align-whole="center"
+          row-key="id"
+          table-layout="auto"
           @selection-change="handleSelectionChange"
           @page-size-change="handleSizeChange"
           @page-current-change="handleCurrentChange"
@@ -118,7 +118,7 @@ const {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 :deep(.el-dropdown-menu__item i) {
   margin: 0;
 }

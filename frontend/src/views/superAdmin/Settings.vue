@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onMounted, reactive, ref, Ref } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { successNotification, warningNotification } from "@/utils/notification";
@@ -134,20 +134,20 @@ const setBtn = async (formEl: FormInstance | undefined) => {
 <template>
   <div>
     <Segmented v-model="tabIndex" :options="segmentedOptions" size="large" />
-    <el-tabs v-model="tabIndex" type="card" class="myTabs">
+    <el-tabs v-model="tabIndex" class="myTabs" type="card">
       <el-tab-pane :name="segmentedOptions[0].value">
         <el-card shadow="never">
           <h4>数据库设置</h4>
           <el-divider />
           <el-form
             ref="dbFormRef"
-            style="max-width: 600px"
             :model="dbInfoForm"
             :rules="rules"
-            label-width="auto"
-            class="demo-ruleForm"
             :size="formSize"
+            class="demo-ruleForm"
+            label-width="auto"
             status-icon
+            style="max-width: 600px"
           >
             <el-form-item label="数据库种类" prop="start">
               <el-select v-model="dbInfoForm.start" placeholder="请选择">
@@ -166,8 +166,8 @@ const setBtn = async (formEl: FormInstance | undefined) => {
             <el-form-item label="密码" prop="password">
               <el-input
                 v-model="dbInfoForm.password"
-                type="password"
                 placeholder="test_pwd"
+                type="password"
               />
             </el-form-item>
             <el-form-item label="数据库名称" prop="database">
@@ -182,15 +182,15 @@ const setBtn = async (formEl: FormInstance | undefined) => {
                   <el-button type="danger">重置</el-button>
                 </template>
               </el-popconfirm>
-              <el-button type="warning" plain @click="testBtn(dbFormRef)">
+              <el-button plain type="warning" @click="testBtn(dbFormRef)">
                 测试连接
               </el-button>
               <el-button
-                type="success"
                 :disabled="setBtnDisabled"
+                type="success"
                 @click="setBtn(dbFormRef)"
-                >保存</el-button
-              >
+                >保存
+              </el-button>
             </el-form-item>
           </el-form>
         </el-card>
@@ -202,21 +202,23 @@ const setBtn = async (formEl: FormInstance | undefined) => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .tab-pane > .el-tabs__items {
   padding: 0;
 }
 
 :deep(.myTabs) {
   .el-tabs__header {
-    border-radius: var(--el-border-radius-base);
-    border: 0;
     height: 0;
+    border: 0;
+    border-radius: var(--el-border-radius-base);
+
     .el-tabs__nav {
       border: 0;
+
       .el-tabs__item {
-        border: 0;
         padding: 0;
+        border: 0;
       }
     }
   }

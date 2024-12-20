@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from "vue";
 import { noticesData } from "./data";
 import NoticeList from "./noticeList.vue";
@@ -12,9 +12,9 @@ notices.value.map(v => (noticesNum.value += v.list.length));
 </script>
 
 <template>
-  <el-dropdown trigger="click" placement="bottom-end">
+  <el-dropdown placement="bottom-end" trigger="click">
     <span class="dropdown-badge navbar-bg-hover select-none">
-      <el-badge :value="noticesNum" :max="99">
+      <el-badge :max="99" :value="noticesNum">
         <span class="header-notice-icon">
           <IconifyIconOffline :icon="Bell" />
         </span>
@@ -25,13 +25,13 @@ notices.value.map(v => (noticesNum.value += v.list.length));
         <el-tabs
           v-model="activeKey"
           :stretch="true"
-          class="dropdown-tabs"
           :style="{ width: notices.length === 0 ? '200px' : '330px' }"
+          class="dropdown-tabs"
         >
           <el-empty
             v-if="notices.length === 0"
-            description="暂无消息"
             :image-size="60"
+            description="暂无消息"
           />
           <span v-else>
             <template v-for="item in notices" :key="item.key">
