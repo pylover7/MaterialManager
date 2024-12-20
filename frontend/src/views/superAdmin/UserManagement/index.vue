@@ -16,11 +16,13 @@ defineOptions({
 const tableRef = ref();
 
 const {
+  roleId,
   loading,
   columns,
   dataList,
   selectedNum,
   pagination,
+  roleOptions,
   deviceDetection,
   onSearch,
   onBatchDel,
@@ -39,6 +41,21 @@ const {
     <div :class="[deviceDetection() ? ['w-full', 'mt-2'] : 'w-full mt-2']">
       <PureTableBar title="用户管理" :columns="columns" @refresh="onSearch">
         <template #buttons>
+          <el-select
+            v-model="roleId"
+            placeholder="请选择"
+            class="role-select"
+            clearable
+          >
+            <el-option
+              v-for="(item, index) in roleOptions"
+              :key="index"
+              :value="item.id"
+              :label="item.name"
+            >
+              {{ item.name }}
+            </el-option>
+          </el-select>
           <el-button
             type="primary"
             :icon="useRenderIcon(AddFill)"
@@ -145,5 +162,10 @@ const {
   :deep(.el-form-item) {
     margin-bottom: 12px;
   }
+}
+
+.role-select {
+  width: 120px;
+  margin-right: 12px;
 }
 </style>

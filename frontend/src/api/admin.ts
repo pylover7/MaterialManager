@@ -125,9 +125,10 @@ export const updateRoleAuth = (data?: object) => {
 };
 
 /** 新增用户 */
-export const addUser = (data?: object) => {
+export const addUser = (role: number, data?: object) => {
   return http.request<BaseResult>("post", baseUrlApi("/admin/user/add"), {
-    data
+    data,
+    params: { role }
   });
 };
 /** 删除用户 */

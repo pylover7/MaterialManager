@@ -15,8 +15,12 @@ userRouter = APIRouter()
 @userRouter.post("/add", summary="新增用户")
 async def create_user(
         data: list[UserCreate],
+        role: int | None = Query(None, description="角色ID"),
 ):
-    role_obj = await Role.filter(default=1).first()
+    if role is None:
+        role_obj = await Role.filter(default=1).first()
+    else:
+        role_obj = await Role.get(id=role)
     for item in data:
         try:
             user_obj = await user_controller.create(obj_in=item)
@@ -49,7 +53,7 @@ async def get_user(
 @userRouter.get("/list", summary="查看用户列表")
 async def list_user(
         currentPage: int = Query(1, description="页码"),
-        pageSize: int = Query(10, description="每页数量"),
+        pageSize: int = Query(15, description="每页数量"),
         username: str = Query("", description="工号，用于搜索"),
         nickname: str = Query("", description="用户名称，用于搜索"),
 ):

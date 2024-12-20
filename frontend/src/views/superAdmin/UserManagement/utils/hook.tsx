@@ -160,6 +160,8 @@ export function useUser(tableRef: Ref) {
   });
   // 当前密码强度（0-4）
   const curScore = ref();
+
+  const roleId = ref();
   const roleOptions = ref([]);
 
   function onChange({ row, index }) {
@@ -300,7 +302,7 @@ export function useUser(tableRef: Ref) {
         FormRef.validate(valid => {
           if (valid) {
             if (curData.length > 0) {
-              addUser(data).then(() => {
+              addUser(roleId.value, data).then(() => {
                 chores();
               });
             } else {
@@ -362,10 +364,12 @@ export function useUser(tableRef: Ref) {
 
   return {
     form,
+    roleId,
     loading,
     columns,
     dataList,
     treeData,
+    roleOptions,
     treeLoading,
     selectedNum,
     pagination,

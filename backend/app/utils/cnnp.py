@@ -66,13 +66,13 @@ class LDAPAuthentication:
             userList = self.conn.entries
             for user in userList:
                 userList[userList.index(user)] = UserCreate(
-                    company=user.company.value,
-                    department=user.department.value,
                     employeeID=user.employeeID.value,
-                    mobile=user.mobile.value,
-                    email=user.mail.value,
                     username=user.sAMAccountName.value,
                     nickname=user.name.value,
+                    mobile=user.mobile.value,
+                    email=user.mail.value,
+                    department=user.department.value,
+                    company=user.company.value,
                 ).model_dump()
             self.conn.unbind()
             return userList
