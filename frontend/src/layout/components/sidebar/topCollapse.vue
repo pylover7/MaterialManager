@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import MenuFold from "@iconify-icons/ri/menu-fold-fill";
 import MenuUnfold from "@iconify-icons/ri/menu-unfold-fill";
 
@@ -21,8 +21,8 @@ const toggleClick = () => {
 
 <template>
   <div
-    class="px-3 mr-1 navbar-bg-hover"
     :title="props.isActive ? '点击折叠' : '点击展开'"
+    class="px-3 mr-1 navbar-bg-hover"
     @click="toggleClick"
   >
     <IconifyIconOffline

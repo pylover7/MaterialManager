@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useNav } from "@/layout/hooks/useNav";
 import mdiKeyboardEsc from "@/assets/svg/keyboard_esc.svg?component";
 import enterOutlined from "@/assets/svg/enter_outlined.svg?component";

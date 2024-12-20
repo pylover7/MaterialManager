@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, reactive, Ref, ref } from "vue";
 import Segmented, { OptionsType } from "@/components/ReSegmented";
 import type { FormRules } from "element-plus";
@@ -6,12 +6,15 @@ import type { userInfo } from "../types";
 
 const accountFormRef = ref();
 const infoFormRef = ref();
+
 function getAccountRef() {
   return accountFormRef.value;
 }
+
 function getInfoRef() {
   return infoFormRef.value;
 }
+
 defineExpose({ getAccountRef, getInfoRef });
 
 type userType = {
@@ -75,22 +78,22 @@ const formSize: Ref<"" | "default" | "small" | "large"> = ref("default");
   <div>
     <Segmented
       v-model="tabIndex"
+      :disabled="segmentedDisable"
       :options="segmentedOptions"
       size="large"
-      :disabled="segmentedDisable"
     />
-    <el-tabs v-model="tabIndex" type="card" class="myTabs">
+    <el-tabs v-model="tabIndex" class="myTabs" type="card">
       <el-tab-pane :name="segmentedOptions[0].value">
         <el-card shadow="never">
           <el-form
             ref="accountFormRef"
-            style="max-width: 600px"
             :model="userInfo"
             :rules="accountRules"
-            label-width="auto"
-            class="demo-ruleForm"
             :size="formSize"
+            class="demo-ruleForm"
+            label-width="auto"
             status-icon
+            style="max-width: 600px"
           >
             <el-form-item label="邮箱账号" prop="account">
               <el-input v-model="userInfo.account" placeholder="账号">
@@ -100,9 +103,9 @@ const formSize: Ref<"" | "default" | "small" | "large"> = ref("default");
             <el-form-item label="邮箱密码" prop="password">
               <el-input
                 v-model="userInfo.password"
-                type="password"
                 placeholder="密码"
                 show-password
+                type="password"
               />
             </el-form-item>
           </el-form>
@@ -112,13 +115,13 @@ const formSize: Ref<"" | "default" | "small" | "large"> = ref("default");
         <el-card shadow="never">
           <el-form
             ref="infoFormRef"
-            style="max-width: 600px"
             :model="userInfo"
             :rules="infoRules"
-            label-width="auto"
-            class="demo-ruleForm"
             :size="formSize"
+            class="demo-ruleForm"
+            label-width="auto"
             status-icon
+            style="max-width: 600px"
           >
             <el-form-item label="姓名" prop="name">
               <el-input v-model="userInfo.name" placeholder="请输入姓名" />
@@ -139,24 +142,27 @@ const formSize: Ref<"" | "default" | "small" | "large"> = ref("default");
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .tab-pane > .el-tabs__items {
   padding: 0;
 }
 
 :deep(.myTabs) {
   .el-tabs__header {
-    border-radius: var(--el-border-radius-base);
-    border: 0;
     height: 0;
+    border: 0;
+    border-radius: var(--el-border-radius-base);
+
     .el-tabs__nav {
       border: 0;
+
       .el-tabs__item {
-        border: 0;
         padding: 0;
+        border: 0;
       }
     }
   }
+
   .el-tabs__content {
     padding-bottom: 4px;
   }

@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script lang="tsx" setup>
 import { addDialog, closeDialog } from "@/components/ReDialog";
 import { deviceDetection } from "@pureadmin/utils";
 import { h, ref } from "vue";
@@ -197,21 +197,21 @@ const borrowKey = (area: string) => {
           </template>
           <el-space alignment="center" direction="vertical">
             <el-button
-              class="largeBtn"
-              type="primary"
               :loading="btnLoading"
+              class="largeBtn"
               plain
+              type="primary"
               @click="borrowMaterial('glb')"
-              >物资借用</el-button
-            >
+              >物资借用
+            </el-button>
             <el-button
-              class="largeBtn"
-              type="primary"
               :loading="btnLoading"
+              class="largeBtn"
               plain
+              type="primary"
               @click="borrowKey('glb')"
-              >钥匙借用</el-button
-            >
+              >钥匙借用
+            </el-button>
           </el-space>
         </el-card>
         <el-card class="box-card" shadow="never">
@@ -222,21 +222,21 @@ const borrowKey = (area: string) => {
           </template>
           <el-space alignment="center" direction="vertical">
             <el-button
-              class="largeBtn"
-              type="primary"
               :loading="btnLoading"
+              class="largeBtn"
               plain
+              type="primary"
               @click="borrowMaterial('fk')"
-              >物资借用</el-button
-            >
+              >物资借用
+            </el-button>
             <el-button
-              class="largeBtn"
-              type="primary"
               :loading="btnLoading"
+              class="largeBtn"
               plain
+              type="primary"
               @click="borrowKey('fk')"
-              >钥匙借用</el-button
-            >
+              >钥匙借用
+            </el-button>
           </el-space>
         </el-card>
         <el-card class="box-card" shadow="never">
@@ -247,21 +247,21 @@ const borrowKey = (area: string) => {
           </template>
           <el-space alignment="center" direction="vertical">
             <el-button
-              class="largeBtn"
-              type="primary"
               :loading="btnLoading"
+              class="largeBtn"
               plain
+              type="primary"
               @click="borrowMaterial('wk')"
-              >物资借用</el-button
-            >
+              >物资借用
+            </el-button>
             <el-button
-              class="largeBtn"
-              type="primary"
               :loading="btnLoading"
+              class="largeBtn"
               plain
+              type="primary"
               @click="borrowKey('wk')"
-              >钥匙借用</el-button
-            >
+              >钥匙借用
+            </el-button>
           </el-space>
         </el-card>
       </el-space>
@@ -269,18 +269,19 @@ const borrowKey = (area: string) => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .main {
   height: 100%;
 }
+
 .largeBtn {
   width: 400px;
   height: 200px;
-  font-size: 24px;
-  border-radius: 20px;
   margin: 20px;
+  font-size: 24px;
   border: 0;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgb(0 0 0 / 10%);
   transition: all 0.3s;
 }
 

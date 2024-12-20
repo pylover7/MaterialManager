@@ -3,10 +3,10 @@ import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 import { transformI18n } from "@/plugins/i18n";
 import { addDialog } from "@/components/ReDialog";
-import { reactive, ref, onMounted, h } from "vue";
+import { h, onMounted, reactive, ref } from "vue";
 import type { FormItemProps } from "../utils/types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { cloneDeep, isAllEmpty, deviceDetection } from "@pureadmin/utils";
+import { cloneDeep, deviceDetection, isAllEmpty } from "@pureadmin/utils";
 import { errorNotification } from "@/utils/notification";
 import { addMenu, deleteMenu, getMenuList, updateMenu } from "@/api/admin";
 
@@ -173,6 +173,7 @@ export function useMenu() {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
+
         function chores() {
           message(
             `您${title}了菜单名称为${transformI18n(curData.title)}的这条数据`,
@@ -183,6 +184,7 @@ export function useMenu() {
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
+
         FormRef.validate(valid => {
           if (valid) {
             // 表单规则校验通过

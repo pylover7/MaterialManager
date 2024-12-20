@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script lang="tsx" setup>
 import { OptionsType } from "@/components/ReSegmented";
 import { reactive, ref } from "vue";
 import { PaginationProps, PureTable } from "@pureadmin/table";
@@ -57,6 +57,7 @@ const pagination = reactive<PaginationProps>({
 const selectedNum = ref(0);
 // 表格ref
 const tableRef = ref();
+
 /** 取消选择 */
 function onSelectionCancel() {
   selectedNum.value = 0;
@@ -75,12 +76,15 @@ function handleSelectionChange(val) {
 }
 
 function handleSizeChange(val: number) {
-  console.log(`${val} items per page`);
+  pagination.pageSize = val;
+  onSearch();
 }
 
 function handleCurrentChange(val: number) {
-  console.log(`current page: ${val}`);
+  pagination.currentPage = val;
+  onSearch();
 }
+
 const onBatchBtnLoading = ref(false);
 // 删除所选择的行
 const onBatchDel = () => {
@@ -265,7 +269,7 @@ const columns: TableColumnList = [
 
 <template>
   <div class="main">
-    <el-tab-pane :name="props.segmentedOptions[2].value" :lazy="true">
+    <el-tab-pane :lazy="true" :name="props.segmentedOptions[2].value">
       <el-form
         ref="borrowedOptBarRef"
         :inline="true"
@@ -275,8 +279,8 @@ const columns: TableColumnList = [
         <el-form-item label="选择区域" prop="area">
           <el-select
             v-model="borrowedOptBar.area"
-            placeholder="请选择区域"
             class="!w-[150px]"
+            placeholder="请选择区域"
           >
             <el-option
               v-for="item in areaOpt"
@@ -288,10 +292,10 @@ const columns: TableColumnList = [
         </el-form-item>
         <el-form-item>
           <el-button
-            type="primary"
+            :disabled="borrowedOptBar.area === ''"
             :icon="useRenderIcon(Search)"
             :loading="loading"
-            :disabled="borrowedOptBar.area === ''"
+            type="primary"
             @click="onSearch"
           >
             搜索
@@ -299,17 +303,17 @@ const columns: TableColumnList = [
         </el-form-item>
       </el-form>
 
-      <PureTableBar title="借用记录" :columns="columns" @refresh="onSearch">
+      <PureTableBar :columns="columns" title="借用记录" @refresh="onSearch">
         <template #buttons>
           <div class="h-full mb-2 pl-4 flex items-center">
             <div class="flex-auto">
               <span
-                style="font-size: var(--el-font-size-base)"
                 class="text-[rgba(42,46,54,0.5)] dark:text-[rgba(220,220,242,0.5)]"
+                style="font-size: var(--el-font-size-base)"
               >
                 已选 {{ selectedNum }} 项
               </span>
-              <el-button type="primary" text @click="onSelectionCancel">
+              <el-button text type="primary" @click="onSelectionCancel">
                 取消选择
               </el-button>
             </div>
@@ -318,10 +322,10 @@ const columns: TableColumnList = [
           <el-popconfirm title="确定要删除所选记录吗？" @confirm="onBatchDel">
             <template #reference>
               <el-button
-                type="danger"
                 :disabled="selectedNum < 1"
-                :loading="onBatchBtnLoading"
                 :icon="useRenderIcon(Reject)"
+                :loading="onBatchBtnLoading"
+                type="danger"
               >
                 删除所选
               </el-button>
@@ -331,21 +335,21 @@ const columns: TableColumnList = [
         <template v-slot="{ size, dynamicColumns }">
           <pure-table
             ref="tableRef"
-            row-key="id"
-            align-whole="center"
-            table-layout="auto"
-            :loading="loading"
-            :size="size"
-            adaptive
             :adaptiveConfig="{ offsetBottom: 108 }"
-            :data="dataList"
             :columns="dynamicColumns"
-            :pagination="pagination"
-            :paginationSmall="size === 'small'"
+            :data="dataList"
             :header-cell-style="{
               background: 'var(--el-fill-color-light)',
               color: 'var(--el-text-color-primary)'
             }"
+            :loading="loading"
+            :pagination="pagination"
+            :paginationSmall="size === 'small'"
+            :size="size"
+            adaptive
+            align-whole="center"
+            row-key="id"
+            table-layout="auto"
             @selection-change="handleSelectionChange"
             @page-size-change="handleSizeChange"
             @page-current-change="handleCurrentChange"
@@ -355,5 +359,3 @@ const columns: TableColumnList = [
     </el-tab-pane>
   </div>
 </template>
-
-<style scoped lang="scss"></style>

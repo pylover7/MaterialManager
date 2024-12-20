@@ -1,5 +1,5 @@
 import { http } from "@/utils/http";
-import { baseUrlApi, staticUrl } from "./utils";
+import { baseUrlApi } from "./utils";
 import type { dbInfoResult } from "@/types/superAdmin";
 import type {
   BaseResult,
@@ -7,31 +7,10 @@ import type {
   ResultRoleAuth,
   ResultTable
 } from "@/types/base";
-import { hashPwd } from "@/utils/hash";
 
-/** 创建API */
-export const addApi = () => {
-  return http.request<BaseResult>("post", baseUrlApi("/admin/api/add"));
-};
-/** 删除API */
-export const deleteApi = () => {
-  return http.request<BaseResult>("delete", baseUrlApi("/admin/api/delete"));
-};
-/** 查看API */
-export const getApi = () => {
-  return http.request<BaseResult>("get", baseUrlApi("/admin/api/get"));
-};
 /** 获取API列表 */
 export const getApiList = () => {
   return http.request<ResultTable>("get", baseUrlApi("/admin/api/list"));
-};
-/** 更新API */
-export const updateApi = () => {
-  return http.request<BaseResult>("post", baseUrlApi("/admin/api/update"));
-};
-/** 刷新API */
-export const refreshApi = () => {
-  return http.request<BaseResult>("delete", baseUrlApi("/admin/api/refresh"));
 };
 
 /** 新增部门 */
@@ -123,6 +102,17 @@ export const updateRole = (data?: object) => {
     data
   });
 };
+/** 设置默认角色 */
+export const setDefaultRole = (id: number) => {
+  return http.request<BaseResult>(
+    "get",
+    baseUrlApi("/admin/role/setDefaultRole"),
+    {
+      params: { id }
+    }
+  );
+};
+
 /** 更新角色权限 */
 export const updateRoleAuth = (data?: object) => {
   return http.request<BaseResult>(
@@ -135,9 +125,10 @@ export const updateRoleAuth = (data?: object) => {
 };
 
 /** 新增用户 */
-export const addUser = (data?: object) => {
+export const addUser = (role: number, data?: object) => {
   return http.request<BaseResult>("post", baseUrlApi("/admin/user/add"), {
-    data
+    data,
+    params: { role }
   });
 };
 /** 删除用户 */
@@ -175,16 +166,6 @@ export const getLdapUserList = (filterKey: string, filterValue: string) => {
     }
   );
 };
-/** 获取用户头像 */
-export const getUserAvatar = (name: string) => {
-  return staticUrl(`/avatar/${name}`);
-};
-/** 更新用户 */
-export const updateUser = (data?: object) => {
-  return http.request<BaseResult>("post", baseUrlApi("/admin/user/update"), {
-    data
-  });
-};
 /** 更新用户状态 */
 export const updateUserStatus = (data?: object) => {
   return http.request<BaseResult>(
@@ -192,19 +173,6 @@ export const updateUserStatus = (data?: object) => {
     baseUrlApi("/admin/user/updateStatus"),
     {
       data
-    }
-  );
-};
-/** 更新用户头像 */
-export const updateUserAvatar = (id: number, data?: object) => {
-  return http.request<BaseResult>(
-    "post",
-    baseUrlApi("/admin/user/updateAvatar"),
-    {
-      data,
-      params: {
-        id
-      }
     }
   );
 };
@@ -218,13 +186,6 @@ export const updateUserRole = (id: number, data?: object) => {
       params: { id }
     }
   );
-};
-/** 重置用户密码 */
-export const resetUserPwd = (id: number, newPwd: string) => {
-  newPwd = hashPwd(newPwd);
-  return http.request<BaseResult>("post", baseUrlApi("/admin/user/resetPwd"), {
-    data: { id, newPwd }
-  });
 };
 
 /** 获取数据库信息 */

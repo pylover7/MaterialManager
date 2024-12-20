@@ -1,21 +1,25 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from "vue";
 import { formRules } from "../utils/rule";
 import Search from "@iconify-icons/ep/search";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { getLdapUserList } from "@/api/admin";
 
-const props = withDefaults(defineProps<{ formInline: { userList: [] } }>(), {
-  formInline: () => ({
-    userList: []
-  })
-});
+const props = withDefaults(
+  defineProps<{ formInline: { userList: []; transferList: any[] } }>(),
+  {
+    formInline: () => ({
+      userList: [],
+      transferList: []
+    })
+  }
+);
 
 const ruleFormRef = ref();
 const newFormInline = ref(props.formInline);
 const transferProps = {
   key: "employeeID",
-  value: "name"
+  value: "nickname"
 };
 
 function getRef() {
@@ -24,23 +28,15 @@ function getRef() {
 
 const select = ref("sAMAccountName");
 const filter = ref("");
-const transferList = ref([
-  {
-    employeeID: 1,
-    name: "张三",
-    sAMAccountName: "zhangsan"
-  },
-  {
-    employeeID: 2,
-    name: "李四",
-    sAMAccountName: "lisi"
-  }
-]);
 
 const searchUser = () => {
   getLdapUserList(select.value, filter.value).then(res => {
-    transferList.value = res.data;
+    newFormInline.value.transferList = res.data;
   });
+};
+
+const clearAll = () => {
+  newFormInline.value.userList = [];
 };
 
 defineExpose({ getRef });
@@ -55,25 +51,27 @@ defineExpose({ getRef });
   >
     <el-transfer
       v-model="newFormInline.userList"
-      :props="transferProps"
-      filter-placeholder="请输入"
-      :titles="['搜索用户', '新增用户']"
       :button-texts="['退回', '新增']"
-      :data="transferList"
+      :data="newFormInline.transferList"
+      :props="transferProps"
+      :titles="['搜索用户', '新增用户']"
+      filter-placeholder="请输入"
       style="padding: 10px 0"
     >
       <template #default="{ option }">
-        <span>{{ option.sAMAccountName }} - {{ option.name }}</span>
+        <span>{{ option.username }} - {{ option.nickname }}</span>
       </template>
       <template #right-footer>
-        <el-button class="transfer-footer" size="small">清空已选择</el-button>
+        <el-button class="transfer-footer" size="small" @click="clearAll"
+          >清空已选择
+        </el-button>
       </template>
       <template #left-footer>
         <el-input
           v-model="filter"
-          style="max-width: 600px"
-          placeholder="请输入"
           class="input-with-select"
+          placeholder="请输入"
+          style="max-width: 600px"
           @keyup.enter="searchUser"
         >
           <template #prepend>
@@ -95,11 +93,12 @@ defineExpose({ getRef });
   </el-form>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .transfer-footer {
-  margin-left: 15px;
   padding: 6px 5px;
+  margin-left: 15px;
 }
+
 :deep(.el-transfer-panel) {
   width: 300px;
 }

@@ -1,15 +1,15 @@
-<script setup lang="tsx">
-import { ref, reactive, computed, onMounted, h } from "vue";
+<script lang="tsx" setup>
+import { computed, h, onMounted, reactive, ref } from "vue";
 import { getMaterialMeta } from "@/api/material";
-import { successNotification, errorNotification } from "@/utils/notification";
+import { errorNotification, successNotification } from "@/utils/notification";
 import PureTable from "@pureadmin/table";
 import { addDialog } from "@/components/ReDialog/index";
 import verifyDialog from "@/views/welcome/dialog/VerifyDialog.vue";
 import type { userInfo } from "@/views/welcome/types";
 import {
   dutyOver,
-  getDutyPerson,
   getDutyOverList,
+  getDutyPerson,
   getLatestNote
 } from "@/api/duty";
 import { auth } from "@/api/base";
@@ -271,35 +271,35 @@ const openVerifyDialog = () => {
 <template>
   <div class="main">
     <el-affix :offset="105" target=".main">
-      <el-card class="operationCar" shadow="never" body-style="padding: 0px;">
+      <el-card body-style="padding: 0px;" class="operationCar" shadow="never">
         <el-row :gutter="20" justify="space-between">
-          <el-col class="rowFlex" :span="5">
+          <el-col :span="5" class="rowFlex">
             <el-popconfirm
               :disabled="dialogVisible"
-              title="请确认所有数据已核对！"
-              confirm-button-text="好的"
               cancel-button-text="再看看"
+              confirm-button-text="好的"
+              title="请确认所有数据已核对！"
             >
               <template #reference>
                 <el-button
-                  type="success"
                   plain
                   size="large"
+                  type="success"
                   @click="handoverConfirm"
-                  >交班</el-button
-                >
+                  >交班
+                </el-button>
               </template>
             </el-popconfirm>
           </el-col>
-          <el-col class="rowFlex" :span="5">
-            <el-text size="large" type="danger" tag="b"
-              >值班员：{{ dutyPerson }}</el-text
-            >
+          <el-col :span="5" class="rowFlex">
+            <el-text size="large" tag="b" type="danger"
+              >值班员：{{ dutyPerson }}
+            </el-text>
           </el-col>
-          <el-col class="rowFlex" :span="5"
-            ><el-text size="large" tag="b"
-              >部门：{{ dutyPersonDepart }}</el-text
-            >
+          <el-col :span="5" class="rowFlex">
+            <el-text size="large" tag="b"
+              >部门：{{ dutyPersonDepart }}
+            </el-text>
           </el-col>
           <el-col :span="5" />
         </el-row>
@@ -310,77 +310,77 @@ const openVerifyDialog = () => {
       <div class="flex">
         <el-steps direction="vertical">
           <el-step
-            title="核对物资数量"
             :status="step1Init ? 'process' : step1Status"
+            title="核对物资数量"
           >
             <template #description>
-              <el-space direction="vertical" alignment="flex-start">
+              <el-space alignment="flex-start" direction="vertical">
                 <pure-table
+                  :border="true"
+                  :cell-style="{ textAlign: 'center' }"
                   :columns="columns"
                   :data="confirmedData"
-                  :border="true"
-                  stripe
+                  :header-cell-style="{ textAlign: 'center' }"
                   :loading="loading"
                   highlight-current-row
-                  :header-cell-style="{ textAlign: 'center' }"
-                  :cell-style="{ textAlign: 'center' }"
+                  stripe
                   style="width: 70vw"
                 />
                 <el-button
-                  type="primary"
                   plain
                   size="large"
+                  type="primary"
                   @click="handleConfirmAll"
-                  >确认所有</el-button
-                >
+                  >确认所有
+                </el-button>
               </el-space>
             </template>
           </el-step>
           <el-step
-            title="备注异常信息"
             :status="step2Init ? 'process' : step2Status"
+            title="备注异常信息"
           >
             <template #description>
               <el-space alignment="flex-start">
-                <el-space direction="vertical" alignment="flex-start">
+                <el-space alignment="flex-start" direction="vertical">
                   <p>当前备注</p>
                   <el-input
                     v-model="remark"
-                    type="textarea"
-                    placeholder="填写本班备注"
                     :autosize="{ minRows: 2 }"
-                    maxlength="510"
                     :show-word-limit="true"
+                    maxlength="510"
+                    placeholder="填写本班备注"
                     style="width: 35vw"
+                    type="textarea"
                     @blur="burlHandle"
                   />
-                  <el-button type="warning" plain @click="copyLastRemark"
-                    >复制上个班</el-button
-                  >
+                  <el-button plain type="warning" @click="copyLastRemark"
+                    >复制上个班
+                  </el-button>
                 </el-space>
-                <el-space direction="vertical" alignment="flex-start">
+                <el-space alignment="flex-start" direction="vertical">
                   <p>上个班备注</p>
                   <el-input
                     v-model="lastRemark"
-                    type="textarea"
-                    placeholder="上个班没有备注"
                     :autosize="{ minRows: 2 }"
                     :show-word-limit="true"
-                    style="width: 35vw"
+                    placeholder="上个班没有备注"
                     readonly
+                    style="width: 35vw"
+                    type="textarea"
                   />
                 </el-space>
               </el-space>
             </template>
           </el-step>
-          <el-step title="查看注意事项" :status="attentionStatus">
+          <el-step :status="attentionStatus" title="查看注意事项">
             <template #description>
-              <el-space direction="vertical" alignment="flex-start">
+              <el-space alignment="flex-start" direction="vertical">
                 <el-alert
-                  title="注意事项"
+                  :closable="false"
                   :type="attentionBtn"
                   show-icon
-                  :closable="false"
+                  title="注意事项"
                 >
                   <template #default>
                     <ol>
@@ -416,9 +416,9 @@ const openVerifyDialog = () => {
         <div class="dialog-footer">
           <el-button @click="handoverCancel">取消</el-button>
           <el-button
-            type="primary"
-            :loading="handleOverBtnLoading"
             :disabled="dutyOverInfo.nickname.length === 0"
+            :loading="handleOverBtnLoading"
+            type="primary"
             @click="handover"
           >
             确定

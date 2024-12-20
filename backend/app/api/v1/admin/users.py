@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Query
-from fastapi.exceptions import HTTPException
 from tortoise.expressions import Q
 
 from app.controllers.user import user_controller
+from app.models import Role
 from app.schemas.base import Success, SuccessExtra
 from app.schemas.users import *
 from app.utils.cnnp import ldap_auth
@@ -15,8 +15,19 @@ userRouter = APIRouter()
 @userRouter.post("/add", summary="新增用户")
 async def create_user(
         data: list[UserCreate],
+        role: int | None = Query(None, description="角色ID"),
 ):
-    await User.bulk_create(data, ignore_conflicts=True)
+    if role is None:
+        role_obj = await Role.filter(default=1).first()
+    else:
+        role_obj = await Role.get(id=role)
+    for item in data:
+        try:
+            user_obj = await user_controller.create(obj_in=item)
+            await user_obj.roles.add(role_obj)
+        except Exception as e:
+            logger.error(f"用户 {item.nickname} 已存在")
+            continue
     return Success(msg="创建成功！")
 
 
@@ -42,7 +53,7 @@ async def get_user(
 @userRouter.get("/list", summary="查看用户列表")
 async def list_user(
         currentPage: int = Query(1, description="页码"),
-        pageSize: int = Query(10, description="每页数量"),
+        pageSize: int = Query(15, description="每页数量"),
         username: str = Query("", description="工号，用于搜索"),
         nickname: str = Query("", description="用户名称，用于搜索"),
 ):

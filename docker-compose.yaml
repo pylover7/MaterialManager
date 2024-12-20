@@ -21,7 +21,7 @@ services:
         aliases:
           - db
   material:
-    image: material:1.0.3
+    image: material:1.0.5
     restart: unless-stopped
     environment:
       - DB_HOST=localhost

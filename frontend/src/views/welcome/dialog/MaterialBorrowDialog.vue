@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { h, onMounted, ref } from "vue";
 import useDialogStore from "../store";
 import Search from "@iconify-icons/ep/search";
@@ -8,7 +8,7 @@ import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { useUserStoreHook } from "@/store/modules/user";
 import { addDialog } from "@/components/ReDialog/index";
 import verifyDialog from "./VerifyDialog.vue";
-import type { userInfo, borrowInfo } from "../types";
+import type { borrowInfo, userInfo } from "../types";
 import { auth } from "@/api/base";
 import { MaterialItem } from "@/types/material";
 import { errorNotification } from "@/utils/notification";
@@ -18,9 +18,11 @@ type materialItemList = {
 };
 
 const formRef = ref();
+
 function getRef() {
   return formRef.value;
 }
+
 defineExpose({ getRef });
 
 const store = useDialogStore();
@@ -155,12 +157,12 @@ const openVerifyDialog = () => {
         <el-space direction="vertical" fill style="width: 100%">
           <el-input
             v-model="search"
+            :prefix-icon="useRenderIcon(Search)"
+            placeholder="请输入搜索内容"
             size="large"
             style="width: 80%"
-            placeholder="请输入搜索内容"
-            :prefix-icon="useRenderIcon(Search)"
           />
-          <el-card style="width: 80%" shadow="never">
+          <el-card shadow="never" style="width: 80%">
             <el-scrollbar height="400" noresize>
               <TransitionGroup name="list" tag="ul">
                 <li
@@ -170,35 +172,35 @@ const openVerifyDialog = () => {
                   class="resultItem"
                 >
                   <el-row>
-                    <el-col :span="20" style="text-align: left">{{
-                      item.name
-                    }}</el-col>
+                    <el-col :span="20" style="text-align: left"
+                      >{{ item.name }}
+                    </el-col>
                     <el-col
                       :span="4"
-                      style="text-align: right; padding-right: 8px"
+                      style="padding-right: 8px; text-align: right"
                     >
                       <el-button
                         v-show="btnInputShow(item)"
                         :icon="useRenderIcon(Subtract)"
-                        type="primary"
                         circle
                         plain
+                        type="primary"
                         @click="item.borrowing -= 1"
                       />
                       <el-input-number
                         v-show="btnInputShow(item)"
                         v-model="item.borrowing"
-                        :min="0"
-                        :max="maxNumber(item)"
                         :controls="false"
+                        :max="maxNumber(item)"
+                        :min="0"
                         style="width: 60px"
                       />
                       <el-button
                         :disabled="item.borrowing >= maxNumber(item)"
                         :icon="useRenderIcon(Add)"
-                        type="primary"
                         circle
                         plain
+                        type="primary"
                         @click="borrowAdd(item)"
                       />
                     </el-col>
@@ -214,8 +216,8 @@ const openVerifyDialog = () => {
           <el-card
             class="card"
             header="借用物资确认"
-            style="width: 80%"
             shadow="never"
+            style="width: 80%"
           >
             <el-scrollbar height="250" noresize>
               <p
@@ -225,35 +227,35 @@ const openVerifyDialog = () => {
                 class="resultItem"
               >
                 <el-row>
-                  <el-col :span="20" style="text-align: left">{{
-                    item.name
-                  }}</el-col>
+                  <el-col :span="20" style="text-align: left"
+                    >{{ item.name }}
+                  </el-col>
                   <el-col
                     :span="4"
-                    style="text-align: right; padding-right: 8px"
+                    style="padding-right: 8px; text-align: right"
                   >
                     <el-button
                       v-show="btnInputShow(item)"
                       :icon="useRenderIcon(Subtract)"
-                      type="primary"
                       circle
                       plain
+                      type="primary"
                       @click="item.borrowing -= 1"
                     />
                     <el-input-number
                       v-show="btnInputShow(item)"
                       v-model="item.borrowing"
-                      :min="0"
-                      :max="maxNumber(item)"
                       :controls="false"
+                      :max="maxNumber(item)"
+                      :min="0"
                       style="width: 60px"
                     />
                     <el-button
                       :disabled="item.borrowing >= maxNumber(item)"
                       :icon="useRenderIcon(Add)"
-                      type="primary"
                       circle
                       plain
+                      type="primary"
                       @click="borrowAdd(item)"
                     />
                   </el-col>
@@ -265,30 +267,30 @@ const openVerifyDialog = () => {
             v-model="borrowInfo.reason"
             :rows="2"
             maxlength="200"
+            placeholder="请填写借用理由（必填）"
             show-word-limit
             type="textarea"
-            placeholder="请填写借用理由（必填）"
           />
           <el-space>
             <b>常用理由：</b>
             <el-button plain type="info" @click="borrowInfo.reason = '厂房巡检'"
-              >厂房巡检</el-button
-            >
+              >厂房巡检
+            </el-button>
             <el-button plain type="info" @click="borrowInfo.reason = '厂房清洁'"
-              >厂房清洁</el-button
-            >
+              >厂房清洁
+            </el-button>
             <el-button
               plain
               type="info"
               @click="borrowInfo.reason = '持票作业，工作票号：'"
-              >持票作业</el-button
-            >
+              >持票作业
+            </el-button>
             <el-button
               plain
               type="info"
               @click="borrowInfo.reason = '持票作业，紧急工单，工作票号：'"
-              >紧急工单</el-button
-            >
+              >紧急工单
+            </el-button>
           </el-space>
           <el-card class="card" header="借用人信息" shadow="never">
             <el-row>
@@ -309,38 +311,42 @@ const openVerifyDialog = () => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .tab-pane > .el-tabs__items {
   padding: 0;
 }
 
 :deep(.myTabs) {
   .el-tabs__header {
-    border-radius: var(--el-border-radius-base);
-    border: 0;
     height: 0;
+    border: 0;
+    border-radius: var(--el-border-radius-base);
+
     .el-tabs__nav {
-      border: 0;
       height: 0;
+      border: 0;
+
       .el-tabs__item {
-        border: 0;
         padding: 0;
+        border: 0;
       }
     }
   }
+
   .el-tabs__content {
     padding-bottom: 4px;
   }
 }
 
 .resultItem {
-  margin: 0;
   padding: 2px;
+  margin: 0;
   font-size: 20px;
-  border-radius: 4px;
   cursor: pointer;
+  border-radius: 4px;
+
   &:hover {
-    background-color: rgba(91, 94, 103, 0.45);
+    background-color: rgb(91 94 103 / 45%);
   }
 }
 

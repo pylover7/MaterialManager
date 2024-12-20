@@ -1,13 +1,13 @@
 import Sortable from "sortablejs";
 import { transformI18n } from "@/plugins/i18n";
 import { useEpThemeStoreHook } from "@/store/modules/epTheme";
-import { defineComponent, ref, computed, type PropType, nextTick } from "vue";
+import { computed, defineComponent, nextTick, type PropType, ref } from "vue";
 import {
-  delay,
   cloneDeep,
+  delay,
+  getKeyList,
   isBoolean,
-  isFunction,
-  getKeyList
+  isFunction
 } from "@pureadmin/utils";
 
 import DragIcon from "./svg/drag.svg?component";

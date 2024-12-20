@@ -1,12 +1,12 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useRole } from "./utils/hook";
-import { ref, computed, nextTick, onMounted } from "vue";
+import { computed, nextTick, onMounted, ref } from "vue";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import {
   delay,
-  subBefore,
   deviceDetection,
+  subBefore,
   useResizeObserver
 } from "@pureadmin/utils";
 
@@ -118,35 +118,35 @@ onMounted(() => {
       <el-form-item label="角色名称：" prop="name">
         <el-input
           v-model="form.name"
-          placeholder="请输入角色名称"
-          clearable
           class="!w-[180px]"
+          clearable
+          placeholder="请输入角色名称"
         />
       </el-form-item>
       <el-form-item label="角色标识：" prop="code">
         <el-input
           v-model="form.code"
-          placeholder="请输入角色标识"
-          clearable
           class="!w-[180px]"
+          clearable
+          placeholder="请输入角色标识"
         />
       </el-form-item>
       <el-form-item label="状态：" prop="status">
         <el-select
           v-model="form.status"
-          placeholder="请选择状态"
-          clearable
           class="!w-[180px]"
+          clearable
+          placeholder="请选择状态"
         >
-          <el-option label="已启用" :value="1" />
-          <el-option label="已停用" :value="0" />
+          <el-option :value="1" label="已启用" />
+          <el-option :value="0" label="已停用" />
         </el-select>
       </el-form-item>
       <el-form-item>
         <el-button
-          type="primary"
           :icon="useRenderIcon(Search)"
           :loading="loading"
+          type="primary"
           @click="onSearch"
         >
           搜索
@@ -163,15 +163,15 @@ onMounted(() => {
     >
       <PureTableBar
         :class="[isShow && !deviceDetection() ? '!w-[60vw]' : 'w-full']"
+        :columns="columns"
         style="transition: width 220ms cubic-bezier(0.4, 0, 0.2, 1)"
         title="角色管理"
-        :columns="columns"
         @refresh="onSearch"
       >
         <template #buttons>
           <el-button
-            type="primary"
             :icon="useRenderIcon(AddFill)"
+            type="primary"
             @click="openDialog()"
           >
             新增角色
@@ -180,33 +180,33 @@ onMounted(() => {
         <template v-slot="{ size, dynamicColumns }">
           <pure-table
             ref="tableRef"
-            align-whole="center"
-            showOverflowTooltip
-            table-layout="auto"
-            :loading="loading"
-            :size="size"
-            adaptive
-            :row-style="rowStyle"
             :adaptiveConfig="{ offsetBottom: 108 }"
-            :data="dataList"
             :columns="dynamicColumns"
-            :pagination="pagination"
-            :paginationSmall="size === 'small'"
+            :data="dataList"
             :header-cell-style="{
               background: 'var(--el-fill-color-light)',
               color: 'var(--el-text-color-primary)'
             }"
+            :loading="loading"
+            :pagination="pagination"
+            :paginationSmall="size === 'small'"
+            :row-style="rowStyle"
+            :size="size"
+            adaptive
+            align-whole="center"
+            showOverflowTooltip
+            table-layout="auto"
             @selection-change="handleSelectionChange"
             @page-size-change="handleSizeChange"
             @page-current-change="handleCurrentChange"
           >
             <template #operation="{ row }">
               <el-button
+                :icon="useRenderIcon(EditPen)"
+                :size="size"
                 class="reset-margin"
                 link
                 type="primary"
-                :size="size"
-                :icon="useRenderIcon(EditPen)"
                 @click="openDialog('修改', row)"
               >
                 修改
@@ -217,22 +217,22 @@ onMounted(() => {
               >
                 <template #reference>
                   <el-button
+                    :icon="useRenderIcon(Delete)"
+                    :size="size"
                     class="reset-margin"
                     link
                     type="primary"
-                    :size="size"
-                    :icon="useRenderIcon(Delete)"
                   >
                     删除
                   </el-button>
                 </template>
               </el-popconfirm>
               <el-button
+                :icon="useRenderIcon(Menu)"
+                :size="size"
                 class="reset-margin"
                 link
                 type="primary"
-                :size="size"
-                :icon="useRenderIcon(Menu)"
                 @click="handleMenu(row)"
               >
                 权限
@@ -253,10 +253,10 @@ onMounted(() => {
                 v-tippy="{
                   content: '关闭'
                 }"
-                class="dark:text-white"
-                width="18px"
-                height="18px"
                 :icon="Close"
+                class="dark:text-white"
+                height="18px"
+                width="18px"
                 @click="handleMenu"
               />
             </span>
@@ -265,10 +265,10 @@ onMounted(() => {
                 v-tippy="{
                   content: '保存菜单权限'
                 }"
-                class="dark:text-white"
-                width="18px"
-                height="18px"
                 :icon="Check"
+                class="dark:text-white"
+                height="18px"
+                width="18px"
                 @click="handleSave"
               />
             </span>
@@ -280,13 +280,13 @@ onMounted(() => {
         </div>
         <el-input
           v-model="treeSearchValue"
-          placeholder="筛选"
           class="mb-1"
           clearable
+          placeholder="筛选"
           @input="onQueryChanged"
         />
         <Segmented v-model="tabIndex" :options="tabOperation" size="small" />
-        <el-tabs v-model="tabIndex" type="card" class="myTabs">
+        <el-tabs v-model="tabIndex" class="myTabs" type="card">
           <el-tab-pane :name="tabOperation[0].value">
             <div class="flex flex-wrap">
               <el-checkbox v-model="isExpandAll" label="展开/折叠" />
@@ -294,12 +294,12 @@ onMounted(() => {
             </div>
             <el-tree-v2
               ref="menuTreeRef"
-              show-checkbox
-              :height="treeHeight"
-              :data="menuTreeData"
-              :props="menuTreeProps"
               :check-strictly="isLinkage"
+              :data="menuTreeData"
               :filter-method="filterMethod"
+              :height="treeHeight"
+              :props="menuTreeProps"
+              show-checkbox
             >
               <template #default="{ node }">
                 <span>{{ transformI18n(node.label) }}</span>
@@ -313,12 +313,12 @@ onMounted(() => {
             </div>
             <el-tree-v2
               ref="apiTreeRef"
-              show-checkbox
-              :height="treeHeight"
-              :data="apiTreeData"
-              :props="apiTreeProps"
               :check-strictly="!apiIsLinkage"
+              :data="apiTreeData"
               :filter-method="filterMethod"
+              :height="treeHeight"
+              :props="apiTreeProps"
+              show-checkbox
             >
               <template #default="{ node }">
                 <span>{{ transformI18n(node.label) }}</span>
@@ -331,11 +331,11 @@ onMounted(() => {
             </div>
             <el-tree-v2
               ref="areaTreeRef"
-              show-checkbox
-              :height="treeHeight"
               :data="areaTreeData"
-              :props="areaProps"
               :filter-method="filterMethod"
+              :height="treeHeight"
+              :props="areaProps"
+              show-checkbox
             >
               <template #default="{ node }">
                 <span>{{ transformI18n(node.label) }}</span>
@@ -348,7 +348,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 :deep(.el-dropdown-menu__item i) {
   margin: 0;
 }
@@ -365,14 +365,16 @@ onMounted(() => {
 
 :deep(.myTabs) {
   .el-tabs__header {
-    border: 0;
     height: 0;
     margin: 0;
+    border: 0;
+
     .el-tabs__nav {
       border: 0;
+
       .el-tabs__item {
-        border: 0;
         padding: 0;
+        border: 0;
       }
     }
   }

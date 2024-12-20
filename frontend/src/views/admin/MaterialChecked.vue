@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script lang="tsx" setup>
 import { h, reactive, ref } from "vue";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { defaultPaginationSizes } from "@/views/hooks";
@@ -94,6 +94,7 @@ const pagination = reactive<PaginationProps>({
 const selectedNum = ref(0);
 // 表格ref
 const tableRef = ref();
+
 /** 取消选择 */
 function onSelectionCancel() {
   selectedNum.value = 0;
@@ -370,16 +371,16 @@ function handleCurrentChange(val: number) {
         <el-select-v2
           v-model="optionBar.type"
           :options="typeOpt"
-          placeholder="请选择类型"
           class="!w-[150px]"
+          placeholder="请选择类型"
         />
       </el-form-item>
       <el-form-item label="选择区域" prop="area">
         <el-select-v2
           v-model="optionBar.area"
           :options="areaOpt"
-          placeholder="请选择区域"
           class="!w-[150px]"
+          placeholder="请选择区域"
         />
       </el-form-item>
       <el-form-item label="归还状态" prop="returnStatus">
@@ -391,10 +392,10 @@ function handleCurrentChange(val: number) {
       </el-form-item>
       <el-form-item>
         <el-button
-          type="primary"
+          :disabled="optionBar.area === ''"
           :icon="useRenderIcon(Search)"
           :loading="loading"
-          :disabled="optionBar.area === ''"
+          type="primary"
           @click="onSearch"
         >
           搜索
@@ -402,17 +403,17 @@ function handleCurrentChange(val: number) {
       </el-form-item>
     </el-form>
 
-    <PureTableBar title="借出待审批" :columns="columns" @refresh="onSearch">
+    <PureTableBar :columns="columns" title="借出待审批" @refresh="onSearch">
       <template #buttons>
         <div class="h-full mb-2 pl-4 flex items-center">
           <div class="flex-auto">
             <span
-              style="font-size: var(--el-font-size-base)"
               class="text-[rgba(42,46,54,0.5)] dark:text-[rgba(220,220,242,0.5)]"
+              style="font-size: var(--el-font-size-base)"
             >
               已选 {{ selectedNum }} 项
             </span>
-            <el-button type="primary" text @click="onSelectionCancel">
+            <el-button text type="primary" @click="onSelectionCancel">
               取消选择
             </el-button>
           </div>
@@ -421,9 +422,9 @@ function handleCurrentChange(val: number) {
         <el-popconfirm title="要批量归还吗？" @confirm="onBatchReturn">
           <template #reference>
             <el-button
-              type="success"
               :disabled="selectedNum < 1"
               :icon="useRenderIcon(Approve)"
+              type="success"
             >
               批量归还
             </el-button>
@@ -433,21 +434,21 @@ function handleCurrentChange(val: number) {
       <template v-slot="{ size, dynamicColumns }">
         <pure-table
           ref="tableRef"
-          row-key="id"
-          align-whole="center"
-          table-layout="auto"
-          :loading="loading"
-          :size="size"
-          adaptive
           :adaptiveConfig="{ offsetBottom: 108 }"
-          :data="dataList"
           :columns="dynamicColumns"
-          :pagination="pagination"
-          :paginationSmall="size === 'small'"
+          :data="dataList"
           :header-cell-style="{
             background: 'var(--el-fill-color-light)',
             color: 'var(--el-text-color-primary)'
           }"
+          :loading="loading"
+          :pagination="pagination"
+          :paginationSmall="size === 'small'"
+          :size="size"
+          adaptive
+          align-whole="center"
+          row-key="id"
+          table-layout="auto"
           @selection-change="handleSelectionChange"
           @page-size-change="handleSizeChange"
           @page-current-change="handleCurrentChange"
@@ -457,7 +458,7 @@ function handleCurrentChange(val: number) {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 :deep(.el-dropdown-menu__item i) {
   margin: 0;
 }
@@ -468,6 +469,7 @@ function handleCurrentChange(val: number) {
 
 .search-form {
   display: flex;
+
   :deep(.el-form-item) {
     margin-bottom: 12px;
   }

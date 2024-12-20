@@ -7,18 +7,18 @@ import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
 import { addDialog } from "@/components/ReDialog";
 import type { PaginationProps } from "@pureadmin/table";
 import type { RoleFormItemProps } from "../utils/types";
-import { getKeyList, isAllEmpty, deviceDetection } from "@pureadmin/utils";
+import { deviceDetection, getKeyList, isAllEmpty } from "@pureadmin/utils";
 
 import { ElMessageBox } from "element-plus";
 import {
-  type Ref,
-  h,
-  ref,
-  toRaw,
-  watch,
   computed,
+  h,
+  onMounted,
   reactive,
-  onMounted
+  ref,
+  type Ref,
+  toRaw,
+  watch
 } from "vue";
 import { successNotification } from "@/utils/notification";
 import {
@@ -160,6 +160,8 @@ export function useUser(tableRef: Ref) {
   });
   // 当前密码强度（0-4）
   const curScore = ref();
+
+  const roleId = ref();
   const roleOptions = ref([]);
 
   function onChange({ row, index }) {
@@ -275,7 +277,8 @@ export function useUser(tableRef: Ref) {
       title: `新增用户`,
       props: {
         formInline: {
-          userList: []
+          userList: [],
+          transferList: []
         }
       },
       width: "50%",
@@ -286,20 +289,26 @@ export function useUser(tableRef: Ref) {
       contentRenderer: () => h(editForm, { ref: formRef }),
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
-        const curData = options.props.formInline;
+        const curData = options.props.formInline.userList;
+        const sourceData = options.props.formInline.transferList;
+        const data = sourceData.filter(item =>
+          curData.includes(item.employeeID)
+        );
+
         function chores() {
-          successNotification(`您新增了用户数据`);
+          successNotification(`您新增了用户数据，重复用户数据已自动过滤`);
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
+
         FormRef.validate(valid => {
           if (valid) {
-            if (curData.userList.length > 0) {
-              addUser(curData.userList).then(() => {
+            if (curData.length > 0) {
+              addUser(roleId.value, data).then(() => {
                 chores();
               });
             } else {
-              console.log(curData.userList);
+              console.log(data);
               done();
             }
           }
@@ -357,10 +366,12 @@ export function useUser(tableRef: Ref) {
 
   return {
     form,
+    roleId,
     loading,
     columns,
     dataList,
     treeData,
+    roleOptions,
     treeLoading,
     selectedNum,
     pagination,

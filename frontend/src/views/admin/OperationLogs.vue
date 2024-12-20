@@ -1,6 +1,6 @@
-<script setup lang="tsx">
+<script lang="tsx" setup>
 import dayjs from "dayjs";
-import { ref, reactive, computed, onMounted } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { ElMessageBox, FormInstance } from "element-plus";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { getPickerShortcuts, usePublicHooks } from "./utils";
@@ -13,7 +13,7 @@ import Search from "@iconify-icons/ep/search";
 import { PaginationProps, PureTable } from "@pureadmin/table";
 import { getKeyList } from "@pureadmin/utils";
 import type { SelectOptList } from "@/views/admin/utils/types";
-import { deleteDutyLogs, getDutyNote, getDutyLogList } from "@/api/duty";
+import { deleteDutyLogs, getDutyLogList, getDutyNote } from "@/api/duty";
 import { defaultPaginationSizes } from "@/views/hooks";
 import { getAreaList } from "@/api/base";
 
@@ -264,26 +264,26 @@ onMounted(() => {
         <el-select-v2
           v-model="operationForm.type"
           :options="typeOpt"
-          placeholder="请选择类型"
-          clearable
           class="!w-[150px]"
+          clearable
+          placeholder="请选择类型"
         />
       </el-form-item>
       <el-form-item label="选择区域" prop="area">
         <el-select-v2
           v-model="operationForm.area"
           :options="areaOpt"
-          placeholder="请选择区域"
-          clearable
           class="!w-[150px]"
+          clearable
+          placeholder="请选择区域"
         />
       </el-form-item>
       <el-form-item label="操作状态" prop="status">
         <el-select
           v-model="operationForm.status"
-          placeholder="请选择"
-          clearable
           class="!w-[150px]"
+          clearable
+          placeholder="请选择"
         >
           <el-option label="正常" value="1" />
           <el-option label="异常" value="0" />
@@ -293,18 +293,18 @@ onMounted(() => {
         <el-date-picker
           v-model="operationForm.operatingTime"
           :shortcuts="getPickerShortcuts()"
-          type="datetimerange"
+          end-placeholder="结束日期时间"
           range-separator="至"
           start-placeholder="开始日期时间"
-          end-placeholder="结束日期时间"
+          type="datetimerange"
         />
       </el-form-item>
       <el-form-item>
         <el-button
-          type="primary"
+          :disabled="searchDisable"
           :icon="useRenderIcon(Search)"
           :loading="loading"
-          :disabled="searchDisable"
+          type="primary"
           @click="onSearch"
         >
           搜索
@@ -318,17 +318,17 @@ onMounted(() => {
       </el-form-item>
     </el-form>
 
-    <PureTableBar title="值班日志" :columns="columns" @refresh="onSearch">
+    <PureTableBar :columns="columns" title="值班日志" @refresh="onSearch">
       <template #buttons>
         <div class="h-full mb-2 pl-4 flex items-center">
           <div class="flex-auto">
             <span
-              style="font-size: var(--el-font-size-base)"
               class="text-[rgba(42,46,54,0.5)] dark:text-[rgba(220,220,242,0.5)]"
+              style="font-size: var(--el-font-size-base)"
             >
               已选 {{ selectedNum }} 项
             </span>
-            <el-button type="primary" text @click="onSelectionCancel">
+            <el-button text type="primary" @click="onSelectionCancel">
               取消选择
             </el-button>
           </div>
@@ -336,7 +336,7 @@ onMounted(() => {
 
         <el-popconfirm title="确定要删除所有日志数据吗？" @confirm="clearAll">
           <template #reference>
-            <el-button type="danger" :icon="useRenderIcon(Delete)">
+            <el-button :icon="useRenderIcon(Delete)" type="danger">
               清空日志
             </el-button>
           </template>
@@ -349,38 +349,38 @@ onMounted(() => {
         >
           <div class="flex-auto">
             <span
-              style="font-size: var(--el-font-size-base)"
               class="text-[rgba(42,46,54,0.5)] dark:text-[rgba(220,220,242,0.5)]"
+              style="font-size: var(--el-font-size-base)"
             >
               已选 {{ selectedNum }} 项
             </span>
-            <el-button type="primary" text @click="onSelectionCancel">
+            <el-button text type="primary" @click="onSelectionCancel">
               取消选择
             </el-button>
           </div>
           <el-popconfirm title="是否确认删除?" @confirm="onBatchDel">
             <template #reference>
-              <el-button type="danger" text class="mr-1"> 批量删除 </el-button>
+              <el-button class="mr-1" text type="danger"> 批量删除</el-button>
             </template>
           </el-popconfirm>
         </div>
         <pure-table
           ref="tableRef"
-          row-key="id"
-          align-whole="center"
-          table-layout="auto"
-          :loading="loading"
-          :size="size"
-          adaptive
           :adaptiveConfig="{ offsetBottom: 108 }"
-          :data="dataList"
           :columns="dynamicColumns"
-          :pagination="pagination"
-          :paginationSmall="size === 'small'"
+          :data="dataList"
           :header-cell-style="{
             background: 'var(--el-fill-color-light)',
             color: 'var(--el-text-color-primary)'
           }"
+          :loading="loading"
+          :pagination="pagination"
+          :paginationSmall="size === 'small'"
+          :size="size"
+          adaptive
+          align-whole="center"
+          row-key="id"
+          table-layout="auto"
           @selection-change="handleSelectionChange"
           @page-size-change="handleSizeChange"
           @page-current-change="handleCurrentChange"
@@ -390,7 +390,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 :deep(.el-dropdown-menu__item i) {
   margin: 0;
 }

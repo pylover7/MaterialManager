@@ -8,7 +8,7 @@ import { useFullscreen } from "@vueuse/core";
 import { deviceDetection, isAllEmpty, useGlobal } from "@pureadmin/utils";
 import type { routeMetaType } from "../types";
 import { transformI18n } from "@/plugins/i18n";
-import { router, remainingPaths } from "@/router";
+import { remainingPaths, router } from "@/router";
 import { computed, type CSSProperties, reactive, ref, watch } from "vue";
 import { useAppStoreHook } from "@/store/modules/app";
 import { useUserStoreHook } from "@/store/modules/user";

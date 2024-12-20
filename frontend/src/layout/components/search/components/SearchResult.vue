@@ -1,14 +1,15 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { Props } from "../types";
 import { transformI18n } from "@/plugins/i18n";
 import { useResizeObserver } from "@pureadmin/utils";
 import { useEpThemeStoreHook } from "@/store/modules/epTheme";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
-import { ref, computed, getCurrentInstance, onMounted } from "vue";
+import { computed, getCurrentInstance, onMounted, ref } from "vue";
 import enterOutlined from "@/assets/svg/enter_outlined.svg?component";
 
 interface Emits {
   (e: "update:value", val: string): void;
+
   (e: "enter"): void;
 }
 
@@ -75,8 +76,8 @@ defineExpose({ handleScroll });
       v-for="(item, index) in options"
       :key="item.path"
       :ref="'resultItemRef' + index"
-      class="result-item dark:bg-[#1d1d1d]"
       :style="itemStyle(item)"
+      class="result-item dark:bg-[#1d1d1d]"
       @click="handleTo"
       @mouseenter="handleMouse(item)"
     >

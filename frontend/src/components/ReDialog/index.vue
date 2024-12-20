@@ -1,12 +1,12 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import {
-  type EventType,
   type ButtonProps,
-  type DialogOptions,
   closeDialog,
-  dialogStore
+  type DialogOptions,
+  dialogStore,
+  type EventType
 } from "./index";
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
 import { isFunction } from "@pureadmin/utils";
 import Fullscreen from "@iconify-icons/ri/fullscreen-fill";
 import ExitFullscreen from "@iconify-icons/ri/fullscreen-exit-fill";
@@ -87,14 +87,14 @@ function handleClose(
   <el-dialog
     v-for="(options, index) in dialogStore"
     :key="index"
-    v-bind="options"
     v-model="options.visible"
-    class="pure-dialog"
     :fullscreen="fullscreen ? true : options?.fullscreen ? true : false"
-    @closed="handleClose(options, index)"
-    @opened="eventsCallBack('open', options, index)"
-    @openAutoFocus="eventsCallBack('openAutoFocus', options, index)"
+    class="pure-dialog"
+    v-bind="options"
     @closeAutoFocus="eventsCallBack('closeAutoFocus', options, index)"
+    @closed="handleClose(options, index)"
+    @openAutoFocus="eventsCallBack('openAutoFocus', options, index)"
+    @opened="eventsCallBack('open', options, index)"
   >
     <!-- header -->
     <template
@@ -122,7 +122,6 @@ function handleClose(
           "
         >
           <IconifyIconOffline
-            class="pure-dialog-svg"
             :icon="
               options?.fullscreen
                 ? ExitFullscreen
@@ -130,6 +129,7 @@ function handleClose(
                   ? ExitFullscreen
                   : Fullscreen
             "
+            class="pure-dialog-svg"
           />
         </i>
       </div>
@@ -139,8 +139,8 @@ function handleClose(
       />
     </template>
     <component
-      v-bind="options?.props"
       :is="options.contentRenderer({ options, index })"
+      v-bind="options?.props"
       @close="args => handleClose(options, index, args)"
     />
     <!-- footer -->

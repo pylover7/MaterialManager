@@ -1,10 +1,10 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import Search from "../search/index.vue";
 import Notice from "../notice/index.vue";
 import FullScreen from "./fullScreen.vue";
 import SidebarItem from "./sidebarItem.vue";
 import { isAllEmpty } from "@pureadmin/utils";
-import { ref, nextTick, computed } from "vue";
+import { computed, nextTick, ref } from "vue";
 import { useNav } from "@/layout/hooks/useNav";
 import { useTranslationLang } from "../../hooks/useTranslationLang";
 import { usePermissionStoreHook } from "@/store/modules/permission";
@@ -50,17 +50,17 @@ nextTick(() => {
     </div>
     <el-menu
       ref="menuRef"
-      router
+      :default-active="defaultActive"
+      class="horizontal-header-menu"
       mode="horizontal"
       popper-class="pure-scrollbar"
-      class="horizontal-header-menu"
-      :default-active="defaultActive"
+      router
     >
       <sidebar-item
         v-for="route in usePermissionStoreHook().wholeMenus"
         :key="route.path"
-        :item="route"
         :base-path="route.path"
+        :item="route"
       />
     </el-menu>
     <div class="horizontal-header-right">
@@ -74,8 +74,8 @@ nextTick(() => {
         <template #dropdown>
           <el-dropdown-menu class="translation">
             <el-dropdown-item
-              :style="getDropdownItemStyle(locale, 'zh')"
               :class="['dark:!text-white', getDropdownItemClass(locale, 'zh')]"
+              :style="getDropdownItemStyle(locale, 'zh')"
               @click="translationCh"
             >
               <span v-show="locale === 'zh'" class="check-zh">
@@ -84,8 +84,8 @@ nextTick(() => {
               简体中文
             </el-dropdown-item>
             <el-dropdown-item
-              :style="getDropdownItemStyle(locale, 'en')"
               :class="['dark:!text-white', getDropdownItemClass(locale, 'en')]"
+              :style="getDropdownItemStyle(locale, 'en')"
               @click="translationEn"
             >
               <span v-show="locale === 'en'" class="check-en">
@@ -119,8 +119,8 @@ nextTick(() => {
         </template>
       </el-dropdown>
       <span
-        class="set-icon navbar-bg-hover"
         :title="t('buttons.pureSystemSet')"
+        class="set-icon navbar-bg-hover"
         @click="onPanel"
       >
         <IconifyIconOffline :icon="Setting" />

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useRouter } from "vue-router";
 import noServer from "@/assets/status/500.svg?component";
 
@@ -15,11 +15,6 @@ const router = useRouter();
     <div class="ml-12">
       <p
         v-motion
-        class="font-medium text-4xl mb-4 dark:text-white"
-        :initial="{
-          opacity: 0,
-          y: 100
-        }"
         :enter="{
           opacity: 1,
           y: 0,
@@ -27,16 +22,16 @@ const router = useRouter();
             delay: 80
           }
         }"
+        :initial="{
+          opacity: 0,
+          y: 100
+        }"
+        class="font-medium text-4xl mb-4 dark:text-white"
       >
         500
       </p>
       <p
         v-motion
-        class="mb-4 text-gray-500"
-        :initial="{
-          opacity: 0,
-          y: 100
-        }"
         :enter="{
           opacity: 1,
           y: 0,
@@ -44,16 +39,16 @@ const router = useRouter();
             delay: 120
           }
         }"
+        :initial="{
+          opacity: 0,
+          y: 100
+        }"
+        class="mb-4 text-gray-500"
       >
         抱歉，服务器出错了
       </p>
       <el-button
         v-motion
-        type="primary"
-        :initial="{
-          opacity: 0,
-          y: 100
-        }"
         :enter="{
           opacity: 1,
           y: 0,
@@ -61,6 +56,11 @@ const router = useRouter();
             delay: 160
           }
         }"
+        :initial="{
+          opacity: 0,
+          y: 100
+        }"
+        type="primary"
         @click="router.push('/')"
       >
         返回首页

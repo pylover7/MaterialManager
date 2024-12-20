@@ -10,6 +10,7 @@ interface FormItemProps {
   status: number;
   remark: string;
 }
+
 interface FormProps {
   formInline: FormItemProps;
 }

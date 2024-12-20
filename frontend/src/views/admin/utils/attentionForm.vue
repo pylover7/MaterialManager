@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { reactive, ref } from "vue";
 import { FormItemProps, FormProps } from "./types";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
@@ -8,9 +8,11 @@ import { successNotification } from "@/utils/notification";
 import { deleteDutyOverList } from "@/api/duty";
 
 const attentionFormRef = ref();
+
 function getRef() {
   return attentionFormRef.value;
 }
+
 defineExpose({ getRef });
 
 const props = withDefaults(defineProps<FormProps>(), {
@@ -58,9 +60,9 @@ const editForm = () => {
     <el-form-item
       v-for="(item, index) in attList"
       :key="item.key"
+      :label="(index + 1).toString()"
       :prop="`${index}.content`"
       :rules="formItemRules"
-      :label="(index + 1).toString()"
     >
       <el-row :gutter="10" style="width: 100%">
         <el-col :span="20">
@@ -69,10 +71,10 @@ const editForm = () => {
         <el-col :span="4">
           <el-button
             v-show="!editAble"
-            type="danger"
+            :icon="useRenderIcon(Minus)"
             circle
             size="small"
-            :icon="useRenderIcon(Minus)"
+            type="danger"
             @click.prevent="removeAttItem(item)"
           />
         </el-col>
@@ -81,22 +83,20 @@ const editForm = () => {
     <el-form-item>
       <el-row :gutter="10">
         <el-col :span="12">
-          <el-button type="primary" @click="editForm">{{
-            editAble ? "修改" : "保存"
-          }}</el-button>
+          <el-button type="primary" @click="editForm"
+            >{{ editAble ? "修改" : "保存" }}
+          </el-button>
         </el-col>
         <el-col :span="12">
           <el-button
-            type="primary"
-            :icon="useRenderIcon(Add)"
             :disabled="editAble"
+            :icon="useRenderIcon(Add)"
+            type="primary"
             @click="addAttention"
-            >新建行</el-button
-          >
+            >新建行
+          </el-button>
         </el-col>
       </el-row>
     </el-form-item>
   </el-form>
 </template>
-
-<style scoped lang="scss"></style>

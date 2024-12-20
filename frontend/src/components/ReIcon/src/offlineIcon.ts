@@ -5,13 +5,9 @@ import { addIcon } from "@iconify/vue/dist/offline";
 // @iconify-icons/ep
 import Lollipop from "@iconify-icons/ep/lollipop";
 import HomeFilled from "@iconify-icons/ep/home-filled";
-addIcon("lollipop", Lollipop);
-addIcon("Home", HomeFilled);
 // @iconify-icons/ri
 import Search from "@iconify-icons/ri/search-line";
 import InformationLine from "@iconify-icons/ri/information-line";
-addIcon("searchLine", Search);
-addIcon("informationLine", InformationLine);
 // @iconify-icons/fluent
 import Desktop from "@iconify-icons/fluent/desktop-flow-24-regular";
 import BoxSearch from "@iconify-icons/fluent/box-search-16-regular";
@@ -32,6 +28,12 @@ import BoxMultipleArrowRight from "@iconify-icons/fluent/box-multiple-arrow-righ
 import PersonBoard from "@iconify-icons/fluent/person-board-32-regular";
 import PersonVoice from "@iconify-icons/fluent/person-voice-24-regular";
 import DataTreemap from "@iconify-icons/fluent/data-treemap-24-regular";
+
+addIcon("lollipop", Lollipop);
+addIcon("Home", HomeFilled);
+
+addIcon("searchLine", Search);
+addIcon("informationLine", InformationLine);
 
 addIcon("Glb", Desktop);
 addIcon("Material", BoxSearch);
