@@ -9,7 +9,7 @@ from app.schemas.login import CredentialsSchema
 from app.schemas.users import UserCreate, UserUpdate
 
 from .role import role_controller
-from ..models import User
+from ..models import User, Role
 from ..utils import now, generate_uuid
 from ..utils.cnnp import ldap_auth
 from ..utils.log import loginLogger
@@ -54,7 +54,9 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
                 department=ldapUser.department,
                 company=ldapUser.company
             )
+            role = await Role.filter(default=1).first()
             user = await self.create(userCreate)
+            await user.roles.add(role)
         if now(0) - user.updated_at  < timedelta(hours=1) and user.status == 0:
             remaining_time = 60 - int((now(0) - user.updated_at).total_seconds()) // 60
             raise HTTPException(status_code=400,

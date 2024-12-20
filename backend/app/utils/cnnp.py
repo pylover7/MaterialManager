@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from ldap3 import Server, Connection, ALL, SUBTREE
 
 from app.utils.log import logger
-from app.schemas.users import UserLdap
+from app.schemas.users import UserLdap, UserCreate
 from app.settings import settings
 
 
@@ -65,15 +65,14 @@ class LDAPAuthentication:
         if self.conn.search(settings.LDAP_BASE, f'({fiterKey}={fiterValue})', attributes=self.attr):
             userList = self.conn.entries
             for user in userList:
-                userList[userList.index(user)] = UserLdap(
+                userList[userList.index(user)] = UserCreate(
                     company=user.company.value,
                     department=user.department.value,
                     employeeID=user.employeeID.value,
                     mobile=user.mobile.value,
-                    mail=user.mail.value,
-                    dn=user.distinguishedName.value,
-                    sAMAccountName=user.sAMAccountName.value,
-                    name=user.name.value,
+                    email=user.mail.value,
+                    username=user.sAMAccountName.value,
+                    nickname=user.name.value,
                 ).model_dump()
             self.conn.unbind()
             return userList

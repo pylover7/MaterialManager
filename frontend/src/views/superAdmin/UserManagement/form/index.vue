@@ -5,17 +5,21 @@ import Search from "@iconify-icons/ep/search";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { getLdapUserList } from "@/api/admin";
 
-const props = withDefaults(defineProps<{ formInline: { userList: [] } }>(), {
-  formInline: () => ({
-    userList: []
-  })
-});
+const props = withDefaults(
+  defineProps<{ formInline: { userList: []; transferList: any[] } }>(),
+  {
+    formInline: () => ({
+      userList: [],
+      transferList: []
+    })
+  }
+);
 
 const ruleFormRef = ref();
 const newFormInline = ref(props.formInline);
 const transferProps = {
   key: "employeeID",
-  value: "name"
+  value: "nickname"
 };
 
 function getRef() {
@@ -24,11 +28,10 @@ function getRef() {
 
 const select = ref("sAMAccountName");
 const filter = ref("");
-const transferList = ref([]);
 
 const searchUser = () => {
   getLdapUserList(select.value, filter.value).then(res => {
-    transferList.value = res.data;
+    newFormInline.value.transferList = res.data;
   });
 };
 
@@ -52,11 +55,11 @@ defineExpose({ getRef });
       filter-placeholder="请输入"
       :titles="['搜索用户', '新增用户']"
       :button-texts="['退回', '新增']"
-      :data="transferList"
+      :data="newFormInline.transferList"
       style="padding: 10px 0"
     >
       <template #default="{ option }">
-        <span>{{ option.sAMAccountName }} - {{ option.name }}</span>
+        <span>{{ option.username }} - {{ option.nickname }}</span>
       </template>
       <template #right-footer>
         <el-button class="transfer-footer" size="small" @click="clearAll"

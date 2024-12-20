@@ -36,6 +36,7 @@ class Role(BaseModel, TimestampMixin):
     name = fields.CharField(max_length=20, unique=True, description="角色名称")
     code = fields.CharField(max_length=20, unique=True, description="角色编码")
     status = fields.IntField(default=0, description="状态：启用/停用")
+    default = fields.IntField(default=0, description="是否为默认角色")
     remark = fields.CharField(max_length=500, null=True, blank=True, description="角色描述")
 
     menus: fields.ManyToManyRelation["Menu"] = fields.ManyToManyField("models.Menu", related_name="roles")

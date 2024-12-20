@@ -275,7 +275,8 @@ export function useUser(tableRef: Ref) {
       title: `新增用户`,
       props: {
         formInline: {
-          userList: []
+          userList: [],
+          transferList: []
         }
       },
       width: "50%",
@@ -286,20 +287,24 @@ export function useUser(tableRef: Ref) {
       contentRenderer: () => h(editForm, { ref: formRef }),
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
-        const curData = options.props.formInline;
+        const curData = options.props.formInline.userList;
+        const sourceData = options.props.formInline.transferList;
+        const data = sourceData.filter(item =>
+          curData.includes(item.employeeID)
+        );
         function chores() {
-          successNotification(`您新增了用户数据`);
+          successNotification(`您新增了用户数据，重复用户数据已自动过滤`);
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
         FormRef.validate(valid => {
           if (valid) {
-            if (curData.userList.length > 0) {
-              addUser(curData.userList).then(() => {
+            if (curData.length > 0) {
+              addUser(data).then(() => {
                 chores();
               });
             } else {
-              console.log(curData.userList);
+              console.log(data);
               done();
             }
           }
