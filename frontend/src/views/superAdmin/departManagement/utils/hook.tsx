@@ -4,9 +4,9 @@ import { handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 import { usePublicHooks } from "@/views/hooks";
 import { addDialog } from "@/components/ReDialog";
-import { reactive, ref, onMounted, h } from "vue";
+import { h, onMounted, reactive, ref } from "vue";
 import type { FormItemProps } from "../utils/types";
-import { cloneDeep, isAllEmpty, deviceDetection } from "@pureadmin/utils";
+import { cloneDeep, deviceDetection, isAllEmpty } from "@pureadmin/utils";
 import {
   addDepart,
   deleteDepart,
@@ -139,6 +139,7 @@ export function useDept() {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
+
         /** 关闭弹框，刷新表格数据 */
         function chores() {
           message(`您${title}了部门名称为【${curData.name}】的这条数据`, {
@@ -147,6 +148,7 @@ export function useDept() {
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
+
         FormRef.validate(valid => {
           if (valid) {
             delete curData.higherDeptOptions;
@@ -174,7 +176,9 @@ export function useDept() {
       message("该部门下存在员工，无法删除", { type: "warning" });
     } else {
       deleteDepart(row.id, row.name).then(() => {
-        message(`您删除了部门名称为【${row.name}】的这条数据`, { type: "success" });
+        message(`您删除了部门名称为【${row.name}】的这条数据`, {
+          type: "success"
+        });
         onSearch();
       });
     }

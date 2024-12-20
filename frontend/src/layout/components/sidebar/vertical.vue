@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import Logo from "./logo.vue";
 import { useRoute } from "vue-router";
 import { emitter } from "@/utils/mitt";
@@ -7,10 +7,10 @@ import LeftCollapse from "./leftCollapse.vue";
 import { useNav } from "@/layout/hooks/useNav";
 import CenterCollapse from "./centerCollapse.vue";
 import { responsiveStorageNameSpace } from "@/config";
-import { storageLocal, isAllEmpty } from "@pureadmin/utils";
+import { isAllEmpty, storageLocal } from "@pureadmin/utils";
 import { findRouteByPath, getParentPaths } from "@/router/utils";
 import { usePermissionStoreHook } from "@/store/modules/permission";
-import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 const route = useRoute();
 const isShow = ref(false);
@@ -95,25 +95,25 @@ onBeforeUnmount(() => {
   >
     <Logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar
-      wrap-class="scrollbar-wrapper"
       :class="[device === 'mobile' ? 'mobile' : 'pc']"
+      wrap-class="scrollbar-wrapper"
     >
       <el-menu
-        router
-        unique-opened
-        mode="vertical"
-        popper-class="pure-scrollbar"
-        class="outer-most select-none"
         :collapse="isCollapse"
         :collapse-transition="false"
-        :popper-effect="tooltipEffect"
         :default-active="defaultActive"
+        :popper-effect="tooltipEffect"
+        class="outer-most select-none"
+        mode="vertical"
+        popper-class="pure-scrollbar"
+        router
+        unique-opened
       >
         <sidebar-item
           v-for="routes in menuData"
           :key="routes.path"
-          :item="routes"
           :base-path="routes.path"
+          :item="routes"
           class="outer-most select-none"
         />
       </el-menu>

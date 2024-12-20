@@ -1,13 +1,13 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import {
-  ref,
-  unref,
-  watch,
-  reactive,
   computed,
   nextTick,
+  onBeforeMount,
   onUnmounted,
-  onBeforeMount
+  reactive,
+  ref,
+  unref,
+  watch
 } from "vue";
 import panel from "../panel/index.vue";
 import { emitter } from "@/utils/mitt";
@@ -17,7 +17,7 @@ import { toggleTheme } from "@pureadmin/theme/dist/browser-utils";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import Segmented, { type OptionsType } from "@/components/ReSegmented";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
-import { useDark, useGlobal, debounce, isNumber } from "@pureadmin/utils";
+import { debounce, isNumber, useDark, useGlobal } from "@pureadmin/utils";
 
 import Check from "@iconify-icons/ep/check";
 import LeftArrow from "@iconify-icons/ri/arrow-left-s-line";
@@ -311,9 +311,9 @@ onUnmounted(() => removeMatchMedia);
     <div class="p-5">
       <p :class="pClass">整体风格</p>
       <Segmented
-        class="select-none"
         :modelValue="overallStyle === 'system' ? 2 : dataTheme ? 1 : 0"
         :options="themeOptions"
+        class="select-none"
         @change="
           theme => {
             theme.index === 1 && theme.index !== 2
@@ -336,9 +336,9 @@ onUnmounted(() => removeMatchMedia);
           @click="setLayoutThemeColor(item.themeColor)"
         >
           <el-icon
-            style="margin: 0.1em 0.1em 0 0"
-            :size="17"
             :color="getThemeColor(item.themeColor)"
+            :size="17"
+            style="margin: 0.1em 0.1em 0 0"
           >
             <IconifyIconOffline :icon="Check" />
           </el-icon>
@@ -390,16 +390,16 @@ onUnmounted(() => removeMatchMedia);
       <span v-if="useAppStoreHook().getViewportWidth > 1280">
         <p :class="['mt-5', pClass]">页宽</p>
         <Segmented
-          class="mb-2 select-none"
           :modelValue="isNumber(settings.stretch) ? 1 : 0"
           :options="stretchTypeOptions"
+          class="mb-2 select-none"
           @change="stretchTypeChange"
         />
         <el-input-number
           v-if="isNumber(settings.stretch)"
           v-model="settings.stretch as number"
-          :min="1280"
           :max="1600"
+          :min="1280"
           controls-position="right"
           @change="value => setStretch(value)"
         />
@@ -410,8 +410,8 @@ onUnmounted(() => removeMatchMedia);
           @click="setStretch(!settings.stretch)"
         >
           <div
-            class="flex-bc transition-all duration-300"
             :class="[settings.stretch ? 'w-[24%]' : 'w-[50%]']"
+            class="flex-bc transition-all duration-300"
             style="color: var(--el-color-primary)"
           >
             <IconifyIconOffline
@@ -432,9 +432,9 @@ onUnmounted(() => removeMatchMedia);
 
       <p :class="['mt-4', pClass]">页签风格</p>
       <Segmented
-        class="select-none"
         :modelValue="markValue === 'smart' ? 0 : 1"
         :options="markOptions"
+        class="select-none"
         @change="onChange"
       />
 
@@ -444,9 +444,9 @@ onUnmounted(() => removeMatchMedia);
           <span class="dark:text-white">灰色模式</span>
           <el-switch
             v-model="settings.greyVal"
-            inline-prompt
             active-text="开"
             inactive-text="关"
+            inline-prompt
             @change="greyChange"
           />
         </li>
@@ -454,9 +454,9 @@ onUnmounted(() => removeMatchMedia);
           <span class="dark:text-white">色弱模式</span>
           <el-switch
             v-model="settings.weakVal"
-            inline-prompt
             active-text="开"
             inactive-text="关"
+            inline-prompt
             @change="weekChange"
           />
         </li>
@@ -464,9 +464,9 @@ onUnmounted(() => removeMatchMedia);
           <span class="dark:text-white">隐藏标签页</span>
           <el-switch
             v-model="settings.tabsVal"
-            inline-prompt
             active-text="开"
             inactive-text="关"
+            inline-prompt
             @change="tagsChange"
           />
         </li>
@@ -474,9 +474,9 @@ onUnmounted(() => removeMatchMedia);
           <span class="dark:text-white">隐藏页脚</span>
           <el-switch
             v-model="settings.hideFooter"
-            inline-prompt
             active-text="开"
             inactive-text="关"
+            inline-prompt
             @change="hideFooterChange"
           />
         </li>
@@ -484,11 +484,11 @@ onUnmounted(() => removeMatchMedia);
           <span class="dark:text-white">Logo</span>
           <el-switch
             v-model="logoVal"
-            inline-prompt
             :active-value="true"
             :inactive-value="false"
             active-text="开"
             inactive-text="关"
+            inline-prompt
             @change="logoChange"
           />
         </li>
@@ -496,9 +496,9 @@ onUnmounted(() => removeMatchMedia);
           <span class="dark:text-white">页签持久化</span>
           <el-switch
             v-model="settings.multiTagsCache"
-            inline-prompt
             active-text="开"
             inactive-text="关"
+            inline-prompt
             @change="multiTagsCacheChange"
           />
         </li>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { match } from "pinyin-pro";
 import { useI18n } from "vue-i18n";
 import { getConfig } from "@/config";
@@ -8,9 +8,9 @@ import SearchFooter from "./SearchFooter.vue";
 import { useNav } from "@/layout/hooks/useNav";
 import { transformI18n } from "@/plugins/i18n";
 import SearchHistory from "./SearchHistory.vue";
-import type { optionsItem, dragItem } from "../types";
-import { ref, computed, shallowRef, watch } from "vue";
-import { useDebounceFn, onKeyStroke } from "@vueuse/core";
+import type { dragItem, optionsItem } from "../types";
+import { computed, ref, shallowRef, watch } from "vue";
+import { onKeyStroke, useDebounceFn } from "@vueuse/core";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import { cloneDeep, isAllEmpty, storageLocal } from "@pureadmin/utils";
 import Search from "@iconify-icons/ri/search-line";
@@ -95,12 +95,14 @@ function setStorageItem(key, value) {
 /** 将菜单树形结构扁平化为一维数组，用于菜单查询 */
 function flatTree(arr) {
   const res = [];
+
   function deep(arr) {
     arr.forEach(item => {
       res.push(item);
       item.children && deep(item.children);
     });
   }
+
   deep(arr);
   return res;
 }
@@ -276,24 +278,24 @@ onKeyStroke("ArrowDown", handleDown);
 <template>
   <el-dialog
     v-model="show"
-    top="5vh"
-    class="pure-search-dialog"
-    :show-close="false"
-    :width="device === 'mobile' ? '80vw' : '40vw'"
     :before-close="handleClose"
+    :show-close="false"
     :style="{
       borderRadius: '6px'
     }"
+    :width="device === 'mobile' ? '80vw' : '40vw'"
     append-to-body
-    @opened="inputRef.focus()"
+    class="pure-search-dialog"
+    top="5vh"
     @closed="inputRef.blur()"
+    @opened="inputRef.focus()"
   >
     <el-input
       ref="inputRef"
       v-model="keyword"
-      size="large"
       clearable
       placeholder="搜索菜单（中文模式下支持拼音搜索）"
+      size="large"
       @input="handleSearch"
     >
       <template #prefix>
@@ -312,8 +314,8 @@ onKeyStroke("ArrowDown", handleDown);
           v-model:value="historyPath"
           :options="historyOptions"
           @click="handleEnter"
-          @delete="handleDelete"
           @collect="handleCollect"
+          @delete="handleDelete"
           @drag="handleDrag"
         />
         <SearchResult

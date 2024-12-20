@@ -17,6 +17,7 @@ interface FormItemProps {
   };
   remark: string;
 }
+
 interface FormProps {
   formInline: FormItemProps;
 }
@@ -29,6 +30,7 @@ interface RoleFormItemProps {
   /** 选中的角色列表 */
   ids: Record<number, unknown>[];
 }
+
 interface RoleFormProps {
   formInline: RoleFormItemProps;
 }

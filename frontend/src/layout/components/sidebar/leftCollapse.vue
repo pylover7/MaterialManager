@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed } from "vue";
 import { useGlobal } from "@pureadmin/utils";
 import { useNav } from "@/layout/hooks/useNav";
@@ -49,8 +49,8 @@ const toggleClick = () => {
         hideOnClick: 'toggle',
         placement: 'right'
       }"
-      :icon="MenuFold"
       :class="[iconClass, themeColor === 'light' ? '' : 'text-primary']"
+      :icon="MenuFold"
       :style="{ transform: props.isActive ? 'none' : 'rotateY(180deg)' }"
       @click="toggleClick"
     />

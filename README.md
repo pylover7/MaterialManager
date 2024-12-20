@@ -16,22 +16,22 @@
 构建镜像
 
 ```bash
-docker build -t material:1.0.4 .
+docker build -t material:1.0.5 .
 ```
 
 保存镜像
 ```bash
-docker save material:1.0.4 -o material104.tar
+docker save material:1.0.5 -o material105.tar
 ```
 加载镜像
 ```bash
-docker load -i material104.tar
+docker load -i material105.tar
 ```
 
 启动容器
 
 ```bash
-docker run -d --restart=always --name=material-manager -p 8080:80 material-manager:0.0.2
+docker-compose up -d
 ```
 
 访问 http://localhost:8080/ 即可

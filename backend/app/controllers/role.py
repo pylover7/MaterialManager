@@ -1,5 +1,3 @@
-from typing import List
-
 from app.core.crud import CRUDBase
 from app.models import MaterialArea
 from app.models.users import Api, Menu, Role
@@ -28,6 +26,10 @@ class RoleController(CRUDBase[Role, RoleCreate, RoleUpdate]):
         for area_id in area_ids:
             area_obj = await MaterialArea.filter(id=area_id).first()
             await role.areas.add(area_obj)
+
+    async def setDefault(self, id: int):
+        await self.model.filter().update(default=0)
+        await self.model.filter(id=id).update(default=1)
 
 
 role_controller = RoleController()

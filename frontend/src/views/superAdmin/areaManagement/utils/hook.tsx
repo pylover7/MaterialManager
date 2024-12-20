@@ -7,7 +7,7 @@ import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "../utils/types";
 import type { PaginationProps } from "@pureadmin/table";
 import { deviceDetection } from "@pureadmin/utils";
-import { reactive, ref, onMounted, h } from "vue";
+import { h, onMounted, reactive, ref } from "vue";
 import { successNotification } from "@/utils/notification";
 import {
   addArea,
@@ -208,6 +208,7 @@ export function useRole() {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
+
         function chores() {
           successNotification(
             `您${title}了区域名称为${curData.name}的这条数据`
@@ -215,6 +216,7 @@ export function useRole() {
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
+
         FormRef.validate(valid => {
           if (valid) {
             // 表单规则校验通过

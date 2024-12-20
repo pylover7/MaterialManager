@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import editForm from "../form.vue";
-import { handleTree, buildApiTree } from "@/utils/tree";
+import { buildApiTree, handleTree } from "@/utils/tree";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
 import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
@@ -8,8 +8,8 @@ import { transformI18n } from "@/plugins/i18n";
 import { addDialog } from "@/components/ReDialog";
 import type { FormItemProps } from "../utils/types";
 import type { PaginationProps } from "@pureadmin/table";
-import { getKeyList, deviceDetection } from "@pureadmin/utils";
-import { type Ref, reactive, ref, onMounted, h, toRaw, watch } from "vue";
+import { deviceDetection, getKeyList } from "@pureadmin/utils";
+import { h, onMounted, reactive, type Ref, ref, toRaw, watch } from "vue";
 import type { OptionsType } from "@/components/ReSegmented";
 import { successNotification } from "@/utils/notification";
 import {
@@ -20,6 +20,7 @@ import {
   getMenuList,
   getRoleAuth,
   getRoleList,
+  setDefaultRole,
   updateRole,
   updateRoleAuth
 } from "@/api/admin";
@@ -121,6 +122,24 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
       minWidth: 90
     },
     {
+      label: "默认",
+      cellRenderer: scope => (
+        <el-switch
+          size={scope.props.size === "small" ? "small" : "default"}
+          loading={switchLoadMap.value[scope.index]?.loading}
+          v-model={scope.row.default}
+          active-value={1}
+          inactive-value={0}
+          active-text="默认"
+          inactive-text="非默"
+          inline-prompt
+          style={switchStyle.value}
+          onChange={() => onDefaultChange(scope as any)}
+        />
+      ),
+      minWidth: 90
+    },
+    {
       label: "备注",
       prop: "remark",
       minWidth: 160
@@ -191,6 +210,63 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
       });
   }
 
+  function onDefaultChange({ row, index }) {
+    ElMessageBox.confirm(
+      `确认要<strong>${
+        row.default === 0 ? "取消" : "设置"
+      }</strong>【<strong style='color:var(--el-color-primary)'>${
+        row.name
+      }</strong>】默认吗?`,
+      "系统提示",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        dangerouslyUseHTMLString: true,
+        draggable: true
+      }
+    )
+      .then(() => {
+        if (row.status == 0) {
+          message("请先启用角色", { type: "warning" });
+          row.default === 0 ? (row.default = 1) : (row.default = 0);
+          return;
+        }
+        switchLoadMap.value[index] = Object.assign(
+          {},
+          switchLoadMap.value[index],
+          {
+            loading: true
+          }
+        );
+        setDefaultRole(row.id)
+          .then(() => {
+            setTimeout(() => {
+              switchLoadMap.value[index] = Object.assign(
+                {},
+                switchLoadMap.value[index],
+                {
+                  loading: false
+                }
+              );
+              message(
+                `已${row.default === 0 ? "取消" : "设置"}${row.name}默认`,
+                {
+                  type: "success"
+                }
+              );
+            }, 300);
+            onSearch();
+          })
+          .catch(() => {
+            row.default === 0 ? (row.default = 1) : (row.default = 0);
+          });
+      })
+      .catch(() => {
+        row.default === 0 ? (row.default = 1) : (row.default = 0);
+      });
+  }
+
   function handleDelete(row) {
     deleteRole(row.id, row.name).then(() => {
       message(`您删除了角色名称为【${row.name}】的这条数据`, {
@@ -216,19 +292,18 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
 
   async function onSearch() {
     loading.value = true;
-    const { data, total, currentPage, pageSize } = await getRoleList(
-      pagination.currentPage,
-      pagination.pageSize,
-      toRaw(form)
-    );
-    dataList.value = data;
-    pagination.total = total;
-    pagination.pageSize = pageSize;
-    pagination.currentPage = currentPage;
-
-    setTimeout(() => {
-      loading.value = false;
-    }, 500);
+    getRoleList(pagination.currentPage, pagination.pageSize, toRaw(form))
+      .then(({ data, total, pageSize, currentPage }) => {
+        dataList.value = data;
+        pagination.total = total;
+        pagination.pageSize = pageSize;
+        pagination.currentPage = currentPage;
+      })
+      .finally(() => {
+        setTimeout(() => {
+          loading.value = false;
+        }, 500);
+      });
   }
 
   const resetForm = formEl => {
@@ -257,6 +332,7 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
       beforeSure: (done, { options }) => {
         const FormRef = formRef.value.getRef();
         const curData = options.props.formInline as FormItemProps;
+
         function chores() {
           successNotification(
             `您${title}了角色名称为【${curData.name}】的这条数据`
@@ -264,6 +340,7 @@ export function useRole(menuTreeRef: Ref, apiTreeRef: Ref, areaTreeRef: Ref) {
           done(); // 关闭弹框
           onSearch(); // 刷新表格数据
         }
+
         FormRef.validate(valid => {
           if (valid) {
             // 表单规则校验通过

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import Search from "./search/index.vue";
 import mixNav from "./sidebar/mixNav.vue";
 import { useNav } from "@/layout/hooks/useNav";
@@ -7,8 +7,8 @@ import Breadcrumb from "./sidebar/breadCrumb.vue";
 import topCollapse from "./sidebar/topCollapse.vue";
 import { useTranslationLang } from "../hooks/useTranslationLang";
 import LogoutCircleRLine from "@iconify-icons/ri/logout-circle-r-line";
-import ResetPwd from "@iconify-icons/ri/lock-password-line";
 import Setting from "@iconify-icons/ri/settings-3-line";
+
 const {
   layout,
   device,
@@ -30,8 +30,8 @@ const { t, locale, translationCh, translationEn } = useTranslationLang();
   <div class="navbar bg-[#fff] shadow-sm shadow-[rgba(0,21,41,0.08)]">
     <topCollapse
       v-if="device === 'mobile'"
-      class="hamburger-container"
       :is-active="pureApp.sidebar.opened"
+      class="hamburger-container"
       @toggleClick="toggleSideBar"
     />
 
@@ -65,8 +65,8 @@ const { t, locale, translationCh, translationEn } = useTranslationLang();
         </template>
       </el-dropdown>
       <span
-        class="set-icon navbar-bg-hover"
         :title="t('buttons.pureSystemSet')"
+        class="set-icon navbar-bg-hover"
         @click="onPanel"
       >
         <IconifyIconOffline :icon="Setting" />

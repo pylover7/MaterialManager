@@ -1,12 +1,12 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useRole } from "./utils/hook";
-import { ref, nextTick, onMounted } from "vue";
+import { nextTick, onMounted, ref } from "vue";
 import { PureTableBar } from "@/components/RePureTableBar";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import {
   delay,
-  subBefore,
   deviceDetection,
+  subBefore,
   useResizeObserver
 } from "@pureadmin/utils";
 
@@ -66,35 +66,35 @@ onMounted(() => {
       <el-form-item label="区域名称：" prop="name">
         <el-input
           v-model="form.name"
-          placeholder="请输入区域名称"
-          clearable
           class="!w-[180px]"
+          clearable
+          placeholder="请输入区域名称"
         />
       </el-form-item>
       <el-form-item label="区域标识：" prop="code">
         <el-input
           v-model="form.code"
-          placeholder="请输入区域标识"
-          clearable
           class="!w-[180px]"
+          clearable
+          placeholder="请输入区域标识"
         />
       </el-form-item>
       <el-form-item label="状态：" prop="status">
         <el-select
           v-model="form.status"
-          placeholder="请选择状态"
-          clearable
           class="!w-[180px]"
+          clearable
+          placeholder="请选择状态"
         >
-          <el-option label="已启用" :value="1" />
-          <el-option label="已停用" :value="0" />
+          <el-option :value="1" label="已启用" />
+          <el-option :value="0" label="已停用" />
         </el-select>
       </el-form-item>
       <el-form-item>
         <el-button
-          type="primary"
           :icon="useRenderIcon(Search)"
           :loading="loading"
+          type="primary"
           @click="onSearch"
         >
           搜索
@@ -111,15 +111,15 @@ onMounted(() => {
     >
       <PureTableBar
         :class="[isShow && !deviceDetection() ? '!w-[60vw]' : 'w-full']"
+        :columns="columns"
         style="transition: width 220ms cubic-bezier(0.4, 0, 0.2, 1)"
         title="区域管理"
-        :columns="columns"
         @refresh="onSearch"
       >
         <template #buttons>
           <el-button
-            type="primary"
             :icon="useRenderIcon(AddFill)"
+            type="primary"
             @click="openDialog()"
           >
             新增区域
@@ -128,33 +128,33 @@ onMounted(() => {
         <template v-slot="{ size, dynamicColumns }">
           <pure-table
             ref="tableRef"
-            align-whole="center"
-            showOverflowTooltip
-            table-layout="auto"
-            :loading="loading"
-            :size="size"
-            adaptive
-            :row-style="rowStyle"
             :adaptiveConfig="{ offsetBottom: 108 }"
-            :data="dataList"
             :columns="dynamicColumns"
-            :pagination="pagination"
-            :paginationSmall="size === 'small'"
+            :data="dataList"
             :header-cell-style="{
               background: 'var(--el-fill-color-light)',
               color: 'var(--el-text-color-primary)'
             }"
+            :loading="loading"
+            :pagination="pagination"
+            :paginationSmall="size === 'small'"
+            :row-style="rowStyle"
+            :size="size"
+            adaptive
+            align-whole="center"
+            showOverflowTooltip
+            table-layout="auto"
             @selection-change="handleSelectionChange"
             @page-size-change="handleSizeChange"
             @page-current-change="handleCurrentChange"
           >
             <template #operation="{ row }">
               <el-button
+                :icon="useRenderIcon(EditPen)"
+                :size="size"
                 class="reset-margin"
                 link
                 type="primary"
-                :size="size"
-                :icon="useRenderIcon(EditPen)"
                 @click="openDialog('修改', row)"
               >
                 修改
@@ -165,11 +165,11 @@ onMounted(() => {
               >
                 <template #reference>
                   <el-button
+                    :icon="useRenderIcon(Delete)"
+                    :size="size"
                     class="reset-margin"
                     link
                     type="primary"
-                    :size="size"
-                    :icon="useRenderIcon(Delete)"
                   >
                     删除
                   </el-button>
@@ -183,7 +183,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 :deep(.el-dropdown-menu__item i) {
   margin: 0;
 }
@@ -200,14 +200,16 @@ onMounted(() => {
 
 :deep(.myTabs) {
   .el-tabs__header {
-    border: 0;
     height: 0;
     margin: 0;
+    border: 0;
+
     .el-tabs__nav {
       border: 0;
+
       .el-tabs__item {
-        border: 0;
         padding: 0;
+        border: 0;
       }
     }
   }

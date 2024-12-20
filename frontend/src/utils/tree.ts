@@ -199,6 +199,7 @@ export const handleTree = (
       }
     }
   }
+
   return tree;
 };
 

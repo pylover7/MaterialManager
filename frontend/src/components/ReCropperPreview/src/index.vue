@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script lang="tsx" setup>
 import { ref } from "vue";
 import ReCropper from "@/components/ReCropper";
 import { formatBytes } from "@pureadmin/utils";
@@ -57,8 +57,8 @@ defineExpose({ hidePopover });
       <div class="flex flex-wrap justify-center items-center text-center">
         <el-image
           v-if="cropperImg"
-          :src="cropperImg"
           :preview-src-list="Array.of(cropperImg)"
+          :src="cropperImg"
           fit="cover"
         />
         <div v-if="infos" class="mt-1">

@@ -1,10 +1,9 @@
 import dayjs from "dayjs";
 import { message } from "@/utils/message";
-import { getKeyList } from "@pureadmin/utils";
 import { clearLoginLogs, getLoginLogsList } from "@/api/system";
 import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
 import type { PaginationProps } from "@pureadmin/table";
-import { type Ref, reactive, ref, onMounted } from "vue";
+import { onMounted, reactive, ref, type Ref } from "vue";
 import type { DateModelType } from "element-plus";
 
 export function useRole(tableRef: Ref) {
@@ -84,18 +83,6 @@ export function useRole(tableRef: Ref) {
     tableRef.value.getTableRef().clearSelection();
   }
 
-  /** 批量删除 */
-  function onbatchDel() {
-    // 返回当前选中的行
-    const curSelected = tableRef.value.getTableRef().getSelectionRows();
-    // 接下来根据实际业务，通过选中行的某项数据，比如下面的id，调用接口进行批量删除
-    message(`已删除序号为 ${getKeyList(curSelected, "id")} 的数据`, {
-      type: "success"
-    });
-    tableRef.value.getTableRef().clearSelection();
-    onSearch();
-  }
-
   /** 清空日志 */
   function clearAll() {
     // 根据实际业务，调用接口删除所有日志数据
@@ -154,7 +141,6 @@ export function useRole(tableRef: Ref) {
     onSearch,
     clearAll,
     resetForm,
-    onbatchDel,
     handleSizeChange,
     onSelectionCancel,
     handleCurrentChange,

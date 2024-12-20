@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed } from "vue";
 import { useMetaInfoStoreHook } from "@/store/modules/metaInfo";
 import Key from "./page/key.vue";
@@ -15,5 +15,3 @@ const metaType = computed(() => useMetaInfoStoreHook().metaType.key);
     <Key :area="area" :metaType="metaType" />
   </div>
 </template>
-
-<style scoped lang="scss"></style>

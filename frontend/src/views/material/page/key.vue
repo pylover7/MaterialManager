@@ -1,4 +1,4 @@
-<script setup lang="tsx">
+<script lang="tsx" setup>
 import PureTable from "@pureadmin/table";
 import { computed, h, onMounted, reactive, ref } from "vue";
 import { usePublicHooks } from "@/views/hooks";
@@ -265,35 +265,35 @@ const openVerifyDialog = () => {
 <template>
   <div class="main">
     <el-affix :offset="105" target=".main">
-      <el-card class="operationCar" shadow="never" body-style="padding: 0px;">
+      <el-card body-style="padding: 0px;" class="operationCar" shadow="never">
         <el-row :gutter="20" justify="space-between">
-          <el-col class="rowFlex" :span="5">
+          <el-col :span="5" class="rowFlex">
             <el-popconfirm
               :disabled="dialogVisible"
-              title="请确认所有数据已核对！"
-              confirm-button-text="好的"
               cancel-button-text="再看看"
+              confirm-button-text="好的"
+              title="请确认所有数据已核对！"
             >
               <template #reference>
                 <el-button
-                  type="success"
                   plain
                   size="large"
+                  type="success"
                   @click="handoverConfirm"
-                  >交班</el-button
-                >
+                  >交班
+                </el-button>
               </template>
             </el-popconfirm>
           </el-col>
-          <el-col class="rowFlex" :span="5">
-            <el-text size="large" type="danger" tag="b"
-              >值班员：{{ dutyPerson }}</el-text
-            >
+          <el-col :span="5" class="rowFlex">
+            <el-text size="large" tag="b" type="danger"
+              >值班员：{{ dutyPerson }}
+            </el-text>
           </el-col>
-          <el-col class="rowFlex" :span="5"
-            ><el-text size="large" tag="b"
-              >部门：{{ dutyPersonDepart }}</el-text
-            >
+          <el-col :span="5" class="rowFlex">
+            <el-text size="large" tag="b"
+              >部门：{{ dutyPersonDepart }}
+            </el-text>
           </el-col>
           <el-col :span="5" />
         </el-row>
@@ -305,16 +305,16 @@ const openVerifyDialog = () => {
         <el-steps direction="vertical">
           <el-step title="核对钥匙借用情况">
             <template #description>
-              <el-space direction="vertical" alignment="flex-start">
+              <el-space alignment="flex-start" direction="vertical">
                 <pure-table
+                  :border="true"
+                  :cell-style="{ textAlign: 'center' }"
                   :columns="columns"
                   :data="tableDataList"
-                  :border="true"
-                  stripe
+                  :header-cell-style="{ textAlign: 'center' }"
                   :loading="loading"
                   highlight-current-row
-                  :header-cell-style="{ textAlign: 'center' }"
-                  :cell-style="{ textAlign: 'center' }"
+                  stripe
                   style="width: 70vw"
                 />
               </el-space>
@@ -323,31 +323,31 @@ const openVerifyDialog = () => {
           <el-step title="备注异常信息">
             <template #description>
               <el-space alignment="flex-start">
-                <el-space direction="vertical" alignment="flex-start">
+                <el-space alignment="flex-start" direction="vertical">
                   <p>当前备注</p>
                   <el-input
                     v-model="remark"
-                    type="textarea"
-                    placeholder="填写本班备注"
                     :autosize="{ minRows: 2 }"
-                    maxlength="510"
                     :show-word-limit="true"
+                    maxlength="510"
+                    placeholder="填写本班备注"
                     style="width: 35vw"
+                    type="textarea"
                   />
-                  <el-button type="warning" plain @click="copyLastRemark"
-                    >复制上个班</el-button
-                  >
+                  <el-button plain type="warning" @click="copyLastRemark"
+                    >复制上个班
+                  </el-button>
                 </el-space>
-                <el-space direction="vertical" alignment="flex-start">
+                <el-space alignment="flex-start" direction="vertical">
                   <p>上个班备注</p>
                   <el-input
                     v-model="lastRemark"
-                    type="textarea"
-                    placeholder="上个班没有备注"
                     :autosize="{ minRows: 2 }"
                     :show-word-limit="true"
-                    style="width: 35vw"
+                    placeholder="上个班没有备注"
                     readonly
+                    style="width: 35vw"
+                    type="textarea"
                   />
                 </el-space>
               </el-space>
@@ -373,9 +373,9 @@ const openVerifyDialog = () => {
         <div class="dialog-footer">
           <el-button @click="handoverCancel">取消</el-button>
           <el-button
-            type="primary"
-            :loading="handleOverBtnLoading"
             :disabled="dutyOverInfo.nickname.length === 0"
+            :loading="handleOverBtnLoading"
+            type="primary"
             @click="handover"
           >
             确定

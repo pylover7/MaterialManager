@@ -1,4 +1,5 @@
 from datetime import timedelta
+import base64
 
 from fastapi import APIRouter, Request
 from jwt.exceptions import ExpiredSignatureError
@@ -20,6 +21,7 @@ router = APIRouter()
 
 @router.post("/accessToken", summary="获取token")
 async def login_access_token(request: Request, credentials: CredentialsSchema):
+    credentials.password = base64.b64decode(credentials.password).decode("utf-8")
     user = await user_controller.authenticate(credentials, request.client.host)
     await user_controller.update_last_login(user.id)
     roles = await user.roles.all().values_list("code", flat=True)
@@ -95,6 +97,7 @@ async def refresh_token(refreshToken: refreshTokenSchema):
 
 @router.post("/auth", summary="用户验证")
 async def auth(request: Request, credentials: CredentialsSchema):
+    credentials.password = base64.b64decode(credentials.password).decode("utf-8")
     user = await user_controller.authenticate(credentials, request.client.host)
     data = {
         "uuid": user.uuid.__str__(),

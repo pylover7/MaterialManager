@@ -1,7 +1,7 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { emitter } from "@/utils/mitt";
 import { onClickOutside } from "@vueuse/core";
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useDataThemeChange } from "@/layout/hooks/useDataThemeChange";
 import Close from "@iconify-icons/ep/close";
 
@@ -61,10 +61,10 @@ onBeforeUnmount(() => {
           :class="iconClass"
         >
           <IconifyIconOffline
-            class="dark:text-white"
-            width="18px"
-            height="18px"
             :icon="Close"
+            class="dark:text-white"
+            height="18px"
+            width="18px"
             @click="show = !show"
           />
         </span>
@@ -82,9 +82,9 @@ onBeforeUnmount(() => {
             placement: 'left-start',
             zIndex: 41000
           }"
-          type="danger"
-          text
           bg
+          text
+          type="danger"
           @click="onReset"
         >
           清空缓存

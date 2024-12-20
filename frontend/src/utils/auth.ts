@@ -1,6 +1,7 @@
 import Cookies from "js-cookie";
 import { storageLocal } from "@pureadmin/utils";
 import { useUserStoreHook } from "@/store/modules/user";
+import { Md5 } from "ts-md5";
 
 export interface DataInfo<T> {
   /** token */
@@ -117,4 +118,9 @@ export function removeToken() {
 /** 格式化token（jwt格式） */
 export const formatToken = (token: string): string => {
   return "Bearer " + token;
+};
+
+/** md5 加密 */
+export const hashPwd = (str: string): string => {
+  return Md5.hashStr(str);
 };

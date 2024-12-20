@@ -86,3 +86,8 @@ async def update_role_menu_id(data: RoleUpdateMenusApis):
     await role_controller.update_roles(role=role_obj, menu_ids=data.menus, api_ids=data.apis, area_ids=data.areas)
     return Success(msg="权限更新成功")
 
+@roleRouter.get("/setDefaultRole", summary="设置默认角色")
+async def set_default_role(id: int):
+    await role_controller.setDefault(id=id)
+    return Success(msg="设置成功")
+
