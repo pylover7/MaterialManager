@@ -36,7 +36,6 @@ class UpdateStatus(BaseModel):
     status: int = Field(description="状态")
 
 
-
 class UserLdap(BaseModel):
     sAMAccountName: str = Field(description="邮箱前缀")
     employeeID: str = Field(description="工号")
@@ -46,6 +45,15 @@ class UserLdap(BaseModel):
     mail: str = Field(description="邮箱")
     name: str = Field(description="姓名")
     dn: str = Field(description="DN")
+
+class UserLdapCreate(BaseModel):
+    username: str
+    nickname: str
+    email: str
+    mobile: str
+    employeeID: str
+    department: str
+    company: str
 
 
 if __name__ == '__main__':

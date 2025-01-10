@@ -172,11 +172,11 @@ const openVerifyDialog = () => {
                   class="resultItem"
                 >
                   <el-row>
-                    <el-col :span="20" style="text-align: left"
+                    <el-col :span="18" style="text-align: left"
                       >{{ item.name }}
                     </el-col>
                     <el-col
-                      :span="4"
+                      :span="6"
                       style="padding-right: 8px; text-align: right"
                     >
                       <el-button
@@ -227,11 +227,11 @@ const openVerifyDialog = () => {
                 class="resultItem"
               >
                 <el-row>
-                  <el-col :span="20" style="text-align: left"
+                  <el-col :span="18" style="text-align: left"
                     >{{ item.name }}
                   </el-col>
                   <el-col
-                    :span="4"
+                    :span="6"
                     style="padding-right: 8px; text-align: right"
                   >
                     <el-button

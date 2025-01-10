@@ -35,7 +35,7 @@ const tableRef = ref();
 // 表格加载控制
 const loading = ref(false);
 // 区域配置
-const areaOpt: SelectOpt = [
+const areaOpt: SelectOpt[] = [
   {
     label: "隔离办",
     value: "glb"
@@ -50,7 +50,7 @@ const areaOpt: SelectOpt = [
   }
 ];
 // 类型配置
-const typeOpt: SelectOpt = [
+const typeOpt: SelectOpt[] = [
   {
     label: "工具",
     value: "tool"
@@ -133,10 +133,10 @@ const columns: TableColumnList = [
     reserveSelection: true // 数据刷新后保留选项
   },
   { label: "序号", type: "index", width: "60" },
-  { label: "编号", prop: "code", width: "100" },
+  { label: "编号", prop: "code", minWidth: "60" },
   { label: "名称", prop: "name" },
   { label: "位置", prop: "position" },
-  { label: "型号", prop: "model", width: "200" },
+  { label: "型号", prop: "model", minWidth: "200" },
   { label: "数量", prop: "number", width: "100" },
   { label: "借出数量", prop: "borrowed", width: "100" },
   { label: "送检数量", prop: "checking", width: "100" },
@@ -172,15 +172,24 @@ const columns: TableColumnList = [
           plain
           onClick={() => {
             addDialog({
-              title: "送检数量",
+              title: "送检确认",
               width: "15%",
               contentRenderer: () => (
                 <div style="text-align: center; margin-bottom: 10px ">
-                  <el-input-number
-                    v-model={toCheckNumber.value}
-                    min={1}
-                    max={row.number - row.borrowed - row.checking}
-                  />
+                  <el-form>
+                    <el-form-item label="名称：">
+                      <el-text type="warning" size="large">
+                        {row.name}
+                      </el-text>
+                    </el-form-item>
+                    <el-form-item label="数量：" prop="number">
+                      <el-input-number
+                        v-model={toCheckNumber.value}
+                        min={1}
+                        max={row.number - row.borrowed - row.checking}
+                      />
+                    </el-form-item>
+                  </el-form>
                 </div>
               ),
               beforeSure(done, { options, index }) {

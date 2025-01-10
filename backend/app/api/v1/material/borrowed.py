@@ -33,7 +33,8 @@ async def create_borrowed(data: CreateBorrowedInfo):
         item["userDepart"] = data.depart
         item["uuid"] = data.uuid
         user = await user_controller.get_by_uuid(item["uuid"])
-        item["phone"] = user.mobile
+        if not (len(item["phone"]) > 0):
+            item["phone"] = user.mobile
         item["reason"] = data.reason
         item["material_id"] = material.id
         obj: Borrowed = await borrowedController.create(obj_in=item)
@@ -70,10 +71,10 @@ async def get_home_list(
         material = await obj.material.all().values("name", "model", "position", "number", "borrowed")
         obj_dict = await obj.to_dict()
         if obj.borrowApproveStatus:
-            borrowApproveUser = await obj.borrowApproveUser.all().values("id", "nickname", "mobile", "department")
+            borrowApproveUser = await obj.borrowApproveUser.all().values("id", "nickname", "employeeID", "mobile", "department")
             obj_dict["borrowApproveUser"] = borrowApproveUser
         if obj.returnApproveStatus:
-            returnApproveUser = await obj.returnApproveUser.all().values("id", "nickname", "mobile", "department")
+            returnApproveUser = await obj.returnApproveUser.all().values("id", "nickname", "employeeID", "mobile", "department")
             obj_dict["returnApproveUser"] = returnApproveUser
         obj_dict["material"] = material
         data.append(obj_dict)

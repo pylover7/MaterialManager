@@ -47,7 +47,7 @@ async def get_checked(
     data = []
     for obj in checked_objs:
         user = await obj.toCheckUser.all()
-        userDepart = user.department
+        userDepart = user.company + user.department
         material = await obj.material.all()
         material_dict = await material.to_dict()
         user_dict = await user.to_dict()
@@ -57,7 +57,7 @@ async def get_checked(
         obj_dict["toCheckUser"] = user_dict
         try:
             user2 = await obj.toReturnUser.all()
-            user2Depart = user2.department
+            user2Depart = user2.company + user2.department
             user_dict2 = await user2.to_dict()
             obj_dict["toReturnUser"] = user_dict2
             user_dict2["depart"] = user2Depart

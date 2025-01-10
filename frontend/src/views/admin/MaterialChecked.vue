@@ -40,7 +40,7 @@ const areaOpt: SelectOpt = [
   }
 ];
 // 类型配置
-const typeOpt: SelectOpt = [
+const typeOpt: SelectOpt[] = [
   {
     label: "工具",
     value: "tool"
@@ -52,7 +52,7 @@ const typeOpt: SelectOpt = [
 ];
 
 // 送检状态
-const checkOpt: SelectOpt = [
+const checkOpt: SelectOpt[] = [
   {
     label: "送检中",
     value: false
@@ -158,7 +158,7 @@ const columns: TableColumnList = [
           default: () => (
             <ul>
               <li>姓名：{row.toCheckUser.nickname}</li>
-              <li>电话：{row.toCheckUser.phone}</li>
+              <li>电话：{row.toCheckUser.mobile}</li>
               <li>部门：{row.toCheckUser.depart}</li>
             </ul>
           )
@@ -184,7 +184,7 @@ const columns: TableColumnList = [
           default: () => (
             <ul>
               <li>姓名：{row.toReturnUser?.nickname}</li>
-              <li>电话：{row.toReturnUser?.phone}</li>
+              <li>电话：{row.toReturnUser?.mobile}</li>
               <li>部门：{row.toReturnUser?.depart}</li>
             </ul>
           )
@@ -280,7 +280,7 @@ const openReturnDialog = (rowList, idList?: [number]) => {
                   const verifyForm = ref();
                   addDialog({
                     title: "验证人",
-                    width: "20%",
+                    width: "30%",
                     props: {
                       userInfo: {
                         account: "",

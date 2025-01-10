@@ -16,16 +16,16 @@
 构建镜像
 
 ```bash
-docker build -t material:1.0.5 .
+docker build -t material:1.0.6 .
 ```
 
 保存镜像
 ```bash
-docker save material:1.0.5 -o material105.tar
+docker save material:1.0.6 -o material106.tar
 ```
 加载镜像
 ```bash
-docker load -i material105.tar
+docker load -i material106.tar
 ```
 
 启动容器

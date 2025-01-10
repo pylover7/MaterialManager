@@ -50,7 +50,6 @@ const onSearchReturn = () => {
     });
 };
 
-const selectedNum = ref(0);
 // 表格ref
 const tableRef = ref();
 
@@ -201,7 +200,7 @@ const onBatchReturn = () => {
 
 /** 取消选择 */
 function onSelectionCancel() {
-  selectedNum.value = 0;
+  returnSelectedNum.value = 0;
   // 用于多选表格，清空用户的选择
   tableRef.value.getTableRef().clearSelection();
 }
@@ -286,7 +285,7 @@ function handleCurrentChange(val: number) {
           >
             <template #reference>
               <el-button
-                :disabled="selectedNum < 1"
+                :disabled="returnSelectedNum < 1"
                 :icon="useRenderIcon(Approve)"
                 type="success"
               >
