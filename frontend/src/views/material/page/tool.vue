@@ -136,7 +136,7 @@ const lastRemark = ref("");
 const step2Init = ref(true);
 
 const step2Status = computed(() => {
-  return remark.value.length > 0 ? StepStatus.Success : StepStatus.Error;
+  return remark.value?.length > 0 ? StepStatus.Success : StepStatus.Error;
 });
 
 const copyLastRemark = () => {

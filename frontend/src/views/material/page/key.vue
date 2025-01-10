@@ -96,10 +96,10 @@ const columns: TableColumnList = [
         width="200"
         trigger="click"
         v-slots={{
-          reference: () => <el-button link>{row.username}</el-button>,
+          reference: () => <el-button link>{row.nickname}</el-button>,
           default: () => (
             <ul>
-              <li>姓名：{row.username}</li>
+              <li>工号：{row.nickname}</li>
               <li>电话：{row.phone}</li>
               <li>部门：{row.userDepart}</li>
             </ul>
@@ -121,7 +121,7 @@ const columns: TableColumnList = [
     prop: "reason",
     cellRenderer: ({ row }) => (
       <el-popover
-        placement="right"
+        placement="bottom"
         width="300"
         trigger="hover"
         v-slots={{
@@ -171,7 +171,6 @@ const init = () => {
   });
   listBorrowed(props.area, 1, 100, true, true, false).then(res => {
     tableDataList.push(...res.data);
-    console.log(tableDataList);
   });
   getLatestNote(props.area, props.metaType).then(res => {
     lastRemark.value = res.data.note;

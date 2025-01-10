@@ -30,7 +30,7 @@ async def tortoise_init(app: FastAPI):
     await init_api(app)
     await init_menus()
     await init_roles()
-    await register_superAdmin()
+    # await register_superAdmin()
 
 
 async def register_superAdmin():

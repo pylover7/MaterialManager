@@ -278,7 +278,17 @@ export function useUser(tableRef: Ref) {
       props: {
         formInline: {
           userList: [],
-          transferList: []
+          transferList: [
+            // {
+            //   username: "zhangsan",
+            //   nickname: "张三",
+            //   department: "技术部",
+            //   mobile: "13888888888",
+            //   email: "xxx@xxx.com",
+            //   employeeID: "10001",
+            //   company: "xxx公司"
+            // }
+          ]
         }
       },
       width: "50%",

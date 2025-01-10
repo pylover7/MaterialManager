@@ -26,7 +26,7 @@ async def create_user(
             user_obj = await user_controller.create(obj_in=item)
             await user_obj.roles.add(role_obj)
         except Exception as e:
-            logger.error(f"用户 {item.nickname} 已存在")
+            logger.error(f"用户添加失败：{e}")
             continue
     return Success(msg="创建成功！")
 
@@ -116,4 +116,3 @@ async def reset_pwd(
     user.password = get_password_hash(data["newPwd"])
     await user.save()
     return Success(msg="Reset Successfully")
-

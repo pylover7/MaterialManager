@@ -172,7 +172,7 @@ const columns: TableColumnList = [
     prop: "reason",
     cellRenderer: ({ row }) => (
       <el-popover
-        placement="right"
+        placement="bottom"
         width="300"
         trigger="hover"
         v-slots={{
@@ -212,9 +212,9 @@ const columns: TableColumnList = [
           ),
           default: () => (
             <ul>
-              <li>姓名：{row.borrowApproveUser?.nickname}</li>
-              <li>电话：{row.borrowApproveUser?.phone}</li>
-              <li>部门：{row.borrowApproveUser?.depart}</li>
+              <li>工号：{row.borrowApproveUser?.employeeID}</li>
+              <li>电话：{row.borrowApproveUser?.mobile}</li>
+              <li>部门：{row.borrowApproveUser?.department}</li>
             </ul>
           )
         }}
@@ -251,9 +251,9 @@ const columns: TableColumnList = [
           ),
           default: () => (
             <ul>
-              <li>姓名：{row.returnApproveUser?.nickname}</li>
-              <li>电话：{row.returnApproveUser?.phone}</li>
-              <li>部门：{row.returnApproveUser?.depart}</li>
+              <li>工号：{row.returnApproveUser?.employeeID}</li>
+              <li>电话：{row.returnApproveUser?.mobile}</li>
+              <li>部门：{row.returnApproveUser?.department}</li>
             </ul>
           )
         }}
