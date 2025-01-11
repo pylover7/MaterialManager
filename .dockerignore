@@ -6,6 +6,7 @@
 .eslintcache
 report.html
 */logs
+*/.venv
 
 yarn.lock
 npm-debug.log*

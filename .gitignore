@@ -8,6 +8,7 @@
 */migrations
 */logs
 */config
+material-*/
 
 # frontend
 node_modules
