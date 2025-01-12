@@ -23,9 +23,8 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends nginx\
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
-RUN pip install poetry -i https://pypi.tuna.tsinghua.edu.cn/simple\
-    && poetry config virtualenvs.create false \
-    && poetry install
+RUN pip install uv -i https://pypi.tuna.tsinghua.edu.cn/simple\
+    && uv sync
 
 COPY --from=frontend /app/frontend/dist /app/frontend
 ADD mm.conf /etc/nginx/sites-available/mm.conf
