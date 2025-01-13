@@ -414,8 +414,10 @@ function handleCurrentChange(val: number) {
       <el-form-item label="归还状态" prop="returnStatus">
         <el-select-v2
           v-model="optionBar.returnStatus"
+          :disabled="optionBar.area === ''"
           :options="checkOpt"
           class="!w-[150px]"
+          @change="onSearch"
         />
       </el-form-item>
       <el-form-item>
