@@ -32,7 +32,7 @@ initStorage();
 const { t } = useI18n();
 const { dataTheme, dataThemeChange } = useDataThemeChange();
 dataThemeChange();
-const { title } = useNav();
+const { title, docxUrl, adminName, adminEmail } = useNav();
 
 const ruleForm = reactive({
   username: "",
@@ -76,8 +76,6 @@ function onkeypress({ code }: KeyboardEvent) {
     onLogin(ruleFormRef.value);
   }
 }
-
-const clipboardText = ref("liushuo@cnnp.com.cn");
 
 onMounted(() => {
   window.document.addEventListener("keypress", onkeypress);
@@ -169,10 +167,7 @@ onBeforeUnmount(() => {
             </Motion>
             <Motion :delay="300">
               <el-row class="flex mt-4" justify="space-between">
-                <el-link
-                  :underline="false"
-                  href="https://hn-disk.hnpc.cc/ucdisk/s/AraYn2"
-                  target="_blank"
+                <el-link :href="docxUrl" :underline="false" target="_blank"
                   >使用说明下载
                 </el-link>
                 <div>
@@ -186,11 +181,11 @@ onBeforeUnmount(() => {
                     placement="bottom"
                   >
                     <el-button
-                      v-copy="clipboardText"
+                      v-copy="adminEmail"
                       link
                       size="small"
                       type="primary"
-                      >刘硕
+                      >{{ adminName }}
                     </el-button>
                   </el-tooltip>
                 </div>
