@@ -1,7 +1,6 @@
 configs:
   create_db_sql:
-    content: |
-      CREATE DATABASE material DEFAULT CHARACTER SET = 'utf8mb4' DEFAULT COLLATE = 'utf8mb4_0900_ai_ci';
+    file: ./create_db.sql
 
 services:
   db:
@@ -21,12 +20,12 @@ services:
         aliases:
           - db
   material:
-    image: material:1.0.5
+    image: material:1.0.7
     restart: unless-stopped
     environment:
-      - DB_HOST=localhost
+      - DB_HOST=db
       - DB_DRIVER=org.mysql.jdbc.Driver
-      - DB_URL=jdbc:mysql://home-db-1:3306/material?serverTimezone=Asia/Shanghai
+      - DB_URL=jdbc:mysql://db:3306/material?serverTimezone=Asia/Shanghai
       - DB_USERNAME=root
       - DB_PASSWORD=mysql
       - DEV=false

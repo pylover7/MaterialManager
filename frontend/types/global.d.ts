@@ -108,6 +108,9 @@ declare global {
     TooltipEffect?: Effect;
     ResponsiveStorageNameSpace?: string;
     MenuSearchHistory?: number;
+    DocxUrl?: string;
+    AdminName?: string;
+    AdminEmail?: string;
   }
 
   /**

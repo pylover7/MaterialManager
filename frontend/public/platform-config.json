@@ -1,5 +1,5 @@
 {
-  "Version": "0.0.7",
+  "Version": "1.0.7",
   "Title": "物资管理平台",
   "FixedHeader": true,
   "HiddenSideBar": false,
@@ -23,5 +23,8 @@
   "CachingAsyncRoutes": false,
   "TooltipEffect": "light",
   "ResponsiveStorageNameSpace": "responsive-",
-  "MenuSearchHistory": 6
+  "MenuSearchHistory": 6,
+  "DocxUrl": "https://hn-disk.cnnp.com.cn/ucdisk/s/AraYn2",
+  "AdminName": "刘硕",
+  "AdminEmail": "liushuo@cnnp.com.cn"
 }

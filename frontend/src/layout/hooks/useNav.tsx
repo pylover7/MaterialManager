@@ -91,6 +91,18 @@ export function useNav() {
     return $config.Title;
   });
 
+  const docxUrl = computed(() => {
+    return $config.DocxUrl;
+  });
+
+  const adminName = computed(() => {
+    return $config.AdminName;
+  });
+
+  const adminEmail = computed(() => {
+    return $config.AdminEmail;
+  });
+
   /** 动态title */
   function changeTitle(meta: routeMetaType) {
     const Title = getConfig().Title;
@@ -363,6 +375,9 @@ export function useNav() {
     tooltipEffect,
     getDropdownItemStyle,
     getDropdownItemClass,
-    updatePwdDialog
+    updatePwdDialog,
+    docxUrl,
+    adminName,
+    adminEmail
   };
 }
