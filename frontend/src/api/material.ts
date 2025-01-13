@@ -55,9 +55,7 @@ export const deleteCheckedMaterial = (idList: Array<number>) => {
     "delete",
     baseUrlApi("/material/checked/delete"),
     {
-      data: {
-        idList
-      }
+      data: idList
     }
   );
 };

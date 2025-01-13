@@ -12,8 +12,13 @@ import verifyDialog from "@/views/welcome/dialog/VerifyDialog.vue";
 import type { userInfo } from "@/views/welcome/types";
 import { successNotification, warningNotification } from "@/utils/notification";
 import { deviceDetection, getKeyList } from "@pureadmin/utils";
-import { getCheckedMaterial, updateCheckedMaterial } from "@/api/material";
+import {
+  deleteCheckedMaterial,
+  getCheckedMaterial,
+  updateCheckedMaterial
+} from "@/api/material";
 import { auth } from "@/api/base";
+import Delete from "@iconify-icons/ep/delete";
 
 defineOptions({
   name: "MaterialChecked"
@@ -25,7 +30,7 @@ const optionBar = reactive({
   returnStatus: false
 });
 // 区域配置
-const areaOpt: SelectOpt = [
+const areaOpt: SelectOpt[] = [
   {
     label: "隔离办",
     value: "glb"
@@ -65,22 +70,28 @@ const checkOpt: SelectOpt[] = [
 const loading = ref(false);
 // 表格数据
 const dataList = ref([]);
-const returnData = reactive({
+reactive({
   username: "",
   uuid: ""
 });
 const onSearch = () => {
+  loading.value = true;
   getCheckedMaterial(
     optionBar.area,
     optionBar.type,
     optionBar.returnStatus,
     pagination.currentPage,
     pagination.pageSize
-  ).then(res => {
-    dataList.value = res.data;
-    pagination.total = res.total;
-    pagination.pageSize = res.pageSize;
-  });
+  )
+    .then(res => {
+      dataList.value = res.data;
+      pagination.total = res.total;
+      pagination.pageSize = res.pageSize;
+    })
+    .finally(() => {
+      loading.value = false;
+      onSelectionCancel();
+    });
 };
 // 分页设置
 const pagination = reactive<PaginationProps>({
@@ -337,10 +348,27 @@ const openReturnDialog = (rowList, idList?: [number]) => {
   });
 };
 
+const onBatchBtnLoading = ref(false);
+
 const onBatchReturn = () => {
   const curSelected = tableRef.value.getTableRef().getSelectionRows();
   const idList = getKeyList(curSelected, "id");
   openReturnDialog(curSelected, idList as [number]);
+};
+
+const onBatchDel = () => {
+  onBatchBtnLoading.value = true;
+  const curSelected = tableRef.value.getTableRef().getSelectionRows();
+  const idList = getKeyList(curSelected, "id");
+  deleteCheckedMaterial(idList)
+    .then(() => {
+      successNotification("删除成功!");
+      onSearch();
+    })
+    .finally(() => {
+      onSelectionCancel();
+      onBatchBtnLoading.value = false;
+    });
 };
 
 /** 当CheckBox选择项发生变化时会触发该事件 */
@@ -386,8 +414,10 @@ function handleCurrentChange(val: number) {
       <el-form-item label="归还状态" prop="returnStatus">
         <el-select-v2
           v-model="optionBar.returnStatus"
+          :disabled="optionBar.area === ''"
           :options="checkOpt"
           class="!w-[150px]"
+          @change="onSearch"
         />
       </el-form-item>
       <el-form-item>
@@ -422,11 +452,24 @@ function handleCurrentChange(val: number) {
         <el-popconfirm title="要批量归还吗？" @confirm="onBatchReturn">
           <template #reference>
             <el-button
+              v-show="!optionBar.returnStatus"
               :disabled="selectedNum < 1"
               :icon="useRenderIcon(Approve)"
               type="success"
             >
               批量归还
+            </el-button>
+          </template>
+        </el-popconfirm>
+        <el-popconfirm title="要批量删除吗？" @confirm="onBatchDel">
+          <template #reference>
+            <el-button
+              v-show="optionBar.returnStatus"
+              :disabled="selectedNum < 1"
+              :icon="useRenderIcon(Delete)"
+              type="danger"
+            >
+              删除所选
             </el-button>
           </template>
         </el-popconfirm>
