@@ -20,7 +20,7 @@ RUN sed -i s@/deb.debian.org/@/mirrors.aliyun.com/@g /etc/apt/sources.list.d/deb
 
 RUN apt-get update \
     # && apt-get install -y --no-install-recommends gcc python3-dev bash nginx vim curl procps net-tools\
-    && apt-get install -y --no-install-recommends nginx\
+    && apt-get install -y --no-install-recommends nginx vim\
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 RUN pip install uv -i https://pypi.tuna.tsinghua.edu.cn/simple\
