@@ -1,0 +1,46 @@
+{
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "terminal.integrated.profiles.linux": {
+    "nload": {
+      "path": "/bin/zsh",
+      "args": [
+        "-c",
+        "nload -u M eth0 && zsh"
+      ],
+      "name": "Start nvitop",
+      "description": "Terminal profile that runs a command on startup"
+    },
+    "btop": {
+      "path": "/bin/zsh",
+      "args": [
+        "-c",
+        "btop -u 1000 && zsh"
+      ],
+      "name": "Start btop",
+      "description": "Terminal profile that runs a command on startup"
+    },
+    "build": {
+      "path": "/bin/zsh",
+      "args": [
+        "-c",
+        "zsh /workspace/build.sh && zsh"
+      ],
+      "name": "Start build image",
+      "description": "Terminal profile that runs a command on startup"
+    },
+    "晚安！": {
+      "path": "/bin/zsh",
+      "args": [
+        "-c",
+        "kill 1"
+      ],
+      "name": "Go to sleep",
+      "description": "Terminal profile that runs a command on startup"
+    },
+    "zsh": {
+      "path": "/bin/zsh"
+    }
+  },
+  "gitblame.inlineMessageEnabled": true,
+  "gitblame.inlineMessageFormat": "${author.name}, (${time.ago}) · ${commit.summary}"
+}
