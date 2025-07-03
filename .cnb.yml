@@ -1,9 +1,10 @@
 $:
   vscode:
     - docker:
-        build: .ide/Dockerfile
-        by:
-          - .ide/settings.json
+        build:
+          dockerfile: .ide/Dockerfile
+          by:
+            - .ide/settings.json
       services:
         - vscode
         - docker
