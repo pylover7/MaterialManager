@@ -3,7 +3,7 @@ $:
     - docker:
         build: .ide/Dockerfile
         by:
-          - .ide/setting.json
+          - .ide/settings.json
       services:
         - vscode
         - docker
