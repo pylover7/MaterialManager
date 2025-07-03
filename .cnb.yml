@@ -5,6 +5,9 @@ $:
           dockerfile: .ide/Dockerfile
           by:
             - .ide/settings.json
+        volumes:
+          - ./backend/.venv:read-write
+          - ./frontend/node_modules:read-write
       services:
         - vscode
         - docker
