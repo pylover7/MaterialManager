@@ -42,20 +42,6 @@ RUN curl -fsSL https://code-server.dev/install.sh | sh \
   && code-server --install-extension cnbcool.cnb-welcome \
   && code-server --install-extension ms-python.python \
   && code-server --install-extension christian-kohler.path-intellisense \
-  && code-server --install-extension warmthsea.vscode-custom-code-color \
-  && code-server --install-extension vscode-icons-team.vscode-icons \
-  && code-server --install-extension davidanson.vscode-markdownlint \
-  && code-server --install-extension stylelint.vscode-stylelint \
-  && code-server --install-extension bradlc.vscode-tailwindcss \
-  && code-server --install-extension dbaeumer.vscode-eslint \
-  && code-server --install-extension esbenp.prettier-vscode \
-  && code-server --install-extension lokalise.i18n-ally \
-  && code-server --install-extension redhat.vscode-yaml \
-  && code-server --install-extension csstools.postcss \
-  && code-server --install-extension mikestead.dotenv \
-  && code-server --install-extension eamodio.gitlens \
-  && code-server --install-extension antfu.iconify \
-  && code-server --install-extension Vue.volar \
   && echo done
 
 # 复制 vscode 自定义到容器中
