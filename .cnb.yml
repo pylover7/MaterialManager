@@ -1,8 +1,7 @@
 $:
   vscode:
     - docker:
-        image:
-          build: .ide/Dockerfile
+        build: .ide/Dockerfile
       services:
         - vscode
         - docker
