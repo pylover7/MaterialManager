@@ -10,6 +10,7 @@
 ## 介绍
 
 一款适用于企业内部的物资管理平台，特点如下：
+
 - 使用企业内部ldap系统登录
 - 单独的权限管理
 - 物资的自定义分类
@@ -18,7 +19,9 @@
 - ...
 
 ## 使用
+
 创建 `docker-compose.yaml` 文件
+
 ```yaml
 configs:
   create_db_sql:
@@ -214,7 +217,24 @@ takeovertime = 2020-01-01 00:00:00
   - mysql
 
 ### 环境搭建
+
+数据库启动
+
+```bash
+docker run -itd --name mysql-server -p 3306:3306 -e MYSQL_ROOT_PASSWORD=mysqlroot mysql:latest
+
+# 进入容器
+docker exec -it mysql-server bash
+
+# 进入mysql
+mysql -uroot -p mysqlroot
+
+# 创建数据库
+create database material default character set utf8mb4 collate utf8mb4_unicode_ci;
+```
+
 后端
+
 ```bash
 # 安装依赖 在目录 backend/ 下执行
 uv sync
