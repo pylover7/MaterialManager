@@ -10,6 +10,7 @@ from app.core.init_app import (
     register_routers,
 )
 from app.core.init_db import init_db
+from app.settings.config import static_path
 
 try:
     from app.settings.config import settings
@@ -27,7 +28,6 @@ def create_app() -> FastAPI:
     )
     register_exceptions(app)
     register_routers(app, prefix="/api")
-    static_path = Path.joinpath(Path(__file__).parent, "static")
     app.mount("/static", StaticFiles(directory=static_path), name="static")
     return app
 
