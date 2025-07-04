@@ -25,7 +25,8 @@ class Settings:
                 "app": {
                     "title": "后台管理系统",
                     "description": "后台管理系统",
-                    "version": "1.0.0"
+                    "version": "1.0.0",
+                    "dev": True
                     },
                 "server": {
                     "host": "127.0.0.1",
