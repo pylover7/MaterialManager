@@ -1,10 +1,7 @@
 $:
   vscode:
     - docker:
-        build:
-          dockerfile: .ide/Dockerfile
-          by:
-            - .ide/settings.json
+        image: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}
         volumes:
           - ./backend/.venv:read-write
           - ./frontend/node_modules:read-write
