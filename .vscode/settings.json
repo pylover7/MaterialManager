@@ -79,5 +79,6 @@
     }
   },
   "gitblame.inlineMessageEnabled": true,
-  "gitblame.inlineMessageFormat": "${author.name}, (${time.ago}) · ${commit.summary}"
+  "gitblame.inlineMessageFormat": "${author.name}, (${time.ago}) · ${commit.summary}",
+  "python.languageServer": "Pylance",
 }

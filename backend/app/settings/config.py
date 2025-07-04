@@ -3,6 +3,7 @@ from pathlib import Path
 from ruamel.yaml import YAML
 
 from app.schemas.admin import DbInfo
+from app.utils.log import logger
 
 config_path = Path.joinpath(Path(__file__).parent.parent.parent, "config", "config.yml")
 static_path = Path.joinpath(Path(__file__).parent.parent, "static")
@@ -18,7 +19,24 @@ class Settings:
             with open(config_path, "rb") as f:
                 self.data = yaml.load(f)
         except FileNotFoundError:
-            raise FileNotFoundError("config.yml 文件不存在")
+            logger.warning("config.yml 文件不存在，生成默认配置yml文件")
+            default_config = {
+                "app": {
+                    "title": "后台管理系统",
+                    "description": "后台管理系统",
+                    "version": "1.0.0"
+                    },
+                "server": {
+                    "host": "127.0.0.1",
+                    "port": 8000,
+                    "reload": True,
+                    "cors_origins": ["*"],
+                    "cors_allow_credentials": True,
+                    "cors_allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                    "cors_allow_headers": ["*"],
+                }
+            }
+
 
     def _save(self):
         with open(config_path, "w", encoding="utf-8") as f:
