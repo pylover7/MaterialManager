@@ -53,6 +53,7 @@ RUN curl -fsSL https://code-server.dev/install.sh | sh \
     && code-server --install-extension mikestead.dotenv \
     && code-server --install-extension antfu.iconify \
     && code-server --install-extension Vue.volar \
+    && code-server --install-extension redjue.git-commit-plugin \
     && echo done
 
 # 复制 vscode 自定义到容器中
