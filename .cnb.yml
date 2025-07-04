@@ -1,0 +1,18 @@
+$:
+  vscode:
+    - docker:
+        image:
+          name: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}
+          dockerUser: $CNB_TOKEN_USER_NAME
+          dockerPassword: $CNB_TOKEN
+        volumes:
+          - ./backend/.venv:read-write
+          - ./frontend/node_modules:read-write
+      services:
+        - vscode
+        - docker
+      imports:
+        - https://cnb.cool/shiyezzz/material/-/blob/main/mysql.yml
+      stages:
+        - name: ls
+          script: ls -al

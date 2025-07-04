@@ -3,9 +3,11 @@ from pathlib import Path
 from ruamel.yaml import YAML
 
 from app.schemas.admin import DbInfo
+from app.utils.log import logger
 
 config_path = Path.joinpath(Path(__file__).parent.parent.parent, "config", "config.yml")
 static_path = Path.joinpath(Path(__file__).parent.parent, "static")
+Path(static_path).mkdir(parents=True, exist_ok=True)
 yaml = YAML()
 
 
@@ -18,7 +20,64 @@ class Settings:
             with open(config_path, "rb") as f:
                 self.data = yaml.load(f)
         except FileNotFoundError:
-            raise FileNotFoundError("config.yml 文件不存在")
+            logger.warning("config.yml 文件不存在，生成默认配置yml文件")
+            default_config = {
+                "app": {
+                    "title": "后台管理系统",
+                    "description": "后台管理系统",
+                    "version": "1.0.0",
+                    "dev": True
+                    },
+                "server": {
+                    "host": "127.0.0.1",
+                    "port": 8000,
+                    "reload": True,
+                    "cors_origins": ["*"],
+                    "cors_allow_credentials": True,
+                    "cors_allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                    "cors_allow_headers": ["*"],
+                },
+                "secret": {
+                    "secret_key": "secret_key",
+                    "jwt_algorithm": "HS256",
+                    "jwt_access_token_expire_min": 30,
+                    "jwt_refresh_token_expire_min": 60 * 24 * 7,
+                },
+                "superUser": {
+                    "username": "admin",
+                    "nickname": "管理员",
+                    "employeeID": "10000000",
+                    "mobile": "13800000000",
+                    "email": "<EMAIL>",
+                    "is_superuser": True,
+                    "remark": "管理员",
+                    "department": "技术部"
+                },
+                "db": {
+                    "start": "mysql",
+                    "host": "127.0.0.1",
+                    "port": 3306,
+                    "username": "root",
+                    "password": "mysqlroot",
+                    "database": "material",
+                },
+                "ldap": {
+                    "host": "127.0.0.1",
+                    "base": "dc=example,dc=com",
+                    "username": "cn=admin,dc=example,dc=com",
+                    "password": "<PASSWORD>",
+                }
+            }
+            # 将数据写入配置文件
+            #创建配置文件
+            Path(config_path).parent.mkdir(parents=True, exist_ok=True)
+            with open(config_path, "w", encoding="utf-8") as f:
+                yaml.dump(default_config, f)
+                self.data = default_config
+                logger.info("生成默认配置文件成功")
+        except Exception as e:
+            logger.error("配置文件读取失败")
+
 
     def _save(self):
         with open(config_path, "w", encoding="utf-8") as f:
@@ -198,7 +257,12 @@ class Settings:
 
     @property
     def APP_LOG_CONFIG(self) -> dict:
-        return self.data["log"]
+        # 读取当前目录下的 log.yml 文件
+        log_path = Path(__file__).parent / "log.yml"
+        with open(log_path, "r", encoding="utf-8") as f:
+            yaml = YAML()
+            data = yaml.load(f)
+        return data
 
     @property
     def STATIC_PATH(self) -> Path:
