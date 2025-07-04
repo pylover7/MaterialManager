@@ -11,6 +11,8 @@ $:
       services:
         - vscode
         - docker
+      imports:
+        - https://cnb.cool/shiyezzz/material/-/blob/main/mysql.yml
       stages:
         - name: ls
           script: ls -al
