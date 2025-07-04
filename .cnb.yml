@@ -1,7 +1,10 @@
 $:
   vscode:
     - docker:
-        image: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}
+        image:
+          name: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}
+          dockerUser: $CNB_TOKEN_USER_NAME
+          dockerPassword: $CNB_TOKEN
         volumes:
           - ./backend/.venv:read-write
           - ./frontend/node_modules:read-write
