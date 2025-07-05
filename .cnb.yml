@@ -16,3 +16,14 @@ $:
       stages:
         - name: ls
           script: ls -al
+
+  push:
+    - stages:
+        - imports: https://cnb.cool/pylover/key/-/blob/main/github.yml
+          name: sync to github
+          image: tencentcom/git-sync
+          settings:
+            target_url: https://github.com/pylover7/MaterialManager.git
+            auth_type: https
+            username: ${GIT_USERNAME}
+            password: ${GIT_ACCESS_TOKEN}
