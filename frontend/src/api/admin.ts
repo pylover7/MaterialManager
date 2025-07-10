@@ -141,15 +141,17 @@ export const deleteUser = (id: number, name: string) => {
 export const getUserList = (
   currentPage: number,
   pageSize: number,
-  username: string = null,
-  nickname: string = null
+  employeeID: string = null,
+  nickname: string = null,
+  role: string = null
 ) => {
   return http.request<ResultTable>("get", baseUrlApi("/admin/user/list"), {
     params: {
       currentPage,
       pageSize,
-      username,
-      nickname
+      employeeID,
+      nickname,
+      role
     }
   });
 };

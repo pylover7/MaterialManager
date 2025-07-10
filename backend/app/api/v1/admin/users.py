@@ -54,14 +54,17 @@ async def get_user(
 async def list_user(
         currentPage: int = Query(1, description="页码"),
         pageSize: int = Query(15, description="每页数量"),
-        username: str = Query("", description="工号，用于搜索"),
-        nickname: str = Query("", description="用户名称，用于搜索"),
+        employeeID: str = Query("", description="工号"),
+        nickname: str = Query("", description="用户名称"),
+        role: str = Query("", description="用户角色code")
 ):
     q = Q()
-    if username:
-        q &= Q(username__contains=username)
+    if employeeID:
+        q &= Q(employeeID__contains=employeeID)
     if nickname:
         q &= Q(nickname__contains=nickname)
+    if role:
+        q &= Q(roles__code=role)
     total, user_objs = await user_controller.list(page=currentPage, page_size=pageSize, search=q)
     data = []
     for obj in user_objs:

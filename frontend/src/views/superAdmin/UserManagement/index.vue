@@ -8,12 +8,16 @@ import Role from "@iconify-icons/ri/admin-line";
 import Delete from "@iconify-icons/ep/delete";
 import AddFill from "@iconify-icons/ri/add-circle-line";
 import PureTable from "@pureadmin/table";
+import Search from "@iconify-icons/ri/search-line";
+import Refresh from "@iconify-icons/ep/refresh";
+import { on } from "events";
 
 defineOptions({
   name: "UserManagement"
 });
 
 const tableRef = ref();
+const formRef = ref();
 
 const {
   form,
@@ -26,6 +30,7 @@ const {
   roleOptions,
   deviceDetection,
   onSearch,
+  resetForm,
   onBatchDel,
   openDialog,
   handleDelete,
@@ -51,16 +56,46 @@ const {
           class="role-select"
           clearable
           placeholder="请选择"
+          @change="onSearch"
         >
           <el-option
             v-for="(item, index) in roleOptions"
             :key="index"
             :label="item.name"
-            :value="item.id"
+            :value="item.code"
           >
             {{ item.name }}
           </el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item label="用户工号：" prop="username">
+        <el-input
+          v-model="form.employeeID"
+          class="!w-[180px]"
+          clearable
+          placeholder="请输入工号"
+        />
+      </el-form-item>
+      <el-form-item label="用户名字：" prop="nickname">
+        <el-input
+          v-model="form.nickname"
+          class="!w-[180px]"
+          clearable
+          placeholder="请输入用户名字"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          :icon="useRenderIcon(Search)"
+          :loading="loading"
+          type="primary"
+          @click="onSearch"
+        >
+          搜索
+        </el-button>
+        <el-button :icon="useRenderIcon(Refresh)" @click="resetForm(formRef)">
+          重置
+        </el-button>
       </el-form-item>
     </el-form>
 
