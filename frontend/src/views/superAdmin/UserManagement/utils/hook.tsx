@@ -32,11 +32,7 @@ import {
 
 export function useUser(tableRef: Ref) {
   const form = reactive({
-    // 左侧部门树的id
-    nickname: "",
-    departId: "",
-    username: "",
-    status: ""
+    role: ""
   });
   const formRef = ref();
   const dataList = ref([]);
