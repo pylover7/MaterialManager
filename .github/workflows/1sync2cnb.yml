@@ -1,9 +1,6 @@
 name: Sync to CNB
 
-on:
-  push:
-    branches:
-      - master
+on: [push, pull_request]
 
 jobs:
   sync:
