@@ -6,9 +6,10 @@
 # @FileName  :home.py
 # @Time      :2024/5/31 上午7:15
 # @Author    :dayezi
+from typing import Union
+
 from fastapi import APIRouter, Query
 from tortoise.expressions import Q
-from typing import Union
 
 from app.controllers import user_controller
 from app.controllers.borrowed import borrowedController

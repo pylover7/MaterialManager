@@ -144,7 +144,7 @@ async def get_user_menu():
         parent_menu_dict["meta"]["showLink"] = parent_menu_dict["showLink"]
         parent_menu_dict["meta"]["rank"] = parent_menu_dict["rank"]
 
-        async def menuTree(parent_menu_dict: dict) -> dict:
+        async def menu_tree(parent_menu_dict: dict) -> dict:
             for menu in menus:
                 if menu.parentId == parent_menu_dict["id"]:
                     # roles = await menu.roles.all().values_list("code", flat=True)
@@ -177,10 +177,10 @@ async def get_user_menu():
                 del parent_menu_dict["children"]
                 return parent_menu_dict
             for i, child_menu in enumerate(parent_menu_dict["children"]):
-                parent_menu_dict["children"][i] = await menuTree(child_menu)
+                parent_menu_dict["children"][i] = await menu_tree(child_menu)
             return parent_menu_dict
 
-        parent_menu_dict = await menuTree(parent_menu_dict)
+        parent_menu_dict = await menu_tree(parent_menu_dict)
         res.append(parent_menu_dict)
     return Success(data=res)
 

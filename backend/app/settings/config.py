@@ -75,7 +75,7 @@ class Settings:
                 yaml.dump(default_config, f)
                 self.data = default_config
                 logger.info("生成默认配置文件成功")
-        except Exception as e:
+        except Exception as exception:
             logger.error("配置文件读取失败")
 
 

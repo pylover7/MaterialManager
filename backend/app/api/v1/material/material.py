@@ -2,6 +2,7 @@ from typing import Union
 
 from fastapi import APIRouter, Query
 from tortoise.expressions import Q
+from tortoise.exceptions import IntegrityError, DoesNotExist
 
 from app.controllers.material import materialController
 from app.models import Material
@@ -62,6 +63,8 @@ async def delete_meta(data: dict[str, list[int]]):
     for id in data["idList"]:
         try:
             await materialController.remove(id)
+        except (IntegrityError, DoesNotExist) as e:
+            logger.error(f"删除物资项失败，ID为{id}, 错误详情: {str(e)}")
         except Exception as e:
             logger.error(f"删除物资项失败，ID为{id}")
             return Fail(msg=f"删除物资项部分失败: {e}")
