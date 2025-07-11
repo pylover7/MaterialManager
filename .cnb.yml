@@ -40,6 +40,18 @@ $:
             # 密钥文件引用。请检查使用此配置的代码库是否具有访问密钥文件的权限，否则会导致构建失败
             - https://cnb.cool/pylover/key/-/blob/main/tca.yml
 
+        - name: TCA frontent
+          image: tencentcom/tca-plugin:latest
+          settings:
+            mode: local
+            org_sid: DlV3t9YzRYP  # 团队编号，从TCA官网获取
+            team_name: material  # 项目名称，从TCA官网获取
+            scheme_id: 7529  # 分析方案id，从TCA官网获取
+            scan_dir: frontent/src
+          settingsFrom:
+            # 密钥文件引用。请检查使用此配置的代码库是否具有访问密钥文件的权限，否则会导致构建失败
+            - https://cnb.cool/pylover/key/-/blob/main/tca.yml
+
   pull_request:
     - stages:
       - name: 代码评审
@@ -57,5 +69,17 @@ $:
           scan_dir: backend/app
         settingsFrom:
           # 密钥文件引用。请检查使用此配置的代码库是否具有访问密钥文件的权限，否则会导致构建失败！
+          - https://cnb.cool/pylover/key/-/blob/main/tca.yml
+      
+      - name: TCA frontent
+        image: tencentcom/tca-plugin:latest
+        settings:
+          mode: local
+          org_sid: DlV3t9YzRYP  # 团队编号，从TCA官网获取
+          team_name: material  # 项目名称，从TCA官网获取
+          scheme_id: 7529  # 分析方案id，从TCA官网获取
+          scan_dir: frontent/src
+        settingsFrom:
+          # 密钥文件引用。请检查使用此配置的代码库是否具有访问密钥文件的权限，否则会导致构建失败
           - https://cnb.cool/pylover/key/-/blob/main/tca.yml
   
