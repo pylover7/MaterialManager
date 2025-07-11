@@ -31,13 +31,17 @@ $:
         - name: Backend TCA
           image: tencentcom/tca-plugin:latest
           settings:
+            mode: local
             block: false
-            scan_dir: /workspace/backend/app
+            org_sid: DlV3t9YzRYP
+            team_name: material
+            scan_dir: backend/app
+            scheme_id: 7528
         - name: Frontend TCA
           image: tencentcom/tca-plugin:latest
           settings:
             block: false
-            scan_dir: /workspace/frontend/src
+            scan_dir: frontend/src
   
   pull_request:
     - stages:
