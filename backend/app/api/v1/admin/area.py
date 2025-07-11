@@ -68,7 +68,7 @@ async def list_area(
     return SuccessExtra(total=total, data=data, msg="查询成功", currentPage=currentPage, pageSize=pageSize)
 
 @areaRouter.get("/all", summary="查看所有区域")
-async def list_area():
+async def list_all_area():
     area_list = await areaController.all()
     data = []
     for area in area_list:
