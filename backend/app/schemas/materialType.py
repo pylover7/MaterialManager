@@ -16,4 +16,3 @@ class MaterialTypeCreate(MaterialTypeSchema):
 
 class MaterialTypeUpdate(MaterialTypeSchema):
     id: int
-

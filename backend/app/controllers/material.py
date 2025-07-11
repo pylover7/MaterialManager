@@ -25,12 +25,14 @@ class MaterialController(CRUDBase[Material, MaterialCreate, MaterialUpdate]):
         return await self.model.filter(name=name).first()
 
 
-class MaterialAttentionController(CRUDBase[AttentionNote, AttentionNoteCreate, AttentionNoteUpdate]):
+class MaterialAttentionController(
+        CRUDBase[AttentionNote, AttentionNoteCreate, AttentionNoteUpdate]):
     def __init__(self):
         super().__init__(AttentionNote)
 
 
-class DutyOverListController(CRUDBase[DutyOverList, DutyOverListCreate, DutyOverListUpdate]):
+class DutyOverListController(
+        CRUDBase[DutyOverList, DutyOverListCreate, DutyOverListUpdate]):
     def __init__(self):
         super().__init__(DutyOverList)
 

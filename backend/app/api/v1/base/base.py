@@ -21,12 +21,15 @@ router = APIRouter()
 
 @router.post("/accessToken", summary="获取token")
 async def login_access_token(request: Request, credentials: CredentialsSchema):
-    credentials.password = base64.b64decode(credentials.password).decode("utf-8")
+    credentials.password = base64.b64decode(
+        credentials.password).decode("utf-8")
     user = await user_controller.authenticate(credentials, request.client.host)
     await user_controller.update_last_login(user.id)
     roles = await user.roles.all().values_list("code", flat=True)
-    access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
-    refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(
+        minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
+    refresh_token_expires = timedelta(
+        minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
     expire = now(0) + access_token_expires
     expire_refresh = now(0) + refresh_token_expires
 
@@ -67,8 +70,10 @@ async def refresh_token(refreshToken: refreshTokenSchema):
             raise ExpiredSignatureError
     except ExpiredSignatureError:
         return FailAuth(msg="refreshToken已过期")
-    access_token_expires = timedelta(minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
-    refresh_token_expires = timedelta(minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(
+        minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
+    refresh_token_expires = timedelta(
+        minutes=settings.JWT_REFRESH_TOKEN_EXPIRE_MINUTES)
     expire = datetime.now() + access_token_expires
     expire_refresh = datetime.now() + refresh_token_expires
 
@@ -97,7 +102,8 @@ async def refresh_token(refreshToken: refreshTokenSchema):
 
 @router.post("/auth", summary="用户验证")
 async def auth(request: Request, credentials: CredentialsSchema):
-    credentials.password = base64.b64decode(credentials.password).decode("utf-8")
+    credentials.password = base64.b64decode(
+        credentials.password).decode("utf-8")
     user = await user_controller.authenticate(credentials, request.client.host)
     data = {
         "uuid": user.uuid.__str__(),
@@ -147,7 +153,8 @@ async def get_user_menu():
         async def menu_tree(parent_menu_dict: dict) -> dict:
             for menu in menus:
                 if menu.parentId == parent_menu_dict["id"]:
-                    # roles = await menu.roles.all().values_list("code", flat=True)
+                    # roles = await menu.roles.all().values_list("code",
+                    # flat=True)
                     children_menu = await menu.to_dict()
                     children_menu["children"] = []
                     children_menu["meta"] = {}
@@ -219,5 +226,6 @@ async def get_user_area():
                 break
             areas.append(await area.to_dict())
     seen = set()
-    areas = [area for area in areas if area["code"] not in seen and not seen.add(area["code"])]
+    areas = [area for area in areas if area["code"]
+             not in seen and not seen.add(area["code"])]
     return Success(data=areas)

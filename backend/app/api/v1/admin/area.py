@@ -13,6 +13,7 @@ from app.utils import generate_uuid
 
 areaRouter = APIRouter()
 
+
 @areaRouter.post("/add", summary="新增区域")
 async def create_area(
         data: AreaCreate,
@@ -32,12 +33,14 @@ async def delete_area(
     await areaController.remove(id)
     return Success(msg="删除成功")
 
+
 @areaRouter.put("/update", summary="更新区域")
 async def update_area(
         data: AreaUpdate,
 ):
     area = await areaController.update(id=data.id, obj_in=data)
     return Success(data=await area.to_dict())
+
 
 @areaRouter.get("/updateStatus", summary="修改区域状态")
 async def update_area_status(
@@ -65,7 +68,9 @@ async def list_area(
     for area in area_list:
         item = await area.to_dict()
         data.append(item)
-    return SuccessExtra(total=total, data=data, msg="查询成功", currentPage=currentPage, pageSize=pageSize)
+    return SuccessExtra(total=total, data=data, msg="查询成功",
+                        currentPage=currentPage, pageSize=pageSize)
+
 
 @areaRouter.get("/all", summary="查看所有区域")
 async def list_all_area():

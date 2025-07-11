@@ -26,7 +26,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     async def all(self, search: Q = Q()):
         return await self.model.filter(search).all()
 
-    async def list(self, page: int, page_size: int, search: Q = Q(), order: list = None) -> Tuple[Total, List[ModelType]]:
+    async def list(self, page: int, page_size: int, search: Q = Q(),
+                   order: list = None) -> Tuple[Total, List[ModelType]]:
         if order is None:
             order = []
         query = self.model.filter(search)
@@ -41,7 +42,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         await obj.save()
         return obj
 
-    async def update(self, id: int, obj_in: Union[UpdateSchemaType, Dict[str, Any]]) -> ModelType:
+    async def update(
+            self, id: int, obj_in: Union[UpdateSchemaType, Dict[str, Any]]) -> ModelType:
         if isinstance(obj_in, Dict):
             obj_dict = obj_in
         else:

@@ -29,7 +29,8 @@ async def get_meta(
 
     total, material_objs = await materialController.list(page=page, page_size=pageSize, search=q)
     data = [await obj.to_dict() for obj in material_objs]
-    return SuccessExtra(msg="物资数据获取成功", data=data, total=total, page=page, pageSize=pageSize)
+    return SuccessExtra(msg="物资数据获取成功", data=data,
+                        total=total, page=page, pageSize=pageSize)
 
 
 @router.get("/allMeta", summary="获取所有物资源数据")

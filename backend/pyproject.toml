@@ -19,5 +19,11 @@ dependencies = [
 ]
 
 [[tool.uv.index]]
-url = "https://mirrors.aliyun.com/pypi/simple"
+url = "https://mirrors.cloud.tencent.com/pypi/simple"
 default = true
+
+[dependency-groups]
+dev = [
+    "autopep8>=2.3.2",
+    "pylint>=3.3.7",
+]

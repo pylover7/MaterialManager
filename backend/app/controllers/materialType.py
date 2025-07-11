@@ -8,7 +8,8 @@ from app.models import MaterialType
 from app.schemas.materialType import MaterialTypeCreate, MaterialTypeUpdate
 
 
-class MaterialTypeController(CRUDBase[MaterialType, MaterialTypeCreate, MaterialTypeUpdate]):
+class MaterialTypeController(
+        CRUDBase[MaterialType, MaterialTypeCreate, MaterialTypeUpdate]):
     def __init__(self):
         super().__init__(model=MaterialType)
 

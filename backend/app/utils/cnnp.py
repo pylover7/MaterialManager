@@ -10,14 +10,29 @@ from app.settings import settings
 
 class LDAPAuthentication:
     def __init__(self):
-        self.server = Server(settings.LDAP_HOST, get_info=ALL, connect_timeout=10)
-        self.conn = Connection(self.server, user=settings.LDAP_USER, password=settings.LDAP_PWD)
-        self.attr = ["company", "department", "employeeID", "mobile", "mail", "distinguishedName", "sAMAccountName", "name"]
+        self.server = Server(
+            settings.LDAP_HOST,
+            get_info=ALL,
+            connect_timeout=10)
+        self.conn = Connection(
+            self.server,
+            user=settings.LDAP_USER,
+            password=settings.LDAP_PWD)
+        self.attr = [
+            "company",
+            "department",
+            "employeeID",
+            "mobile",
+            "mail",
+            "distinguishedName",
+            "sAMAccountName",
+            "name"]
 
     def get_user_info(self, username: str) -> UserLdap:
         if not settings.DEV:
             self.conn.bind()
-            if self.conn.search(settings.LDAP_BASE, f'(sAMAccountName={username})', SUBTREE, attributes=self.attr):
+            if self.conn.search(
+                    settings.LDAP_BASE, f'(sAMAccountName={username})', SUBTREE, attributes=self.attr):
                 user = self.conn.entries[0]
                 self.conn.unbind()
                 return UserLdap(
@@ -45,15 +60,19 @@ class LDAPAuthentication:
                 name="张三"
             )
 
-
-    def authenticate(self, username: str, password: str) -> Tuple[UserLdap | None, bool]:
+    def authenticate(self, username: str,
+                     password: str) -> Tuple[UserLdap | None, bool]:
         if settings.DEV:
             user = self.get_user_info(username)
             return user, True
         else:
             user = self.get_user_info(username)
             try:
-                conn = Connection(self.server, user=user.dn, password=password, auto_bind=True)
+                conn = Connection(
+                    self.server,
+                    user=user.dn,
+                    password=password,
+                    auto_bind=True)
                 conn.unbind()
                 return user, True
             except Exception as e:
@@ -62,7 +81,8 @@ class LDAPAuthentication:
 
     def getUserList(self, fiterKey: str, fiterValue: str) -> list[UserLdap]:
         self.conn.bind()
-        if self.conn.search(settings.LDAP_BASE, f'({fiterKey}={fiterValue})', attributes=self.attr):
+        if self.conn.search(
+                settings.LDAP_BASE, f'({fiterKey}={fiterValue})', attributes=self.attr):
             userList = self.conn.entries
             for user in userList:
                 userList[userList.index(user)] = UserLdapCreate(
@@ -81,7 +101,6 @@ class LDAPAuthentication:
             return []
 
 
-
 ldap_auth = LDAPAuthentication()
 
 
@@ -97,4 +116,3 @@ if __name__ == '__main__':
     distinguishedName: cn=xxx,ou=xxx,dc=com,dc=cn
     """
     pass
-

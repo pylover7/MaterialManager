@@ -16,4 +16,3 @@ class MaterialType(BaseModel, TimestampMixin, UUIDModel):
 
     class PydanticMeta:
         exclude = "id"
-

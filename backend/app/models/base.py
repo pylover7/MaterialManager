@@ -9,7 +9,8 @@ from app.settings import settings
 class BaseModel(models.Model):
     id = fields.BigIntField(pk=True, index=True)
 
-    async def to_dict(self, m2m: bool = False, exclude_fields: list[str] | None = None):
+    async def to_dict(self, m2m: bool = False,
+                      exclude_fields: list[str] | None = None):
         if exclude_fields is None:
             exclude_fields = []
 
@@ -34,7 +35,9 @@ class BaseModel(models.Model):
                             for k, v in value.items()
                             if isinstance(v, datetime)
                         )
-                        value.update((k, str(v)) for k, v in value.items() if isinstance(v, UUID))
+                        value.update(
+                            (k, str(v)) for k, v in value.items() if isinstance(
+                                v, UUID))
                         value.pop("password", "xxx")  # 删除用户模型中的密码字段
                     d[field] = values
         return d
