@@ -37,7 +37,7 @@ $:
             scheme_id: 7529  # 分析方案id，从TCA官网获取
             scan_dir: backend/app
           settingsFrom:
-            # 密钥文件引用。请检查使用此配置的代码库是否具有访问密钥文件的权限，否则会导致构建失败！
+            # 密钥文件引用。请检查使用此配置的代码库是否具有访问密钥文件的权限，否则会导致构建失败
             - https://cnb.cool/pylover/key/-/blob/main/tca.yml
 
   pull_request:
