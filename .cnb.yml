@@ -19,8 +19,8 @@ $:
 
   push:
     - stages:
-        - imports: https://cnb.cool/pylover/key/-/blob/main/github.yml
-          name: sync to github
+        - name: sync to github
+          imports: https://cnb.cool/pylover/key/-/blob/main/github.yml
           image: tencentcom/git-sync
           settings:
             target_url: https://github.com/pylover7/MaterialManager.git
@@ -29,6 +29,7 @@ $:
             password: ${GIT_ACCESS_TOKEN}
       # 代码分析
         - name: Backend TCA
+          imports: https://cnb.cool/pylover/key/-/blob/main/tca.yml
           image: tencentcom/tca-plugin:latest
           settings:
             mode: local
