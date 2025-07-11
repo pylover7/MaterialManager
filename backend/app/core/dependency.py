@@ -27,15 +27,18 @@ class AuthControl:
         if db:
             try:
                 token = authorization.split(" ")[1]
-                decode_data = jwt.decode(token, settings.SECRET_KEY, algorithms=settings.JWT_ALGORITHM)
+                decode_data = jwt.decode(
+                    token, settings.SECRET_KEY, algorithms=settings.JWT_ALGORITHM)
                 user_id = decode_data.get("user_id")
                 username = decode_data.get("username")
-                if settings.DATABASE_START is None and username == settings.SUPER_USER["username"]:
+                if settings.DATABASE_START is None and username == settings.SUPER_USER[
+                        "username"]:
                     return UserPydantic.parse_obj(settings.SUPER_USER)
                 else:
                     user = await User.filter(id=user_id).first()
                 if not user:
-                    raise HTTPException(status_code=401, detail="Authentication failed")
+                    raise HTTPException(
+                        status_code=401, detail="Authentication failed")
                 CTX_USER_ID.set(int(user_id))
                 if user.is_superuser:
                     return user
@@ -50,21 +53,26 @@ class AuthControl:
 
 class PermissionControl:
     @classmethod
-    async def has_permission(cls, request: Request, current_user: User = Depends(AuthControl.is_authed)) -> None:
+    async def has_permission(cls, request: Request, current_user: User = Depends(
+            AuthControl.is_authed)) -> None:
         if current_user.is_superuser:
             return
         method = request.method
         path = request.url.path
         roles: list[Role] = await current_user.roles
         if not roles:
-            raise HTTPException(status_code=403, detail="The user is not bound to a role")
+            raise HTTPException(status_code=403,
+                                detail="The user is not bound to a role")
         apis = [await role.apis for role in roles]
         logger.debug(f"{current_user.username} 访问了 {method} {path} 接口")
-        permission_apis = list(set((api.method, api.path) for api in sum(apis, [])))
+        permission_apis = list(set((api.method, api.path)
+                               for api in sum(apis, [])))
         # path = "/api/v1/auth/userinfo"
         # method = "GET"
         if (method, path) not in permission_apis:
-            raise HTTPException(status_code=403, detail=f"Permission denied method:{method} path:{path}")
+            raise HTTPException(
+                status_code=403,
+                detail=f"Permission denied method:{method} path:{path}")
 
 
 DependAuth = Depends(AuthControl.is_authed)

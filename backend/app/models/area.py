@@ -18,7 +18,11 @@ class MaterialArea(BaseModel, TimestampMixin, UUIDModel):
     name = fields.CharField(max_length=50, unique=True, description="区域名称")
     code = fields.CharField(max_length=50, unique=True, description="区域编码")
     status = fields.IntField(default=0, description="状态：启用/停用")
-    remark = fields.CharField(max_length=500, null=True, blank=True, description="区域描述")
+    remark = fields.CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+        description="区域描述")
 
     roles: fields.ManyToManyRelation["Role"]
 

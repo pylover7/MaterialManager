@@ -19,8 +19,10 @@ class DutyLog(BaseModel):
     model = fields.CharField(max_length=20, null=False, description="型号")
     number = fields.IntField(max_length=20, null=False, description="数量")
     nowNumber = fields.IntField(max_length=20, null=False, description="当前数量")
-    dutyPerson = fields.CharField(max_length=20, null=False, description="当班人员")
-    dutyPersonDepart = fields.CharField(max_length=20, null=False, description="当班人员部门")
+    dutyPerson = fields.CharField(
+        max_length=20, null=False, description="当班人员")
+    dutyPersonDepart = fields.CharField(
+        max_length=20, null=False, description="当班人员部门")
     dutyDate = fields.DatetimeField(auto_now_add=True, description="交班时间")
     dutyNote: fields.ForeignKeyRelation["DutyNotes"] = fields.ForeignKeyField("models.DutyNotes",
                                                                               related_name="duty_log", null=True)
@@ -45,5 +47,3 @@ class DutyNotes(BaseModel):
 
     class PydanticMeta:
         exclude = ("id", "dutyDate")
-
-

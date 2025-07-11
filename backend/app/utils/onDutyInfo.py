@@ -7,7 +7,10 @@ from pathlib import Path
 
 from app.utils import now
 
-path = Path.joinpath(Path(__file__).parent.parent.parent, "config", "dutyInfo.ini")
+path = Path.joinpath(
+    Path(__file__).parent.parent.parent,
+    "config",
+    "dutyInfo.ini")
 
 
 class OnDutyInfo:
@@ -21,10 +24,10 @@ class OnDutyInfo:
             "dutyPersonDepart": self.conf[f"{area}.{metaType}"]["dutyPersonDepart"],
         }
 
-    def setDutyInfo(self, area: str, metaType: str, dutyPerson: str, dutyPersonDepart: str) -> None:
+    def setDutyInfo(self, area: str, metaType: str,
+                    dutyPerson: str, dutyPersonDepart: str) -> None:
         self.conf[f"{area}.{metaType}"]["dutyPerson"] = dutyPerson
         self.conf[f"{area}.{metaType}"]["dutyPersonDepart"] = dutyPersonDepart
         self.conf[f"{area}.{metaType}"]["takeoverTime"] = now()
         with open(path, "w", encoding="utf-8") as f:
             self.conf.write(f)
-

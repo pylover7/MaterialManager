@@ -24,7 +24,11 @@ async def duty_over(
     note = await dutyNotesController.create(data.materialNote)
     await dutyLogController.create_all(data.materialData, note)
     onDutyInfo = OnDutyInfo()
-    onDutyInfo.setDutyInfo(area, metaType, data.dutyPerson, data.dutyPersonDepart)
+    onDutyInfo.setDutyInfo(
+        area,
+        metaType,
+        data.dutyPerson,
+        data.dutyPersonDepart)
 
     result = {
         "dutyPerson": data.dutyPerson,
@@ -69,11 +73,13 @@ async def get_duty_over_list(area: str = Query("glb", description="部门")):
     q = Q(area__contains=area)
     total, duty_over_list_objs = await dutyOverListController.list(page=1, page_size=1000, search=q)
     data = [await obj.to_dict() for obj in duty_over_list_objs]
-    return SuccessExtra(msg="接班清单获取成功", data=data, total=total, page=1, pageSize=1000)
+    return SuccessExtra(msg="接班清单获取成功", data=data,
+                        total=total, page=1, pageSize=1000)
 
 
 @router.post("/7s/update", summary="更新接班7S清单")
-async def update_duty_over_list(data: list[dict], area: str = Query("glb", description="部门")):
+async def update_duty_over_list(
+        data: list[dict], area: str = Query("glb", description="部门")):
     for item in data:
         if item.get("id"):
             await dutyOverListController.update(item["id"], item)

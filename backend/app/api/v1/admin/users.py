@@ -70,7 +70,9 @@ async def list_user(
     for obj in user_objs:
         obj_dict = await obj.to_dict(m2m=True)
         data.append(obj_dict)
-    return SuccessExtra(data=data, total=total, currentPage=currentPage, pageSize=pageSize)
+    return SuccessExtra(data=data, total=total,
+                        currentPage=currentPage, pageSize=pageSize)
+
 
 @userRouter.get("/listLdapUser", summary="查看LDAP用户列表")
 async def list_ldap_user(

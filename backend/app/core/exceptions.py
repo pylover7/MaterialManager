@@ -33,11 +33,13 @@ async def HttpExcHandle(_: Request, exc: HTTPException) -> JSONResponse:
     return JSONResponse(content=content, status_code=exc.status_code)
 
 
-async def RequestValidationHandle(_: Request, exc: RequestValidationError) -> JSONResponse:
+async def RequestValidationHandle(
+        _: Request, exc: RequestValidationError) -> JSONResponse:
     content = dict(code=422, msg=f"RequestValidationError, {exc}")
     return JSONResponse(content=content, status_code=422)
 
 
-async def ResponseValidationHandle(_: Request, exc: ResponseValidationError) -> JSONResponse:
+async def ResponseValidationHandle(
+        _: Request, exc: ResponseValidationError) -> JSONResponse:
     content = dict(code=500, msg=f"ResponseValidationError, {exc}")
     return JSONResponse(content=content, status_code=500)

@@ -3,12 +3,15 @@ import sys
 
 from loguru import logger as loguru_logger
 
+
 class Logger:
 
     def __init__(self):
         self.logger = loguru_logger
-        loginLogs = Path(__file__).parent.parent.parent.joinpath("logs", "login.log")
-        systemLogs = Path(__file__).parent.parent.parent.joinpath("logs", "system.log")
+        loginLogs = Path(__file__).parent.parent.parent.joinpath(
+            "logs", "login.log")
+        systemLogs = Path(__file__).parent.parent.parent.joinpath(
+            "logs", "system.log")
         self.logger.remove()
         self.logger.add(
             sink=sys.stderr,
