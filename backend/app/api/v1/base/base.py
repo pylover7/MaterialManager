@@ -11,7 +11,7 @@ from app.models import MaterialArea
 from app.utils.log import logger
 from app.models.users import Api, Menu, Role, User
 from app.schemas.base import Success, FailAuth
-from app.schemas.login import *
+from app.schemas.login import CredentialsSchema, refreshTokenSchema
 from app.settings import settings
 from app.utils import now
 from app.utils.jwtt import create_access_token, decode_access_token
