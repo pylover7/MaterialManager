@@ -27,18 +27,6 @@ $:
             auth_type: https
             username: ${GIT_USERNAME}
             password: ${GIT_ACCESS_TOKEN}
-          # TCA代码质量分析
-        - name: TCA backend
-          image: tencentcom/tca-plugin:latest
-          settings:
-            mode: local
-            org_sid: DlV3t9YzRYP  # 团队编号，从TCA官网获取
-            team_name: material  # 项目名称，从TCA官网获取
-            scheme_id: 7529  # 分析方案id，从TCA官网获取
-            scan_dir: backend/app
-          settingsFrom:
-            # 密钥文件引用。请检查使用此配置的代码库是否具有访问密钥文件的权限，否则会导致构建失败
-            - https://cnb.cool/pylover/key/-/blob/main/tca.yml
 
         - name: TCA frontent
           image: tencentcom/tca-plugin:latest
@@ -63,23 +51,21 @@ $:
         image: tencentcom/tca-plugin:latest
         settings:
           mode: local
-          org_sid: DlV3t9YzRYP  # 团队编号，从TCA官网获取
-          team_name: material  # 项目名称，从TCA官网获取
-          scheme_id: 7529  # 分析方案id，从TCA官网获取
+          org_sid: DlV3t9YzRYP
+          team_name: material
+          scheme_id: 7529
           scan_dir: backend/app
         settingsFrom:
-          # 密钥文件引用。请检查使用此配置的代码库是否具有访问密钥文件的权限，否则会导致构建失败！
           - https://cnb.cool/pylover/key/-/blob/main/tca.yml
       
       - name: TCA frontent
         image: tencentcom/tca-plugin:latest
         settings:
           mode: local
-          org_sid: DlV3t9YzRYP  # 团队编号，从TCA官网获取
-          team_name: material  # 项目名称，从TCA官网获取
-          scheme_id: 7534  # 分析方案id，从TCA官网获取
+          org_sid: DlV3t9YzRYP 
+          team_name: material
+          scheme_id: 7534
           scan_dir: frontent/src
         settingsFrom:
-          # 密钥文件引用。请检查使用此配置的代码库是否具有访问密钥文件的权限，否则会导致构建失败
           - https://cnb.cool/pylover/key/-/blob/main/tca.yml
   
