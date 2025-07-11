@@ -46,7 +46,7 @@ $:
         settingsFrom:
           - https://cnb.cool/pylover/key/-/blob/main/tca.yml
       
-      - name: TCA frontent
+      - name: TCA frontend
         image: tencentcom/tca-plugin:latest
         settings:
           mode: local
