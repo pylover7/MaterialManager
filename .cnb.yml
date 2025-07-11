@@ -27,6 +27,9 @@ $:
             auth_type: https
             username: ${GIT_USERNAME}
             password: ${GIT_ACCESS_TOKEN}
+      # 代码分析
+        - name: TCA
+          image: tencentcom/tca-plugin:latest
   
   pull_request:
     - stages:
