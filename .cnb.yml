@@ -27,24 +27,7 @@ $:
             auth_type: https
             username: ${GIT_USERNAME}
             password: ${GIT_ACCESS_TOKEN}
-      # 代码分析
-        - name: Backend TCA
-          image: tencentcom/tca-plugin:latest
-          settings:
-            mode: local
-            block: false
-            org_sid: DlV3t9YzRYP
-            team_name: material
-            scan_dir: backend/app
-            scheme_id: 7528
-          settingsFrom:
-            - https://cnb.cool/pylover/key/-/blob/main/tca.yml
-        - name: Frontend TCA
-          image: tencentcom/tca-plugin:latest
-          settings:
-            block: false
-            scan_dir: frontend/src
-  
+
   pull_request:
     - stages:
       - name: 代码评审
