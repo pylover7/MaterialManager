@@ -29,7 +29,6 @@ $:
             password: ${GIT_ACCESS_TOKEN}
       # 代码分析
         - name: Backend TCA
-          imports: https://cnb.cool/pylover/key/-/blob/main/tca.yml
           image: tencentcom/tca-plugin:latest
           settings:
             mode: local
@@ -38,6 +37,8 @@ $:
             team_name: material
             scan_dir: backend/app
             scheme_id: 7528
+          settingsFrom:
+            - https://cnb.cool/pylover/key/-/blob/main/tca.yml
         - name: Frontend TCA
           image: tencentcom/tca-plugin:latest
           settings:
