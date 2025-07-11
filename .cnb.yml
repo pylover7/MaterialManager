@@ -28,17 +28,6 @@ $:
             username: ${GIT_USERNAME}
             password: ${GIT_ACCESS_TOKEN}
 
-        - name: TCA frontent
-          image: tencentcom/tca-plugin:latest
-          settings:
-            mode: local
-            org_sid: DlV3t9YzRYP  # 团队编号，从TCA官网获取
-            team_name: material  # 项目名称，从TCA官网获取
-            scheme_id: 7534  # 分析方案id，从TCA官网获取
-            scan_dir: frontend/src
-          settingsFrom:
-            - https://cnb.cool/pylover/key/-/blob/main/tca.yml
-
   pull_request:
     - stages:
       - name: 代码评审
