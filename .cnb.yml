@@ -42,6 +42,7 @@ $:
     - name: TCA
       image: tencentcom/tca-plugin:latest
       settings:
+        mode: local
         org_sid: DlV3t9YzRYP  # 团队编号，从TCA官网获取
         team_name: material  # 项目名称，从TCA官网获取
         scheme_id: 7529  # 分析方案id，从TCA官网获取
