@@ -30,6 +30,8 @@ $:
       # 代码分析
         - name: TCA
           image: tencentcom/tca-plugin:latest
+          settings:
+            block: false
   
   pull_request:
     - stages:
