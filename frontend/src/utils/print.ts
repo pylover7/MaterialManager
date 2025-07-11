@@ -89,7 +89,7 @@ Print.prototype = {
 
     for (let k2 = 0; k2 < textareas.length; k2++) {
       if (textareas[k2].type == "textarea") {
-        textareas[k2].innerHTML = textareas[k2].value;
+        textareas[k2].textContent = textareas[k2].value;
       }
     }
 
