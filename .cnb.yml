@@ -28,10 +28,16 @@ $:
             username: ${GIT_USERNAME}
             password: ${GIT_ACCESS_TOKEN}
       # 代码分析
-        - name: TCA
+        - name: Backend TCA
           image: tencentcom/tca-plugin:latest
           settings:
             block: false
+            scan_dir: backend/app
+        - name: Frontend TCA
+          image: tencentcom/tca-plugin:latest
+          settings:
+            block: false
+            scan_dir: frontend/src
   
   pull_request:
     - stages:
