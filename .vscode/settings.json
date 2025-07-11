@@ -68,6 +68,4 @@
   },
   "gitblame.inlineMessageEnabled": true,
   "gitblame.inlineMessageFormat": "${author.name}, (${time.ago}) · ${commit.summary}",
-  "python.languageServer": "Jedi",
-  "python.analysis.autoImportCompletions": true
 }
