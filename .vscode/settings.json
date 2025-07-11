@@ -68,4 +68,5 @@
   },
   "gitblame.inlineMessageEnabled": true,
   "gitblame.inlineMessageFormat": "${author.name}, (${time.ago}) · ${commit.summary}",
+  "python.analysis.autoImportCompletions": true,
 }

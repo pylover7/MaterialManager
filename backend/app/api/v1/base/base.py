@@ -176,8 +176,8 @@ async def get_user_menu():
             if len(parent_menu_dict["children"]) == 0:
                 del parent_menu_dict["children"]
                 return parent_menu_dict
-            for i, v in enumerate(parent_menu_dict["children"]):
-                parent_menu_dict["children"][i] = await menuTree(v)
+            for i, child_menu in enumerate(parent_menu_dict["children"]):
+                parent_menu_dict["children"][i] = await menuTree(child_menu)
             return parent_menu_dict
 
         parent_menu_dict = await menuTree(parent_menu_dict)
