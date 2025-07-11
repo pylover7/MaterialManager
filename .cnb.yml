@@ -32,12 +32,12 @@ $:
           image: tencentcom/tca-plugin:latest
           settings:
             block: false
-            scan_dir: backend/app
+            scan_dir: /workspace/backend/app
         - name: Frontend TCA
           image: tencentcom/tca-plugin:latest
           settings:
             block: false
-            scan_dir: frontend/src
+            scan_dir: /workspace/frontend/src
   
   pull_request:
     - stages:
