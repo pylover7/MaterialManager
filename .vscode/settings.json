@@ -79,5 +79,4 @@
   "python.analysis.autoImportCompletions": true,
   "python.linting.enabled": true,
   "python.linting.lintOnSave": true
-
 }
