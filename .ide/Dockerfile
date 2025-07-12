@@ -64,7 +64,7 @@ COPY .ide/settings.json /root/.local/share/code-server/Machine/settings.json
 
 # 安装 WebStorm
 RUN wget https://download.jetbrains.com/webstorm/WebStorm-2025.1.3.tar.gz
-RUN tar -zxvf WebStorm-2025.1.3.tar.gz -C /ide_cnb
+RUN tar -zxvf WebStorm-2025.1.3.tar.gz -C /ide_cnb && rm -rf WebStorm-2025.1.3.tar.gz
 
 # 安装 btop
 RUN git clone https://github.com/aristocratos/btop.git /btop
