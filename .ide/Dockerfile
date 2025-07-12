@@ -62,6 +62,11 @@ RUN curl -fsSL https://code-server.dev/install.sh | sh \
 COPY .ide/settings.json /root/.vscode-server/data/Machine/settings.json
 COPY .ide/settings.json /root/.local/share/code-server/Machine/settings.json
 
+# 安装 JetBrains Mono
+RUN wget https://download.jetbrains.com/fonts/JetBrainsMono-2.304.zip -O /tmp/jetbrains-mono.zip && \
+    unzip /tmp/jetbrains-mono.zip -d /usr/share/fonts/truetype/jetbrains-mono && \
+    rm /tmp/jetbrains-mono.zip && fc-cache -fv
+
 # 安装 btop
 RUN git clone https://github.com/aristocratos/btop.git /btop
 WORKDIR /btop
