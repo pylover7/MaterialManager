@@ -68,7 +68,7 @@ WORKDIR /btop
 RUN make && make install && rm -rf /btop
 
 # 设置启动命令
-ENV CNB_WELCOME_EXECUTE_COMMAND="zsh"
+ENV CNB_WELCOME_CMD="zsh"
 
 # 清除 uv 缓存和 pip 缓存
 RUN rm -rf ~/.cache/uv && rm -rf ~/.cache/pip
@@ -76,7 +76,3 @@ RUN rm -rf ~/.cache/uv && rm -rf ~/.cache/pip
 # 指定字符集支持命令行输入中文（根据需要选择字符集）
 ENV LANG C.UTF-8
 ENV LANGUAGE C.UTF-8
-
-# 安装 WebStorm
-RUN wget https://download.jetbrains.com/webstorm/WebStorm-2024.3.6.tar.gz
-RUN mkdir -p /ide_cnb && tar -zxvf WebStorm-2024.3.6.tar.gz -C /ide_cnb && rm -rf WebStorm-2024.3.6.tar.gz

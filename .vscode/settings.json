@@ -64,7 +64,15 @@
     },
     "zsh": {
       "path": "/bin/zsh"
-    }
+    },
+    "后端启动": {
+      "path": "/bin/zsh",
+      "args": ["-c", "cd /workspace/backend && uv run run.py"]
+    },
+    "前端启动": {
+      "path": "/bin/zsh",
+      "args": ["-c", "cd /workspace/frontend && bun dev"]
+    },
   },
   "gitblame.inlineMessageEnabled": true,
   "gitblame.inlineMessageFormat": "${author.name}, (${time.ago}) · ${commit.summary}",
