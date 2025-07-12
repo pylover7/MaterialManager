@@ -4,13 +4,12 @@ import { clearLoginLogs, getLoginLogsList } from "@/api/system";
 import { defaultPaginationSizes, usePublicHooks } from "@/views/hooks";
 import type { PaginationProps } from "@pureadmin/table";
 import { onMounted, reactive, ref, type Ref } from "vue";
-import type { DateModelType } from "element-plus";
 
 export function useRole(tableRef: Ref) {
   const form = reactive({
     username: "",
     status: "",
-    loginTime: Array<DateModelType>("")
+    loginTime: [] as [Date, Date] | []
   });
   const dataList = ref([]);
   const loading = ref(true);
