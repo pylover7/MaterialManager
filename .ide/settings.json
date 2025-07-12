@@ -46,6 +46,6 @@
   "editor.fontFamily": "'JetBrains Mono', Consolas, 'Courier New', monospace",
   "editor.fontLigatures": true,  // 启用连字（可选，JetBrains Mono 支持连字效果）
   "editor.fontSize": 15,         // 字体大小（根据需求调整）
-  "editor.fontWeight": "normal"  // 字重（可选：normal, bold, 100~900）
-
+  "editor.fontWeight": "normal",  // 字重（可选：normal, bold, 100~900）
+  "workbench.iconTheme": "vscode-icons"
 }
