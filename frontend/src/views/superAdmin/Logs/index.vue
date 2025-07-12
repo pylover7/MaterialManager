@@ -9,7 +9,7 @@ import Delete from "@iconify-icons/ep/delete";
 import Refresh from "@iconify-icons/ep/refresh";
 
 defineOptions({
-  name: "LoginLog"
+  name: "Logs"
 });
 
 const formRef = ref();

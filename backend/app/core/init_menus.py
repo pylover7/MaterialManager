@@ -388,7 +388,7 @@ async def init_menus():
                 title="系统日志",
                 name="Logs",
                 path="/superAdmin/logs",
-                component="superAdmin/Logs",
+                component="superAdmin/Logs/index",
                 icon="Logs",
                 keepAlive=True,
             ),
