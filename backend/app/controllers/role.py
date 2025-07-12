@@ -11,7 +11,8 @@ class RoleController(CRUDBase[Role, RoleCreate, RoleUpdate]):
     async def is_exist(self, name: str) -> bool:
         return await self.model.filter(name=name).exists()
 
-    async def update_roles(self, role: Role, menu_ids: list[int], api_ids: list[int], area_ids: list[int]) -> None:
+    async def update_roles(
+            self, role: Role, menu_ids: list[int], api_ids: list[int], area_ids: list[int]) -> None:
         await role.menus.clear()
         for menu_id in menu_ids:
             menu_obj = await Menu.filter(id=menu_id).first()

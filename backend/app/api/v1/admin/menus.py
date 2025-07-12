@@ -62,4 +62,3 @@ async def update_menu(
 ):
     await menu_controller.update(id=menu_in.id, obj_in=menu_in.update_dict())
     return Success(msg=f"菜单【{menu_in.name}】更新成功")
-

@@ -38,7 +38,8 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
         user.last_login = datetime.now()
         await user.save()
 
-    async def authenticate(self, credentials: CredentialsSchema, ip: str) -> User:
+    async def authenticate(
+            self, credentials: CredentialsSchema, ip: str) -> User:
         # user = await self.model.filter(username=credentials.username).first()
         # ldapUser 有信息就是登录成功
         ldapUser = ldap_auth.get_user_info(credentials.username)
@@ -57,11 +58,13 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
             role = await Role.filter(default=1).first()
             user = await self.create(userCreate)
             await user.roles.add(role)
-        if now(0) - user.updated_at  < timedelta(hours=1) and user.status == 0:
-            remaining_time = 60 - int((now(0) - user.updated_at).total_seconds()) // 60
+        if now(0) - user.updated_at < timedelta(hours=1) and user.status == 0:
+            remaining_time = 60 - \
+                int((now(0) - user.updated_at).total_seconds()) // 60
             raise HTTPException(status_code=400,
                                 detail=f"密码错误次数过多，账号已被锁定，请【{remaining_time}】分钟后再尝试登录")
-        ldapUser, result = ldap_auth.authenticate(credentials.username, credentials.password)
+        ldapUser, result = ldap_auth.authenticate(
+            credentials.username, credentials.password)
         if result:
             # 解封
             user.status = 1
@@ -76,7 +79,8 @@ class UserController(CRUDBase[User, UserCreate, UserUpdate]):
                 user.status = 0
             await user.save()
             loginLogger.error(credentials.username, ip=ip)
-            raise HTTPException(status_code=400, detail=f"密码错误，尝试登录次数{user.loginFail}/5!")
+            raise HTTPException(status_code=400,
+                                detail=f"密码错误，尝试登录次数{user.loginFail}/5!")
 
     async def update_roles(self, user: User, roles: List[int]) -> None:
         await user.roles.clear()

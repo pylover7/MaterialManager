@@ -16,3 +16,44 @@ $:
       stages:
         - name: ls
           script: ls -al
+
+  push:
+    - stages:
+        - name: sync to github
+          imports: https://cnb.cool/pylover/key/-/blob/main/github.yml
+          image: tencentcom/git-sync
+          settings:
+            target_url: https://github.com/pylover7/MaterialManager.git
+            auth_type: https
+            username: ${GIT_USERNAME}
+            password: ${GIT_ACCESS_TOKEN}
+
+  pull_request:
+    - stages:
+      - name: 代码评审
+        image: cnbcool/ai-review:latest
+        settings:
+          type: code-review
+      # TCA代码质量分析
+      - name: TCA backend
+        image: tencentcom/tca-plugin:latest
+        settings:
+          mode: local
+          org_sid: DlV3t9YzRYP
+          team_name: material
+          scheme_id: 7529
+          scan_dir: backend/app
+        settingsFrom:
+          - https://cnb.cool/pylover/key/-/blob/main/tca.yml
+      
+      - name: TCA frontend
+        image: tencentcom/tca-plugin:latest
+        settings:
+          mode: local
+          org_sid: DlV3t9YzRYP 
+          team_name: material
+          scheme_id: 7534
+          scan_dir: frontend/src
+        settingsFrom:
+          - https://cnb.cool/pylover/key/-/blob/main/tca.yml
+  

@@ -13,13 +13,15 @@ BorrowedPydantic = pydantic_model_creator(Borrowed)
 class BorrowedCreate(BorrowedPydantic):
 
     def create_dict(self):
-        return self.model_dump(exclude={"id", "borrowApproveUser", "returnApproveUser"})
+        return self.model_dump(
+            exclude={"id", "borrowApproveUser", "returnApproveUser"})
 
 
 class BorrowedUpdate(BorrowedPydantic):
 
     def update_dict(self):
-        return self.model_dump(exclude={"id", "borrowApproveUser", "returnApproveUser"})
+        return self.model_dump(
+            exclude={"id", "borrowApproveUser", "returnApproveUser"})
 
 
 class MaterialBorrowed(MaterialCreate):

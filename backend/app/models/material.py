@@ -14,7 +14,8 @@ class Material(BaseModel, TimestampMixin, UUIDModel):
     number = fields.IntField(description="物资库存数量")
     checking = fields.IntField(default=0, description="物资送检数量")
     borrowed = fields.IntField(default=0, description="物资外借数量")
-    description = fields.CharField(max_length=255, null=True, description="物资描述")
+    description = fields.CharField(
+        max_length=255, null=True, description="物资描述")
 
     # 物资被借的信息
     borrowedInfo: fields.ManyToManyRelation["Borrowed"]

@@ -9,7 +9,9 @@ class CredentialsSchema(BaseModel):
 
 
 class refreshTokenSchema(BaseModel):
-    refreshToken: str = Field(..., description="刷新令牌", example="eyJhbGciOiJIUzUxMiJ9.newAdminRefresh")
+    refreshToken: str = Field(...,
+                              description="刷新令牌",
+                              example="eyJhbGciOiJIUzUxMiJ9.newAdminRefresh")
 
 
 class JWTReOut(BaseModel):

@@ -5,6 +5,7 @@
 from tortoise.contrib.pydantic import pydantic_model_creator
 from pydantic import BaseModel
 
+
 class AreaCreate(BaseModel):
     uuid: str = None
     name: str

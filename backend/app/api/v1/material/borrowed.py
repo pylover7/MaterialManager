@@ -6,9 +6,10 @@
 # @FileName  :home.py
 # @Time      :2024/5/31 上午7:15
 # @Author    :dayezi
+from typing import Union
+
 from fastapi import APIRouter, Query
 from tortoise.expressions import Q
-from typing import Union
 
 from app.controllers import user_controller
 from app.controllers.borrowed import borrowedController
@@ -64,7 +65,8 @@ async def get_home_list(
     if borrowedStatus is not None:
         q &= Q(borrowApproveStatus=borrowedStatus)
     if borrowWhether is not None:
-        q &= Q(Q(borrowApproveWhether=borrowWhether), Q(returnApproveStatus=returnStatus))
+        q &= Q(Q(borrowApproveWhether=borrowWhether),
+               Q(returnApproveStatus=returnStatus))
     total, objs = await borrowedController.list(page=page, page_size=pageSize, search=q, order=["-borrowTime"])
     data = []
     for obj in objs:
@@ -78,7 +80,8 @@ async def get_home_list(
             obj_dict["returnApproveUser"] = returnApproveUser
         obj_dict["material"] = material
         data.append(obj_dict)
-    return SuccessExtra(data=data, total=total, currentPage=page, pageSize=pageSize)
+    return SuccessExtra(data=data, total=total,
+                        currentPage=page, pageSize=pageSize)
 
 
 @borrowedRouter.post("/update", summary="更新借用信息")
@@ -105,4 +108,3 @@ async def update_borrowed(data: UpdateBorrowedInfo):
 
         await obj.save()
     return Success()
-

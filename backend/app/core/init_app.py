@@ -39,7 +39,9 @@ def register_exceptions(app: FastAPI):
     app.add_exception_handler(HTTPException, HttpExcHandle)
     app.add_exception_handler(IntegrityError, IntegrityHandle)
     app.add_exception_handler(RequestValidationError, RequestValidationHandle)
-    app.add_exception_handler(ResponseValidationError, ResponseValidationHandle)
+    app.add_exception_handler(
+        ResponseValidationError,
+        ResponseValidationHandle)
 
 
 def register_routers(app: FastAPI, prefix: str = "/api"):
