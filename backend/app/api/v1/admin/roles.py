@@ -4,7 +4,7 @@ from tortoise.expressions import Q
 
 from app.controllers import role_controller
 from app.schemas.base import Success, SuccessExtra
-from app.schemas.roles import *
+from app.schemas.roles import RoleCreate, RoleFilter, RoleUpdate, RoleUpdateMenusApis
 from app.utils.log import logger
 
 
@@ -56,7 +56,8 @@ async def list_role(
         q = q & Q(status__contains=data.status)
     total, role_objs = await role_controller.list(page=currentPage, page_size=pageSize, search=q)
     data = [await obj.to_dict() for obj in role_objs]
-    return SuccessExtra(data=data, total=total, currentPage=currentPage, pageSize=pageSize)
+    return SuccessExtra(data=data, total=total,
+                        currentPage=currentPage, pageSize=pageSize)
 
 
 @roleRouter.get("/getRoleAuth", summary="查看角色权限")
@@ -86,8 +87,8 @@ async def update_role_menu_id(data: RoleUpdateMenusApis):
     await role_controller.update_roles(role=role_obj, menu_ids=data.menus, api_ids=data.apis, area_ids=data.areas)
     return Success(msg="权限更新成功")
 
+
 @roleRouter.get("/setDefaultRole", summary="设置默认角色")
 async def set_default_role(id: int):
     await role_controller.setDefault(id=id)
     return Success(msg="设置成功")
-

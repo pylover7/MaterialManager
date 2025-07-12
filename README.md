@@ -72,12 +72,14 @@ networks:
 ```
 
 使用命令启动容器服务
+
 ```bash
 docker-compose up -d
 ```
 
 创建配置文件
 在 `./material-config` 目录下添加配置文件 `config.yml`
+
 ```yml
 app:
   title: MaterialManager
@@ -170,6 +172,7 @@ log:
 ```
 
 交接班记录文件 `dutyInfo.ini`
+
 ```ini
 [glb.tool]
 dutyperson = 张三
@@ -205,6 +208,7 @@ takeovertime = 2020-01-01 00:00:00
 ## 自定义开发
 
 技术栈：
+
 - 前端：
   - Vue3
   - Vite
@@ -244,18 +248,33 @@ uv run run.py
 ```
 
 安装前端依赖
+
 ```bash
 # 安装依赖 在目录 frontend/ 下执行
-pnpm i
+bun i
 
 # 启动
-pnpm dev
+bun dev
 ```
 
 访问 http://localhost:8001/ 即可
 
+### 代码规范检查
+
+前端
+
+```bash
+bun lint
+```
+
+后端
+
+```bash
+autopep8 --in-place --recursive --aggressive app
+```
 
 ### docker镜像
+
 构建镜像
 
 ```bash
@@ -263,10 +282,13 @@ docker build -t material:1.0.9 .
 ```
 
 保存镜像
+
 ```bash
 docker save material:1.0.9 -o material109.tar
 ```
+
 加载镜像
+
 ```bash
 docker load -i material109.tar
 ```

@@ -5,7 +5,10 @@ from ruamel.yaml import YAML
 from app.schemas.admin import DbInfo
 from app.utils.log import logger
 
-config_path = Path.joinpath(Path(__file__).parent.parent.parent, "config", "config.yml")
+config_path = Path.joinpath(
+    Path(__file__).parent.parent.parent,
+    "config",
+    "config.yml")
 static_path = Path.joinpath(Path(__file__).parent.parent, "static")
 Path(static_path).mkdir(parents=True, exist_ok=True)
 yaml = YAML()
@@ -27,7 +30,7 @@ class Settings:
                     "description": "后台管理系统",
                     "version": "1.0.0",
                     "dev": True
-                    },
+                },
                 "server": {
                     "host": "127.0.0.1",
                     "port": 8000,
@@ -69,15 +72,14 @@ class Settings:
                 }
             }
             # 将数据写入配置文件
-            #创建配置文件
+            # 创建配置文件
             Path(config_path).parent.mkdir(parents=True, exist_ok=True)
             with open(config_path, "w", encoding="utf-8") as f:
                 yaml.dump(default_config, f)
                 self.data = default_config
                 logger.info("生成默认配置文件成功")
-        except Exception as e:
+        except Exception as exception:
             logger.error("配置文件读取失败")
-
 
     def _save(self):
         with open(config_path, "w", encoding="utf-8") as f:
@@ -293,8 +295,6 @@ class Settings:
             return True
         else:
             return self.data["app"]["dev"]
-
-
 
 
 settings = Settings()

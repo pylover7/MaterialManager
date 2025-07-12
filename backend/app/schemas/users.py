@@ -46,6 +46,7 @@ class UserLdap(BaseModel):
     name: str = Field(description="姓名")
     dn: str = Field(description="DN")
 
+
 class UserLdapCreate(BaseModel):
     username: str
     nickname: str

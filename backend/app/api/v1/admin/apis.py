@@ -53,7 +53,8 @@ async def list_api(
         q &= Q(tags__contains=tags)
     total, api_objs = await api_controller.list(page=page, page_size=page_size, search=q, order=["tags", "id"])
     data = [await obj.to_dict() for obj in api_objs]
-    return SuccessExtra(data=data, total=total, currentPage=page, pageSize=page_size)
+    return SuccessExtra(data=data, total=total,
+                        currentPage=page, pageSize=page_size)
 
 
 @apiRouter.post("/update", summary="更新API")

@@ -30,6 +30,7 @@ RUN sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highligh
 # 安装 uv
 RUN pip install uv
 ENV UV_DEFAULT_INDEX=https://mirrors.cloud.tencent.com/pypi/simple
+ENV PATH="/root/.local/bin:$PATH"
 
 # 安装 code-server 和 vscode 常用插件
 RUN curl -fsSL https://code-server.dev/install.sh | sh \

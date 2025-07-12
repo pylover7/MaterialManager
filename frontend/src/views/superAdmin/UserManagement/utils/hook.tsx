@@ -32,11 +32,9 @@ import {
 
 export function useUser(tableRef: Ref) {
   const form = reactive({
-    // 左侧部门树的id
-    nickname: "",
-    departId: "",
-    username: "",
-    status: ""
+    role: "",
+    employeeID: "",
+    nickname: ""
   });
   const formRef = ref();
   const dataList = ref([]);
@@ -256,8 +254,9 @@ export function useUser(tableRef: Ref) {
     getUserList(
       pagination.currentPage,
       pagination.pageSize,
-      toRaw(form).username,
-      toRaw(form).nickname
+      toRaw(form).employeeID,
+      toRaw(form).nickname,
+      toRaw(form).role
     )
       .then(({ data, total, currentPage, pageSize }) => {
         dataList.value = data;
@@ -271,6 +270,12 @@ export function useUser(tableRef: Ref) {
         }, 500);
       });
   }
+
+  const resetForm = formEl => {
+    if (!formEl) return;
+    formEl.resetFields();
+    onSearch();
+  };
 
   function openDialog() {
     addDialog({
@@ -388,6 +393,7 @@ export function useUser(tableRef: Ref) {
     buttonClass,
     deviceDetection,
     onSearch,
+    resetForm,
     onBatchDel,
     openDialog,
     handleDelete,

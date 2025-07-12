@@ -1,6 +1,5 @@
 /* $sideBarWidth: vertical 模式下主体内容距离网页文档左侧的距离 */
 @mixin merge-style($sideBarWidth) {
-
   @media screen and (width >= 150px) and (width <= 420px) {
     .app-main-nofixed-header {
       overflow-y: hidden;
@@ -203,7 +202,7 @@
     & .el-sub-menu .el-menu-item {
       min-width: $sideBarWidth !important;
       font-size: 14px;
-      background-color:  var(--pure-theme-sub-menu-bg) !important;
+      background-color: var(--pure-theme-sub-menu-bg) !important;
     }
 
     /* 有子集的激活菜单左侧小竖条 */
@@ -252,7 +251,7 @@
   /* vertical 菜单折叠 */
   .el-menu--vertical {
     .el-menu--popup {
-      background-color:  var(--pure-theme-sub-menu-bg) !important;
+      background-color: var(--pure-theme-sub-menu-bg) !important;
 
       .el-menu-item {
         span {
@@ -280,7 +279,7 @@
     .el-menu .el-sub-menu__title {
       min-width: $sideBarWidth !important;
       font-size: 14px;
-      background-color:  var(--pure-theme-sub-menu-bg) !important;
+      background-color: var(--pure-theme-sub-menu-bg) !important;
     }
 
     .el-menu-item,
@@ -288,7 +287,7 @@
       height: 50px;
       line-height: 50px;
       color: var(--pure-theme-menu-text);
-      background-color:  var(--pure-theme-sub-menu-bg);
+      background-color: var(--pure-theme-sub-menu-bg);
 
       &:hover {
         color: var(--pure-theme-menu-text) !important;
@@ -340,7 +339,7 @@
     }
 
     .el-menu--popup {
-      background-color:  var(--pure-theme-sub-menu-bg) !important;
+      background-color: var(--pure-theme-sub-menu-bg) !important;
 
       a > .is-active.submenu-title-noDropdown {
         border-bottom: none;
@@ -348,7 +347,7 @@
 
       .el-menu-item {
         color: var(--pure-theme-menu-text);
-        background-color:  var(--pure-theme-sub-menu-bg);
+        background-color: var(--pure-theme-sub-menu-bg);
 
         span {
           font-size: 14px;
@@ -364,7 +363,7 @@
     .el-menu .el-sub-menu__title {
       min-width: $sideBarWidth !important;
       font-size: 14px;
-      background-color:  var(--pure-theme-sub-menu-bg) !important;
+      background-color: var(--pure-theme-sub-menu-bg) !important;
 
       &:hover {
         color: var(--pure-theme-menu-text) !important;

@@ -2,6 +2,7 @@ from typing import Union
 
 from fastapi import APIRouter, Query
 from tortoise.expressions import Q
+from tortoise.exceptions import IntegrityError, DoesNotExist
 
 from app.controllers.material import materialController
 from app.models import Material
@@ -28,7 +29,8 @@ async def get_meta(
 
     total, material_objs = await materialController.list(page=page, page_size=pageSize, search=q)
     data = [await obj.to_dict() for obj in material_objs]
-    return SuccessExtra(msg="物资数据获取成功", data=data, total=total, page=page, pageSize=pageSize)
+    return SuccessExtra(msg="物资数据获取成功", data=data,
+                        total=total, page=page, pageSize=pageSize)
 
 
 @router.get("/allMeta", summary="获取所有物资源数据")
@@ -62,6 +64,8 @@ async def delete_meta(data: dict[str, list[int]]):
     for id in data["idList"]:
         try:
             await materialController.remove(id)
+        except (IntegrityError, DoesNotExist) as e:
+            logger.error(f"删除物资项失败，ID为{id}, 错误详情: {str(e)}")
         except Exception as e:
             logger.error(f"删除物资项失败，ID为{id}")
             return Fail(msg=f"删除物资项部分失败: {e}")

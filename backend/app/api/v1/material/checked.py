@@ -42,7 +42,10 @@ async def get_checked(
         page: int = Query(1, description="页码"),
         pageSize: int = Query(10, description="每页数量"),
 ):
-    q = Q(area__contains=area) & Q(type__contains=metaType) & Q(returnStatus=returnStatus)
+    q = Q(
+        area__contains=area) & Q(
+        type__contains=metaType) & Q(
+            returnStatus=returnStatus)
     total, checked_objs = await checkedController.list(page=page, page_size=pageSize, search=q)
     data = []
     for obj in checked_objs:
@@ -64,7 +67,8 @@ async def get_checked(
         except Exception as e:
             logger.warning(f"物资【{material.name}】暂无归还人信息：{e}")
         data.append(obj_dict)
-    return SuccessExtra(data=data, total=total, currentPage=page, pageSize=pageSize)
+    return SuccessExtra(data=data, total=total,
+                        currentPage=page, pageSize=pageSize)
 
 
 @checkedRouter.post("/update", summary="归还送检物资")
@@ -81,4 +85,3 @@ async def update_checked(data: ReturnChecked):
         obj.returnDate = now()
         await obj.save()
     return Success(msg="更新成功！")
-

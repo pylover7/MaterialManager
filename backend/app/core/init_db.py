@@ -37,7 +37,8 @@ async def register_superAdmin():
     user = await user_controller.model.exists()
     if not user:
         logger.info("正在注册超级管理员...")
-        settings.SUPER_USER["uuid"] = generate_uuid(settings.SUPER_USER["username"])
+        settings.SUPER_USER["uuid"] = generate_uuid(
+            settings.SUPER_USER["username"])
         await user_controller.create(UserCreate.parse_obj(settings.SUPER_USER))
         logger.info("超级管理员注册完成")
 
